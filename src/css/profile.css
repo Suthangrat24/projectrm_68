@@ -1,0 +1,523 @@
+.profile-page {
+  padding: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  color: #e5e7eb;
+}
+
+/* ===== Back Header ===== */
+
+.back-header {
+  margin-bottom: 20px;
+}
+
+.back-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.back-arrow {
+  width: 18px;
+  height: 18px;
+}
+
+.back-text {
+  font-size: 16px;
+  color: #e5e7eb;
+}
+
+.page-main-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-top: 18px;
+  color: #ffffff;
+}
+
+/* ===== Header Card ===== */
+.profile-header-card {
+  background: #1F2937;
+  padding: 28px;
+  border-radius: 15px;
+  border: 1px solid #374151;
+  margin-bottom: 24px;
+}
+
+/* Top area */
+.profile-top {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 10px;
+}
+
+.profile-avatar {
+  width: 171px;       /* หรือขนาดที่ต้องการ */
+  height: 171px;
+  border-radius: 50%; /* ทำให้กรอบกลม */
+  overflow: hidden;   /* ตัดส่วนเกิน */
+  background: #374151;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-picture {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;  /* ครอบให้สวย ไม่บี้ */
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+}
+
+.profile-name {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.profile-username {
+  font-size: 16px;
+  color: #9ca3af;
+}
+
+/* badges */
+.profile-badges {
+  margin: 10px 0;
+  display: flex;
+  gap: 10px;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.badge-mid {
+  background: #CA8A04;
+  color: #fff;
+}
+
+.badge-small {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #374151;
+  color: #e5e7eb;
+}
+
+.profile-join {
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+/* ===== Tabs ===== */
+/* ===== Profile Tabs (เหมือน Detail Tabs) ===== */
+
+.profile-tabs-card {
+  margin-top: 12px;
+  margin-bottom: 18px;
+}
+
+.profile-tabs-row {
+  display: inline-flex;
+  gap: 6px;
+  padding: 6px;
+  background: #1F2937;
+  border-radius: 20px;
+  border: 1px solid #374151;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+}
+
+.profile-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  border: none;
+  padding: 8px 24px;
+  background: transparent;
+  color: #e5e7eb;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.profile-tab img {
+  width: 18px;
+  height: 18px;
+  opacity: 0.9;
+}
+
+.profile-tab--active {
+  background: #374151;
+}
+
+/* ===== Content ===== */
+.profile-content-card {
+  margin-top: 22px;
+  background: #1F2937;
+  padding: 26px 28px;
+  border-radius: 18px;
+  border: 1px solid #374151;
+}
+
+/* Grid info */
+
+/* ===== Header ของส่วนข้อมูลส่วนตัว ===== */
+
+.profile-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.profile-section-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-icon {
+    width: 30px;
+    height: 30px;
+    opacity: 0.85;
+}
+
+.history-icon,
+.favorite-icon,
+.setting-icon {
+  width: 20px;
+  height: 20px;
+  opacity: 0.9;
+}
+
+.profile-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* ปุ่มแก้ไข */
+.profile-edit-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  background: #2563EB;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 14px;
+
+  font-size: 14px;
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.profile-edit-btn:hover {
+  filter: brightness(1.07);
+}
+
+.edit-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.info-field label {
+  font-size: 12px;
+  color: #D1D5DB;
+}
+
+.info-field input {
+  width: 100%;
+  margin-top: 6px;
+  padding: 12px 14px;
+  background: #374151;
+  border: 1px solid #4B5563;
+  border-radius: 10px;
+  color: #7D7D7D;
+  font-size: 14px;
+}
+
+/* ===== การ์ดประวัติความเสี่ยง ===== */
+.risk-card {
+  background: #1F2937;
+  border: 1px solid #374151;
+  padding: 20px 24px;
+  border-radius: 16px;
+  margin-top: 18px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.45);
+}
+
+/* header การประเมิน */
+.risk-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.risk-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* badge ระดับความเสี่ยง */
+.risk-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+.risk-mid {
+  background: #d1a300;
+  color: #1f2937;
+}
+
+.risk-low {
+  background: #22c55e;
+  color: #0f172a;
+}
+
+.fav-price-block {
+  margin-top: 8px;   /* ให้หายชิดโลโก้เกินไป */
+  margin-bottom: 16px;
+}
+
+/* ปุ่มดูรายละเอียด */
+.fav-detail-btn {
+  background: #e5e7eb;
+  color: #334155;
+  border: none;
+  padding: 7px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  cursor: pointer;
+  
+  align-self: flex-end;   /* ให้ปุ่มไปขวาเหมือนเดิม */
+  margin-top: 6px;       /* สร้างระยะจากราคา */
+  margin-bottom: 0px;     /* ให้ชิดล่างพอดี */
+}
+
+.risk-row {
+  margin: 6px 0;
+  display: flex;
+  gap: 8px;
+}
+
+.risk-label {
+  color: #9ca3af;
+}
+
+.risk-text {
+  color: #d1d5db;
+}
+
+.risk-score {
+  color: #fbbf24;
+  font-weight: 700;
+}
+
+/* หุ้นแนะนำ */
+.risk-stock-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.risk-stock {
+  background: #374151;
+  padding: 5px 12px;
+  border-radius: 8px;
+  color: #e5e7eb;
+  font-size: 13px;
+}
+
+/* GRID 2 คอลัมน์ */
+.favorite-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+/* การ์ดแต่ละอัน */
+.favorite-card {
+  background: #1d2532;
+  border: 1px solid #2b3445;
+  border-radius: 20px;
+  padding: 20px 24px 28px; /* เพิ่ม padding ล่าง */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.fav-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fav-left {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.fav-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+}
+
+.fav-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.fav-symbol {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.fav-name {
+  font-size: 13px;
+  color: #b8c2cc;
+}
+
+.fav-heart {
+  width: 26px;
+  opacity: 0.9;
+}
+
+/* ราคา + ปุ่ม อยู่แถวเดียว */
+.fav-price-row {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ราคาใหญ่ */
+.fav-price {
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.fav-change {
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+.fav-up {
+  color: #22c55e;
+}
+
+.fav-down {
+  color: #ef4444;
+}
+
+/* การ์ดใหญ่ */
+.settings-container {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* การ์ดย่อย */
+.settings-card {
+  background: #374151;
+  border-radius: 14px;
+  padding: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #374151;
+}
+
+.settings-title {
+  font-size: 17px;
+  color: #fff;
+  font-weight: 500;
+}
+
+.settings-desc {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #9CA3AF;
+}
+
+/* === Toggle แบบ Figma === */
+.dark-toggle {
+  width: 68px;
+  height: 46px;
+  border-radius: 999px;
+  border: none;
+  background: #4B5563;
+  padding: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: 0.25s;
+}
+
+.dark-toggle.on {
+  background: rgba(255, 255, 255, 0.5); /* เขียวแบบ Figma */
+  justify-content: flex-end;
+}
+
+.toggle-circle {
+  width: 36px;
+  height: 36px;
+  background: #16A34A;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.toggle-icon {
+  width: 17px;
+  height: 17px;
+  object-fit: contain;
+}
+
+/* === Logout Card === */
+.logout-card {
+  background: #374151;
+}
+
+.logout-btn {
+  background: #DC2626;
+  border: none;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.logout-icon {
+  width: 16px;
+  height: 16px;
+}

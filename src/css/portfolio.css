@@ -1,0 +1,319 @@
+.portfolio-page {
+  padding: 24px 40px 60px;
+}
+
+/* ---------- HERO ---------- */
+.portfolio-hero {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.portfolio-hero .hero-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url("/pics/allstocks.jpg");
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.9);
+}
+
+.portfolio-hero .hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.portfolio-hero .hero-content {
+  position: absolute;
+  bottom: 70px;
+  left: 40px;
+  color: white;
+}
+
+/* ---------- SUMMARY GRID ---------- */
+.portfolio-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.portfolio-summary-card {
+  background: #1F2937;
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid #2b3545;
+  color: #fff;
+}
+
+.summary-label {
+  opacity: 0.8;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.summary-value {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.summary-sub {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.green-text {
+  color: #4ade80;
+}
+
+/* ---------- TABS ---------- */
+.portfolio-tabs-card {
+  margin-bottom: 18px;
+}
+
+.portfolio-tabs-row {
+  display: inline-flex;
+  gap: 4px;
+  padding: 6px;
+  background: #1F2937;
+  border-radius: 20px;
+  border: 1px solid #374151;
+}
+
+.portfolio-tab {
+  border-radius: 999px;
+  padding: 8px 24px;
+  background: transparent;
+  color: #e5e7eb;
+  border: none;
+  cursor: pointer;
+}
+
+.portfolio-tab--active {
+  background: #374151;
+}
+
+/* ---------- TABLE ---------- */
+.portfolio-table-card {
+  background: #1F2937;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #374151;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.add-invest-btn {
+  background: #22c55e;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.portfolio-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.portfolio-table th {
+  text-align: left;
+  padding: 10px 0;
+  color: #9ca3af;
+}
+
+.portfolio-table td {
+  padding: 10px 0;
+  color: #fff;
+}
+
+.action-icons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.action-icon {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: 0.15s ease;
+}
+
+.action-icon:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* ===== STOCK NAME CELL ===== */
+.stock-name-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.stock-symbol {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.stock-fullname {
+  font-size: 14px;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+/* ===== TEXT MUTED ===== */
+.text-muted {
+  color: #9aa0a6; /* สีเทาอ่อนแบบ Figma */
+}
+
+/* ===== PL ===== */
+.pl-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.pl-main {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.pl-sub {
+  font-size: 13px;
+  margin-top: 2px;
+  opacity: 0.85;
+}
+
+.green-text {
+  color: #1fa97a;
+}
+
+.red-text {
+  color: #ff5b5b;
+}
+
+
+
+
+/* ===== Wrapper ===== */
+.analysis-wrapper {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+/* ===== GRID TOP: 2 PIE CHARTS ===== */
+.analysis-top-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+/* ===== CARD ===== */
+.analysis-card {
+    background: #1f2533;
+    border-radius: 22px;
+    padding: 24px;
+    color: #fff;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.2);
+}
+
+.analysis-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+
+
+.chart-placeholder {
+    color: rgba(255,255,255,0.35);
+}
+
+/* ===== Legend ===== */
+.analysis-legend-row {
+    margin-top: 16px;
+    display: flex;
+    gap: 22px;
+    align-items: center;
+    font-size: 14px;
+}
+
+.legend-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 4px;
+}
+
+/* สี legend ให้เหมือน Figma */
+.legend-red    { background-color: #ff6b6b; }
+.legend-green  { background-color: #7bed9f; }
+.legend-cyan   { background-color: #2ed573; }
+.legend-yellow { background-color: #ffa502; }
+
+/* ===== Bar Card ===== */
+.bar-card {
+    padding-bottom: 28px;
+}
+
+.bar-placeholder {
+    width: 100%;
+    height: 340px;
+    background: #2a3144;
+    border-radius: 18px;
+    border: 1px dashed rgba(255,255,255,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.35);
+}
+
+
+
+
+/* ประวัติ */
+.filter-date-btn {
+  background: #1f2937;
+  color: #fff;
+  border: 1px solid #7D7D7D;
+  padding: 8px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: 0.2s;
+}
+
+.filter-date-btn:hover {
+  background: #2d3642;
+}
+
+.filter-icon {
+  width: 20px;
+  height: 20px;
+  opacity: 0.8;
+}
+
+.tag-buy {
+  background: #0f5132;
+  color: #8dffc9;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+}
+

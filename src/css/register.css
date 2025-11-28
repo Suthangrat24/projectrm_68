@@ -1,0 +1,209 @@
+/* ========== BG ========== */
+.register-page {
+    position: relative;
+    min-height: 100vh;
+    font-family: "Prompt", sans-serif;
+}
+
+.register-bg {
+    position: absolute;
+    inset: 0;
+    background-image: url("/pics/recommend_stock.jpeg");
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.35);
+    transform: scaleX(-1);
+}
+
+/* ========== CONTAINER ========== */
+.register-container {
+    position: relative;
+    z-index: 2;
+    padding: 60px 120px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+/* ========== CARD ========== */
+.register-card {
+    width: 1100px;
+    background: rgba(31, 38, 51, 0.92);
+    padding: 40px 48px;
+    border-radius: 24px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.45);
+    color: #fff;
+}
+
+/* ----- Row 1: Back Button ----- */
+.addinv-row-back {
+  margin-bottom: 10px;
+}
+
+.addinv-back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: #d1d5db;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.addinv-back:hover {
+  opacity: 0.7;
+}
+
+.back-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.register-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 30px 0;
+}
+
+/* ========== GRID ========== */
+.register-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px 36px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group.full {
+    grid-column: span 2;
+}
+
+.input-group label {
+    font-size: 15px;
+    margin-bottom: 6px;
+    opacity: 0.9;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    background: #2b3242;
+    border: 1px solid #3c4558;
+    color: #fff;
+    font-size: 15px;
+}
+
+/* ===== เปลี่ยนสี icon ปฏิทินใน input date ===== */
+.input-group input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);   /* ทำให้ icon เป็นสีขาว */
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+/* ===== SELECT ===== */
+.select-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.select-wrapper select {
+    width: 100%;
+    padding: 14px !important; 
+    padding-right: 40px; /* ที่เผื่อสำหรับ icon */
+    background-color: #2b3242 !important;
+    background-image: none !important; /* ลบ default bg */
+    border: 1px solid #3c4558 !important;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 15px;
+
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+
+    outline: none;
+    cursor: pointer;
+}
+
+/* ไอคอน dropdown */
+.select-icon {
+    position: absolute;
+    right: 16px;
+    top: 35%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+/* ========== BUTTON ========== */
+.register-btn {
+    width: 350px;
+    margin: 40px auto 30px;
+    display: block;
+    padding: 14px;
+    background: #12b76a;
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.register-btn:hover {
+    background: #0fa25c;
+}
+
+/* ========== DIVIDER ========== */
+.register-divider {
+    height: 1px;
+    border: none;
+    background: #4a4f5c;
+    margin: 20px 0 10px;
+}
+
+/* ========== OR TEXT ========== */
+.register-or {
+    text-align: center;
+    margin-top: 8px;
+    opacity: 0.8;
+}
+
+/* ========== SOCIAL ICONS ========== */
+.register-social-row {
+    margin-top: 18px;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+}
+
+.social-circle {
+    width: 60px;
+    height: 60px;
+    background: #ffffff15;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(4px);
+}
+
+/* hover effect */
+.social-circle:hover {
+    transform: scale(1.08);
+    background: #ffffff35;
+}
+
+.social-circle img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}

@@ -1,0 +1,372 @@
+/* ===================== */
+/* PAGE WRAPPER */
+/* ===================== */
+
+.risk-result-page {
+  padding: 40px 100px;
+  font-family: "Prompt", sans-serif;
+  color: #fff;
+}
+
+/* ===================== */
+/* HEADER */
+/* ===================== */
+
+.result-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 40px;
+}
+
+/* บรรทัดเดียว: icon + title */
+.result-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.result-icon {
+  width: 50px;
+  height: 50px;
+}
+
+.result-title {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* subtitle อยู่ล่างตรงกลาง */
+.result-subtitle {
+  font-size: 15px;
+  color: #9ca3af;
+}
+
+/* ===================== */
+/* RISK PROFILE CARD */
+/* ===================== */
+
+.risk-profile-card {
+  background: #1f2937;
+  border-radius: 18px;
+  padding: 30px 34px;
+  border: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  gap: 60px;
+  justify-content: space-between;
+}
+
+/* LEFT SIDE */
+.risk-left {
+  flex: 1.6;
+}
+
+.risk-row-1 {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.risk-target-icon {
+  width: 50px;
+}
+
+.risk-title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.risk-row-2 {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.risk-badge { 
+    padding: 6px 16px; 
+    border-radius: 20px; 
+    font-size: 14px; 
+    color: #fff; 
+    font-weight: 600;
+}
+
+.risk-high {
+  background: #ef4444;
+}
+
+.risk-desc {
+    padding-top: 30px;
+  color: #cbd5e1;
+  font-size: 15px;
+}
+
+.risk-subtitle {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* BULLET LIST */
+.risk-bullet {
+  padding: 0;
+  margin-top: 8px;
+}
+
+.risk-bullet li {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  margin: 6px 0;
+}
+
+.star-icon {
+  width: 18px;
+}
+
+/* RIGHT SIDE SUMMARY */
+.risk-row-3 {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.risk-bullet-left {
+  flex: 1;
+}
+
+.risk-bullet-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: center;
+}
+
+.risk-bullet-right p {
+  color: #cbd5e1;
+  font-size: 15px;
+}
+
+.risk-bullet-right span {
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ===================== */
+/* STOCK TITLE */
+/* ===================== */
+
+.stock-title {
+  margin-top: 55px;
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* ===================== */
+/* STOCK GRID */
+/* ===================== */
+
+.stock-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
+}
+
+.center-last {
+  grid-column: span 2;
+  justify-self: center;
+  width: 60%;
+}
+
+/* ===================== */
+/* STOCK CARD */
+/* ===================== */
+
+.stock-card {
+  background: #1f2937;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+/* ✨ TOP ROW (LEFT + RIGHT BOXES) */
+.stock-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+/* LEFT BLOCK */
+.stock-left-block {
+  display: flex;
+  gap: 18px;
+  flex: 1.3;
+}
+
+.stock-logo {
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.stock-left-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stock-name {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.stock-full {
+  font-size: 13px;
+  color: #cbd5e1;
+}
+
+/* TAGS (ลดขนาดให้งามแบบ Figma) */
+.tag-row {
+  display: flex;
+  gap: 6px;
+  margin: 6px 0 8px;
+}
+
+.tag-pill {
+  padding: 4px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.25);
+  font-size: 12px;
+  color: #d1d5db;
+}
+
+/* PRICE + RISK */
+.stock-price,
+.stock-risk {
+  font-size: 14px;
+  color: #e5e7eb;
+}
+
+.risk-mid {
+  background: #f59e0b;
+}
+
+.risk-badge {
+  padding: 4px 12px;
+  font-size: 12px;
+  border-radius: 999px;
+}
+
+/* ✨ RIGHT BLOCK (VALUE BOXES) */
+.stock-right-block {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: flex-end;
+  flex: 1;
+}
+
+.value-box {
+  background: rgba(255,255,255,0.06);
+  padding: 16px 26px;
+  border-radius: 14px;
+  min-width: 200px;
+  text-align: right;
+}
+
+.value-title {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.value-rate {
+  font-size: 22px;
+  font-weight: 700;
+  color: #22c55e;
+}
+
+.profit {
+  font-size: 20px;
+  color: #22c55e;
+}
+
+.profit-sub {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* ===================== */
+/* FOOTER */
+/* ===================== */
+
+.stock-footer {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+}
+
+.btn-detail {
+  background: #22c55e;
+  padding: 8px 20px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-detail:hover {
+  background: #16a34a;
+}
+
+/* ===================== */
+/*   BOTTOM BUTTONS      */
+/* ===================== */
+
+.result-buttons {
+  margin-top: 60px;
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+}
+
+.btn-back,
+.btn-retake {
+  padding: 10px 24px;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.btn-back {
+  background: none;
+  border: 1px solid white;
+  color: #fff;
+}
+
+.btn-back:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.btn-retake {
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  font-weight: 600;
+}
+
+.btn-retake:hover {
+  background: #2563eb;
+}

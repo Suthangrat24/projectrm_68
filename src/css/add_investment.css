@@ -1,0 +1,172 @@
+.addinv-page {
+  padding: 24px 40px 60px;
+  font-family: "Prompt", sans-serif;
+  color: #fff;
+}
+
+/* ----- Row 1: Back Button ----- */
+.addinv-row-back {
+  margin-bottom: 10px;
+}
+
+.addinv-back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: #d1d5db;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.addinv-back:hover {
+  opacity: 0.7;
+}
+
+.back-icon {
+  width: 18px;
+  height: 18px;
+}
+
+
+/* ----- Row 2: Title + Save Button ----- */
+.addinv-row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.addinv-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.btn-save {
+  background: #22c55e;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.btn-save:hover {
+  background: #18a84d;
+}
+
+/* ===== Card ===== */
+.addinv-card {
+  background: #1f2937;
+  padding: 22px;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.addinv-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.addinv-icon-wrap,
+.add-detail-icon-wrap {
+  width: 46px;            /* ขนาดวงกลม */
+  height: 46px;
+  background: #284d63;    /* สีพื้นหลังตามธีม (เปลี่ยนได้) */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.addinv-icon,
+.add-detail-icon {
+  width: 24px;   /* ขนาด icon */
+  height: 24px;
+}
+
+.addinv-title {
+    font-size: 20px;
+    font-weight: 500;
+    margin: 10px;
+}
+
+/* ===== Inputs ===== */
+.addinv-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.addinv-field label {
+  margin-bottom: 6px;
+  font-size: 15px;
+  color: #D1D5DB;
+}
+
+.addinv-field input,
+.addinv-field select,
+.addinv-field textarea {
+  background: #111827;
+  border: 1px solid #374151;
+  padding: 12px;
+  border-radius: 10px;
+  color: white;
+}
+
+.addinv-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+textarea {
+  height: 110px;
+}
+
+/* ===== เปลี่ยนสี icon ปฏิทินใน input date ===== */
+.addinv-field input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);   /* ทำให้ icon เป็นสีขาว */
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+/* ===== Wrapper สำหรับ select ===== */
+.select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* เอา default arrow ของ select ออก */
+.select-wrapper select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: #111827;
+  border: 1px solid #374151;
+  padding: 12px;
+  padding-right: 40px;     /* เผื่อที่ให้ icon ด้านขวา */
+  border-radius: 10px;
+  color: white;
+  width: 100%;
+}
+
+/* ===== Icon dropdown เราเอง ===== */
+.select-icon {
+  position: absolute;
+  right: 14px;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;   /* ให้คลิกทะลุไปที่ select */
+  opacity: 0.9;
+  transform: translateY(1px);
+}
