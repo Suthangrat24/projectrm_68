@@ -8,7 +8,7 @@ export default function Navbar() {
 
     // ------ Top Five (ไม่ fetch) ------
     const top_five = [
-        { rank: 1, symbol: "PTT",   name: "ปตท.",                     price: 33.25, change: +0.25, pct: +0.76, value: 151136551, amount: 4996684.08 },
+        { rank: 1, symbol: "PT",   name: "ปตท.",                     price: 33.25, change: +0.25, pct: +0.76, value: 151136551, amount: 4996684.08 },
         { rank: 2, symbol: "DELTA", name: "เดลต้า อีเลคโทรนิคส์",     price: 91.50, change: -0.30, pct: -0.21, value: 98765432,  amount: 3210000.50 },
         { rank: 3, symbol: "BDMS",  name: "กรุงเทพดุสิตเวชการ",       price: 28.75, change: +0.10, pct: +0.35, value: 75643123,  amount: 2755000.20 },
         { rank: 4, symbol: "ADVANC",name: "แอดวานซ์ อินโฟร์ เซอร์วิส", price: 189.0, change: +0.50, pct: +0.26, value: 65431234,  amount: 1669000.10 },
