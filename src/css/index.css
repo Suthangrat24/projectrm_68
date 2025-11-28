@@ -1,0 +1,784 @@
+@import "tailwindcss";
+
+:root{
+  --bg: #111827;
+  --white: #ffffff;
+}
+
+html, body { background:#111827; color:#fff; }
+
+/* ===== Hero ===== */
+.rec{
+  position: relative;
+  color: var(--white);
+  min-height: 420px;                     /* ใกล้เคียงฟิกม่า */
+  border-bottom: 1px solid rgba(255,255,255,.06);
+
+  /* รูปพื้นหลัง */
+  background-image: url("../public/pics/recommend_stock.jpeg"); /* ปรับ path ตามโปรเจกต์: public/recommend_stock.jpeg จะง่ายสุด */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* ไล่เฉดมืดจากซ้ายเพื่อให้อ่านง่าย */
+.rec::before{
+  content:"";
+  position:absolute; inset:0;
+  background: linear-gradient(90deg, rgba(17,24,39,.85) 0%, rgba(17,24,39,.6) 45%, rgba(17,24,39,0) 75%);
+}
+
+/* คอนเทนเนอร์ด้านใน */
+.rec_container{
+  position: relative;
+  z-index: 1;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 72px 16px 56px;
+  height: 100%;
+  
+  /* แก้ตรงนี้ — ใช้ flex layout */
+  display: flex;
+  align-items: flex-end;        /* ปุ่มจะอยู่ล่าง */
+  justify-content: space-between; /* ข้อความซ้าย ปุ่มขวา */
+}
+
+/* เหมือน col-8 */
+.rec_text {
+  flex: 0 0 66.666%;    /* 8/12 */
+  max-width: 66.666%;
+}
+
+/* เหมือน col-4 */
+.rec_button {
+  flex: 0 0 33.333%;    /* 4/12 */
+  max-width: 33.333%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+/* ตัวหนังสือ */
+.rec_title{
+  font-weight: 800;
+  font-size: 38px;
+  line-height: 1.75;
+  margin: 0 0 18px;
+  text-shadow: 0 2px 10px rgba(0,0,0,.35);
+}
+
+.rec_des{
+  font-size: 16px;
+  line-height: 2;
+  color: rgba(255,255,255,.9);
+  max-width: 100%;
+  margin: 20px 0;
+}
+
+.rec_note {
+  font-size: 1rem;
+  line-height: 1.9;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 95%;
+  margin-top: 24px;
+  white-space: pre-line; /* ให้ขึ้นบรรทัดใหม่เมื่อมี \n */
+}
+
+/* ตัวหนาสำหรับ “หมายเหตุ” */
+.rec_note .fw-bold {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* สีแดงสำหรับ “การลงทุนมีความเสี่ยง” */
+.rec_note .text-danger {
+  color: #ff4b4b;
+  font-weight: 600;
+}
+
+/* ปุ่ม ขวาล่าง */
+.rec_cta_wrap{
+  position: absolute;
+  right: 48px;
+  bottom: 40px;
+}
+
+.rec_cta{
+  display:inline-flex; align-items:center; gap:10px;
+  background:#fff; color:#111827;
+  border:none; border-radius:999px;
+  padding: 18px 26px;
+  font-weight: 800; font-size: 16px;
+  box-shadow: 0 8px 28px rgba(0,0,0,.35);
+  cursor:pointer; transition: transform .15s ease, background .15s ease;
+}
+.rec_cta:hover{ transform: translateY(-2px); background:#f3f4f6; }
+.rec_cta:active{ transform: translateY(0); }
+
+.next-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* ให้ปุ่มไม่หายเมื่อจอเล็ก */
+@media (max-width: 768px){
+  .rec_cta_wrap{ right: 16px; bottom: 16px; }
+  .rec_container{ padding-bottom: 96px; } /* เผื่อพื้นที่ให้ปุ่ม */
+}
+
+/* ========= INVEST ========= */
+:root{
+  --panel: #1F2937;
+  --panel-inner: #0E1522;
+  --border: #374151;
+  --accent: #00D9A3;
+  --muted: #8b92a7;
+}
+
+/* layout หลัก */
+.invest{
+  max-width: 1300px;
+  margin: 28px auto 56px;
+  padding: 0 16px;
+}
+
+.invest_top{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.invest_title{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.invest_title h3{
+  margin: 0;
+  font-size: 28px;
+  font-weight: 500;
+}
+.invest_title p{
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.invest_manage{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  color: color-mix(in srgb, var(--accent) 85%, white);
+  text-decoration: none;
+  font-weight: 400;
+}
+
+/* grid ซ้าย/ขวา */
+.invest_grid{
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 20px;
+}
+
+/* ----- ซ้าย: รายการหุ้น ----- */
+.invest_list{
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stockcard{
+  background: var(--panel-inner);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  transition: border .15s ease, transform .15s ease;
+}
+.stockcard:hover{ border-color: #2b3550; transform: translateY(-1px); }
+
+.stockcard--active{
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 12%, transparent) 10%, var(--panel) 100%);
+}
+
+.stockcard_left h4{ margin: 0 0 4px; font-weight: 700; }
+.stockcard_left p{ margin: 0 0 8px; color: var(--muted); font-size: 12px; }
+.stockcard_left .label{ color: var(--muted); font-size: 12px; }
+
+.bar{ height: 6px; border-radius: 999px; background:#0f1626; margin-top: 8px; overflow: hidden; }
+.bar_fill{ height: 100%; background: linear-gradient(90deg, var(--accent), #00c593); }
+
+.stockcard_right{ text-align: right; }
+.stockcard_right .price{ font-weight: 700; }
+.stockcard_right .chg{ color: var(--accent); font-size: 13px; margin-top: 4px; }
+.pct{ margin-top: 6px; padding: 2px 8px; border-radius: 999px; font-size: 12px; display: inline-block; border:1px solid; }
+.pct--up{ color: var(--accent); background: color-mix(in srgb, var(--accent) 13%, transparent); border-color: color-mix(in srgb, var(--accent) 35%, transparent); }
+
+.invest_add{
+  margin-top: 2px;
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  color: var(--muted);
+  border: 1px dashed #2d3851;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: .15s;
+}
+.invest_add:hover{ color: color-mix(in srgb, var(--accent) 85%, white); border-color: var(--accent); }
+
+/* ----- ขวา: panel + กราฟ ----- */
+.invest_panel{
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px 12px;  
+}
+
+.panel_head{
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.panel_title{ font-weight: 500; font-size: 24px; margin-bottom: 4px; }
+.panel_sub{ font-size: 18px; margin-bottom: 8px; }
+.panel_line{ font-size: 14px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.panel_line .muted{ color: var(--muted); }
+.panel_price{ font-size: 16px; font-weight: 500; }
+.panel_pct{ font-size: 16px; color: var(--accent); }
+
+/* ปุ่มให้อยู่มุมขวาบน */
+.invest_panel .btn--pill {
+  position: absolute;
+  top: 20px;        /* ระยะจากขอบบน */
+  right: 20px;      /* ระยะจากขอบขวา */
+  background: var(--accent);
+  color: #0a0e1a;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-weight: 400;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.invest_panel .btn--pill:hover {
+  filter: brightness(1.06);
+}
+
+.panel_chart{
+  background: var(--panel-inner);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  height: 360px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.panel_legend{
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  font-size: 13px; color: var(--muted);
+  margin-bottom: 8px;
+}
+.dot{ width:10px; height:10px; display:inline-block; border-radius:999px; }
+.dot--actual{ background:#4de1b5; }
+.dot--base{ background:#ff5b5b; }
+.dot--model{ background:#33d6a3; }
+.ghost{ opacity:.7; }
+
+.panel_foot{
+  font-size: 12px; color: var(--muted);
+  display: flex; justify-content: space-between; flex-wrap: wrap;
+}
+.panel_foot .right{ opacity:.8; }
+
+/* responsive */
+@media (max-width: 992px){
+  .invest_grid{ grid-template-columns: 1fr; }
+  .invest_manage{ align-self: flex-start; }
+}
+
+/* ================= TOP FIVE ================= */
+.top_five{
+  /* ใช้โทนเดียวกับ invest */
+  --panel: #1F2937;
+  --panel-inner:#0E1522;
+  --border:#374151;
+  --accent:#00D9A3;
+  --muted:#8b92a7;
+
+  --item-h: 92px;         /* ความสูงการ์ดมาตรฐาน */
+  --gap: 12px;            /* ระยะห่างระหว่างการ์ด */
+  --list-pad: 8px;        /* padding บนของลิสต์ */
+}
+.top_container{ max-width: 1300px; margin: 0 auto; padding: 28px 16px 56px; }
+.top_header{
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;
+}
+.top_header h3{ font-size: 40px; margin:0; font-weight:500; }
+
+.top_tabs{
+  display:flex; gap:10px; flex-wrap:wrap;
+  margin: 8px 0 16px;
+}
+.tab_btn{
+  display:inline-flex; align-items:center; gap:8px;
+  background:#F0F0F0; color:#4F4F4F;
+  border:1px solid #E6E6E6;
+  border-radius:14px;
+  padding:10px 14px;
+  font-weight:400; font-size:12px;
+  cursor:pointer; transition:.15s;
+}
+.tab_btn .btn_icon{ width:18px; height:18px; stroke:#4F4F4F; }
+.tab_btn:hover{ filter:brightness(0.98); }
+.tab_btn.is-active{
+  background: var(--accent);
+  border-color: transparent;
+  color:#ffffff;
+}
+.tab_btn.is-active .btn_icon{ stroke:#ffffff; }
+
+.top_content{
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 20px;
+  align-items: stretch;          /* ให้ทั้งสองคอลัมน์ดึงสูงสุดเท่ากัน */
+}
+
+/* ===== Left List ===== */
+.top_list{
+  background:transparent; padding-top: var(--list-pad);
+  display:flex; flex-direction:column; gap: var(--gap);
+}
+.top_item{
+  min-height: var(--item-h);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 14px 16px;
+  display: grid; grid-template-columns: 1fr 190px; align-items: center;
+  column-gap: 20px; cursor: pointer; transition: .18s ease;
+}
+.top_item:hover{ border-color:#2a3754; }
+
+.top_item.active{
+  background: linear-gradient(90deg, rgba(0,217,163,.10) 6%, #151B2E 100%);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 10px 30px rgba(0,0,0,.25);
+  transform: translateY(-1px);
+}
+
+.top_item .left{ display: flex; align-items: center; gap: 12px; min-width: 0; }
+.top_item .right{ display: flex; align-items: center; justify-content: flex-start; }
+.top_rank{
+  width: 40px; height:40px; border-radius:10px; font-size: 24px; font-weight: bold;
+  display:flex; align-items:center; justify-content:center;
+}
+.top_logo{
+  width:46px; height:46px; border-radius:12px; background:#0e1522 center/contain no-repeat;
+  border:1px solid var(--border);
+}
+.top_symbolwrap{ display:flex; flex-direction:column; gap:2px; }
+.top_symbol{ font-size:20px; font-weight:700; line-height:1; }
+.top_name{ font-size:12px; color:var(--muted); margin-top:4px; display:none; }
+.top_item.active{
+  background: linear-gradient(90deg, rgba(0,217,163,.13) 0%, #151B2E 100%);
+  border-color: var(--accent);
+
+  /* <<< ทำให้ใหญ่กว่าเพื่อน */
+  min-height: calc(var(--item-h) + 10px);
+  padding: 18px 20px;
+
+  box-shadow: 0 0 0 1px var(--accent), 0 10px 30px rgba(0,0,0,.30);
+  transform: translateY(-2px);
+}
+.top_item.active .top_symbolwrap{ text-align: left; }
+.top_item.active .top_name{ display:block; }
+
+.top_amount{ font-size:20px; font-weight:700; text-align: left; }
+
+/* ===== Right Bubble (Panel) ===== */
+.top_panel{
+  position: relative;
+  background: transparent;
+  height: 100%;
+  display: flex;
+}
+
+/* ลูกศรชี้ไปการ์ดซ้าย — คำนวณตำแหน่งด้วย index ที่ส่งเข้ามา (--sel) */
+.top_panel::before{
+  content:"";
+  position:absolute;
+  left:-14px;
+  /* คำนวณให้อยู่กลางการ์ดที่เลือก */
+  top: calc(var(--list-pad) + (var(--item-h) + var(--gap)) * var(--sel) + (var(--item-h)/2) - 18px);
+  width:0; height:0;
+  border-style: solid;
+  border-width: 18px 18px 18px 0;
+  border-color: transparent var(--panel) transparent transparent;
+  filter: drop-shadow(-1px 0 0 var(--border));
+  z-index:2;
+}
+
+.top_panel_in{
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px;
+  flex: 1;                       /* ยืดเต็มความสูงของ .top_panel */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header layout */
+.top_panel_head{
+  display:flex;
+  align-items:flex-start;       /* <<< สำคัญ: ไม่ใช้ center */
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom: 12px;
+}
+
+/* ซ้าย: ราคา + ลูกศร */
+.price_block {
+  text-align: center;      /* <<< ให้ทั้งบล็อกอยู่ตรงกลาง */
+  margin: 10px;
+}
+
+/* บรรทัดบน: ลูกศร + ตัวเลขใหญ่ */
+.price_now_row {
+  display: flex;
+  align-items: center;     /* จาก baseline → เป็น center */
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.arrow_icon{
+  font-weight: 800;
+  line-height: 1;
+  margin-top: 4px;              /* ให้กลาง ๆ กับตัวเลข */
+}
+
+.arrow_icon.up{
+  color: var(--accent);         /* เขียว */
+}
+
+.arrow_icon.down{
+  color: #ff4b4b;               /* แดง */
+}
+
+.price_now {
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1;
+  color: #ffffff;
+}
+
+/* บรรทัดล่าง: % เปลี่ยนแปลง */
+.price_chg {
+  margin-top: 8px;
+  font-weight: 700;
+}
+
+.price_chg.up {
+  color: var(--accent);
+}
+
+.price_chg.down {
+  color: #ff6b6b;
+}
+
+/* ขวา: กลุ่ม meta + ข้อความข้อมูลล่าสุด */
+.meta_wrap{
+  margin-left: auto;
+  margin-top: -2px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+
+/* “ข้อมูลล่าสุด …” ชิดขอบบนขวาสุดของการ์ด */
+.latest_text{
+  color:#9ba3b8;
+  font-size:12px;
+  text-align:right;
+  margin-bottom: 16px;           /* เพิ่ม space ระหว่าง latest กับ meta_block */
+  margin-right: 8px; 
+}
+
+/* inline meta – ไม่มีกรอบแล้ว ใช้เส้นคั่นแทน */
+.meta_block.right{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:0;
+  border:none;
+  border-radius:0;
+  overflow:visible;
+  background:transparent;
+}
+
+/* แต่ละคอลัมน์: ตัวเลข + label กลางคอลัมน์ */
+.meta_col{
+  min-width: 180px;
+  text-align:center;
+  padding:0 16px;
+  background:transparent;
+}
+
+.meta_col + .meta_col{
+  border-left: 1px solid #9CA3AF;   /* เส้นคั่นระหว่าง ปริมาณ/มูลค่า */
+}
+
+.meta_val{
+  font-weight: 500;
+  font-size: 20px;
+}
+.meta_lbl{
+  font-size: 11px;               /* เล็กลงนิดหน่อย */
+  margin-top: 4px;
+  color: #9ba3b8;  
+}
+
+/* กราฟ */
+.top_chartbox{
+  background: var(--panel-inner);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,.45);
+  margin: 0 0 24px;           /* เว้นด้านบน–ล่างมากขึ้น */
+  flex: 1;                       /* ดันให้กราฟกินพื้นที่กลางการ์ด */
+}
+
+/* Footer */
+.top_panel_foot{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  color: var(--muted);
+  font-size:14px;
+  padding-left:16px;
+  padding-bottom: 4px;
+}
+
+/* กลุ่มราคาสูงสุด/ต่ำสุดด้านซ้าย */
+.foot_left{ display:flex; align-items:center; gap:10px; }
+.foot_label{ color: var(--muted); }
+.foot_val{ font-weight: 500; font-size: 16px; color:#ffffff; }
+.foot_divider{
+  width: 1px; height: 24px; background: #9CA3AF;
+  display: inline-block; margin: 0 8px;
+}
+
+/* ปุ่มมนล่างขวา: “ดูรายละเอียด →” */
+.btn-soft{
+  background:#e9ecef;
+  color:#0a0e1a;
+  border:none;
+  padding:10px 16px;
+  border-radius:999px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.15s;
+}
+.btn-soft:hover{ filter:brightness(0.96); }
+
+/* เล็กลงบนมือถือ */
+@media (max-width: 992px){
+  .top_content{ grid-template-columns: 1fr; }
+  .top_panel::before{ display:none; }
+}
+
+/* =============== FAVORITE (หุ้นที่ติดตาม) =============== */
+.favorite{
+  --panel: #151B2E;
+  --border: #1E2538;
+  --accent: #00D9A3;
+  --muted: #9CA3AF;
+}
+
+.fav_container{
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 8px 16px 72px;
+}
+
+.fav_head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.fav_titlewrap{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.fav_titlewrap h3{
+  margin:0;
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.fav_titlewrap p{
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ไอคอนหัวใจด้านซ้ายหัวข้อ */
+.fav_icon{
+  width:36px;
+  height:36px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#101827;
+}
+.fav_icon_heart{
+  color:var(--accent);
+  font-size:16px;
+}
+
+/* ดูทั้งหมด */
+.fav_all{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  color: color-mix(in srgb, var(--accent) 85%, white);
+  text-decoration: none;
+  font-weight: 400;
+}
+.fav_all:hover{
+  background: rgba(0,217,163,0.08);
+}
+
+/* แถวการ์ดเลื่อนแนวนอน */
+.fav_scroller{
+  display:flex;
+  gap:24px;
+  overflow-x:auto;
+  padding-bottom:10px;
+  margin-top:4px;
+  scroll-snap-type: x mandatory;
+}
+.fav_scroller::-webkit-scrollbar{
+  height:6px;
+}
+.fav_scroller::-webkit-scrollbar-track{
+  background: transparent;
+}
+.fav_scroller::-webkit-scrollbar-thumb{
+  background: #1f2937;
+  border-radius:999px;
+}
+
+/* การ์ดแต่ละใบ */
+.fav_card{
+  flex:0 0 280px;              /* ความกว้างประมาณ Figma */
+  background: var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:16px 16px 18px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.28);
+  scroll-snap-align:start;
+}
+
+/* ส่วนหัวการ์ด */
+.fav_card_head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+
+.fav_symbol_block{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+
+.fav_symbol{
+  font-size:18px;
+  font-weight:700;
+}
+
+.fav_name{
+  font-size:12px;
+  color: var(--muted);
+}
+
+/*หัวใจบนการ์ด*/
+.fav_heart{
+  font-size:18px;
+  color:#f97373;   /* ถ้าใช้รูป ให้แทนด้วย <img class="fav_heart"> */
+}
+
+/* ราคา */
+.fav_price{
+  font-size:22px;
+  font-weight:700;
+  margin-bottom:4px;
+}
+
+/* % เปลี่ยนแปลง */
+.fav_change{
+  font-size:13px;
+  font-weight:600;
+  margin-bottom:10px;
+}
+.fav_change.up{ color: var(--accent); }
+.fav_change.down{ color:#ff6b6b; }
+
+/* เส้นด้านล่าง */
+.fav_bar{
+  height:2px;
+  width:100%;
+  background:#111827;
+  border-radius:999px;
+  overflow:hidden;
+}
+.fav_bar_fill{
+  height:100%;
+  border-radius:999px;
+}
+.fav_bar_fill.up{
+  background: linear-gradient(90deg, #00D9A3, #22c55e);
+}
+.fav_bar_fill.down{
+  background: linear-gradient(90deg, #fb7185, #ef4444);
+}
+
+/* มือถือ */
+@media (max-width:768px){
+  .fav_card{
+    flex:0 0 240px;
+  }
+}
+

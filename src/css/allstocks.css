@@ -1,0 +1,522 @@
+/* ใช้โทนเดียวกับหน้าอื่น */
+.stocks-page {
+  padding: 24px 40px 60px;
+}
+
+.stocks-hero {
+  position: relative;
+  width: 100%;
+  height: 220px; /* ปรับได้ */
+  border-radius: 0;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+/* พื้นหลัง (รูปจริง) */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url("/pics/allstocks.jpg");
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.9);
+}
+
+/* Overlay สีดำโปร่ง ๆ */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45); 
+}
+
+/* เนื้อหา */
+.hero-content {
+  position: absolute;
+  bottom: 70px;
+  left: 40px;
+  color: #fff;
+}
+
+.hero-eyebrow {
+  font-size: 18px;
+  font-weight: 400;
+  opacity: 0.9;
+  margin-bottom: 6px;
+}
+
+.hero-title {
+  font-size: 42px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+/* ===== FILTER CARD ===== */
+
+.stocks-filter-section {
+  margin-top: 28px;          /* ดันลงจาก hero ไม่ให้ชน */
+  padding: 0 32px 32px;      /* ไม่ให้ติดขอบจอซ้ายขวา */
+}
+
+/* การ์ดเขียวด้านหลัง */
+.stocks-filter-shell {
+  max-width: 1400px;
+  margin: 0 auto;               /* ให้อยู่กลาง */
+  background: #00D9A3;          /* เขียว */
+  border-radius: 20px;
+  padding: 6px 0 0 0;                  /* ทำให้เขียวโผล่รอบการ์ด */
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
+.stocks-filter-card {
+  max-width: 1400px;         /* ไม่ให้เต็มจอเกินไป */
+  margin: 0 auto;            /* จัดให้อยู่กลางจอ */
+  position: relative;
+  background: #1F2937;
+  border-radius: 18px;
+  padding: 20px 24px 24px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+}
+
+.stocks-filter-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.filter-icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.stocks-filter-title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.stocks-filter-row {
+  display: grid;
+  grid-template-columns: 3fr 2fr auto;
+  gap: 12px;
+}
+
+.filter-item.grow {
+  width: 100%;
+}
+
+.filter-input {
+  width: 100%;
+  height: 58px;
+  border-radius: 12px;
+  border: 1px solid #4B5563;
+  background: #374151;
+  color: #e5e7eb;
+  padding: 0 16px;
+  font-size: 14px;
+}
+
+.filter-input::placeholder {
+  color: #D1D5DB;
+}
+
+/* ===== กล่อง select แบบมีหัวข้อ ===== */
+
+/* card ครอบทั้งกล่อง */
+.filter-selectcard {
+  width: 100%;
+  height: 58px;
+  border-radius: 12px;
+  border: 1px solid #4b5563;
+  background: #374151;
+  padding: 6px 16px 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* หัวข้อเล็กด้านบน */
+.filter-select-caption {
+  font-size: 12px;
+  color: #d1d5db;
+  margin-bottom: 2px;
+}
+
+/* ครอบ select + ลูกศร */
+.filter-select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* select จริง แต่ให้หน้าตาเป็น textbox */
+.filter-select-native {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: #f9fafb;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 2px 32px 0 0; /* เผื่อช่องด้านขวาให้ icon */
+  outline: none;
+
+  /* เอาลูกศร default ออก */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* จุดไว้ใส่ icon drop-down จริง */
+.filter-select-arrow {
+  position: absolute;
+  right: 0;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+
+  /* เวลาได้รูปจริงให้เปลี่ยนเป็น:
+     background: url("/pics/drop-down.png") center/contain no-repeat;
+     border: none;
+  */
+}
+
+.filter-item.buttons {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.btn-search,
+.btn-reset {
+  border-radius: 14px;
+  padding: 0 24px;
+  font-weight: 400;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-search {
+  background: #00D9A3;
+  color: #ffffff;
+}
+
+.btn-search:hover {
+  filter: brightness(1.05);
+}
+
+.btn-reset {
+  background: #f9fafb;
+  color: #7D7D7D;
+}
+
+.btn-reset:hover {
+  filter: brightness(0.97);
+}
+
+/* มือถือ */
+@media (max-width: 900px) {
+  .stocks-filter-section {
+    padding: 0 16px 24px;
+  }
+
+  .stocks-filter-card {
+    padding: 16px;
+  }
+
+  .stocks-filter-card::before {
+    left: 16px;
+    right: 16px;
+  }
+
+  .stocks-filter-row {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-item.buttons {
+    flex-direction: column;
+  }
+}
+
+/* ===== TABLE ===== */
+
+.stocks-table-section {
+  margin: 6px 36px;
+}
+
+.stocks-table-wrapper {
+  background: #1F2937;
+  border-radius: 16px;
+  border: 1px solid #374151;
+  padding: 12px 0 10px;
+}
+
+.stocks-result-text {
+  padding: 0 20px 10px;
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+/* ทำให้ table เลื่อนแนวนอนถ้าเกิน */
+.table-scroll {
+  overflow-x: auto;
+}
+
+.stocks-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.stocks-table thead {
+  background: #374151;
+}
+
+.stocks-table th,
+.stocks-table td {
+  padding: 10px 20px;
+  border-bottom: 1px solid #1f2937;
+  text-align: left;
+}
+
+/* หัวตารางพื้นฐาน */
+.stocks-table th {
+  position: relative;          /* เผื่อวาดเส้น/ไอคอน */
+  font-weight: 600;
+  color: #e5e7eb;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+/* แถว hover */
+.stocks-table tbody tr:hover {
+  background: #020617aa;
+}
+
+.col-symbol {
+  width: 180px;
+}
+
+.col-market {
+  width: 80px;
+}
+
+.col-factsheet {
+  width: 100px;
+  text-align: center;
+}
+
+/* ===== หัวคอลัมน์แบบ sort ได้ ===== */
+
+/* th ที่คลิกได้ */
+.stocks-table th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* ให้ label + ไอคอนเรียงในแถวเดียวกัน */
+.stocks-table th .th-inner {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.th-label {
+  font-weight: 600;
+}
+
+/* แถบเขียวใต้หัวคอลัมน์ที่กำลัง sort + จะงอยเล็ก ๆ */
+.stocks-table th.sortable.is-sorted::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background: #00D9A3;
+}
+
+/* ตัวจะงอยตรงกลาง */
+.stocks-table th.sortable.is-sorted::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -5px; /* ให้ยื่นลงมาตรงหัว cell */
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 7px solid #22c55e;
+}
+
+/* เปลี่ยนสีข้อความหัวคอลัมน์เวลา active นิดหน่อย */
+.stocks-table th.sortable.is-sorted {
+  color: #f9fafb;
+}
+
+/* ไอคอนสามเหลี่ยมขึ้น-ลง */
+.sort-icon {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0;           /* กันระยะ whitespace แปลก ๆ */
+  color: #9ca3af;         /* default เทา */
+}
+
+/* สร้างสามเหลี่ยมบน/ล่าง ด้วย border */
+.sort-icon::before,
+.sort-icon::after {
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+}
+
+/* ▲ ข้างบน */
+.sort-icon::before {
+  border-bottom: 6px solid currentColor;
+}
+
+/* ▼ ข้างล่าง */
+.sort-icon::after {
+  border-top: 6px solid currentColor;
+}
+
+/* เวลา column นี้ถูกเลือกให้ sort → เปลี่ยนสีลูกศรที่ทิศทางตรงกันให้เขียว */
+.sort-icon.is-asc {
+  color: #00D9A3;              /* ให้ทั้งกล่องเป็นเขียว แล้วไปทำข้างล่างทึบ/จาง */
+}
+
+.sort-icon.is-asc::after {     /* ลูกศรล่างให้จางลงหน่อย */
+  border-top-color: #6b7280;
+}
+
+.sort-icon.is-desc {
+  color: #22c55e;
+}
+
+.sort-icon.is-desc::before {   /* ลูกศรบนให้จางลงหน่อย */
+  border-bottom-color: #6b7280;
+}
+
+/* ถ้าภายหลังอยากใช้เป็นรูปภาพแทน ให้เปลี่ยนเป็นแบบนี้ได้
+   .sort-icon { background:url("/pics/sort_default.png") center/contain no-repeat; }
+   .sort-icon.is-asc { background-image:url("/pics/sort_asc.png"); }
+   .sort-icon.is-desc { background-image:url("/pics/sort_desc.png"); }
+*/
+
+/* badge symbol/market */
+
+.badge-symbol {
+  display: inline-flex;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.badge-market {
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #020617;
+  border: 1px solid #4b5563;
+  font-size: 12px;
+}
+
+/* Factsheet button */
+
+.factsheet-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid #374151;
+  background: #020617;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.factsheet-btn:hover {
+  border-color: #22c55e;
+}
+
+/* icon กระดาษ */
+.factsheet-icon {
+  width: 14px;
+  height: 18px;
+  border-radius: 3px;
+  border: 2px solid #e5e7eb;
+  position: relative;
+}
+
+.factsheet-icon::before {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-top: 2px solid #e5e7eb;
+  border-right: 2px solid #e5e7eb;
+  right: -2px;
+  top: -2px;
+}
+
+/* ===== FOOTER / PAGINATION ===== */
+
+.stocks-table-footer {
+  padding: 8px 20px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+.rows-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rows-select {
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid #374151;
+  background: #020617;
+  color: #e5e7eb;
+  padding: 0 10px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.page-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid #374151;
+  background: #020617;
+  color: #e5e7eb;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.page-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}

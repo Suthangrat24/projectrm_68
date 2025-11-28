@@ -1,0 +1,47 @@
+.detail-history-section {
+  margin-top: 18px;
+}
+
+.history-card {
+  padding: 18px 20px;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.history-table-scroll {
+  overflow-x: auto;
+}
+
+.history-table {
+  width: 100%;
+  font-size: 13px;
+  border-collapse: collapse;
+}
+
+.history-table thead {
+  background: #374151;
+}
+
+.history-table th,
+.history-table td {
+  padding: 8px 14px;
+  border-bottom: 1px solid #1f2937;
+  text-align: right;
+}
+
+.history-table th:first-child {
+  text-align: left;
+  border-right: 3px solid #374151;
+}
+
+.text-up { color: #22c55e; }
+.text-down { color: #ef4444; }
+
+.history-footer {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}

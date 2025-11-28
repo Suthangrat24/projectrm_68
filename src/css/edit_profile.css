@@ -1,0 +1,183 @@
+.edit-profile-page {
+  padding: 24px 40px 60px;
+  font-family: "Prompt", sans-serif;
+  color: #e6e6e6;
+}
+
+/* ===== HEADER ===== */
+/* ===== HEADER GENERAL ===== */
+.edit-header {
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+/* Row 1 — Back Button */
+.edit-header-top {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.edit-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #ffffffcc;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.edit-back-btn:hover {
+  color: #fff;
+}
+
+.edit-back-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Row 2 — Title + Save Button */
+.edit-header-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.edit-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.edit-save-btn {
+  background: #22c55e;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #fff;
+}
+
+.edit-save-btn:hover {
+  background: #1da851;
+}
+
+/* ===== MAIN CARD ===== */
+.edit-card {
+  background: #1d2735;
+  padding: 30px;
+  border-radius: 18px;
+  border: 1px solid #2b3644;
+}
+
+.edit-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  margin-bottom: 22px;
+}
+
+.section-icon {
+  width: 28px;
+  height: 28px;
+  opacity: 0.9;
+}
+
+/* ===== INPUT GRID ===== */
+.edit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px 30px;
+}
+
+.field label {
+  font-size: 14px;
+  margin-bottom: 6px;
+  display: block;
+  color: #c7ccd4;
+}
+
+.field input {
+  width: 100%;
+  padding: 12px 14px;
+  background: #2a3544;
+  border: 1px solid #3a4553;
+  border-radius: 10px;
+  color: #e6e6e6;
+}
+
+.field input:focus {
+  border-color: #4f9cff;
+  outline: none;
+}
+
+.select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.select-native {
+  width: 100%;
+  padding: 12px 14px;
+  padding-right: 40px; /* เว้นที่ให้ icon */
+  background-color: #2a3544 !important;
+  border: 1px solid #3a4553 !important;
+  color: #e6e6e6;
+  border-radius: 10px;
+  appearance: none; /* ซ่อนลูกศร default */
+}
+
+.select-native:focus {
+  border-color: #4f9cff;
+}
+
+.select-arrow {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+/* ===== เปลี่ยนสี icon ปฏิทินใน input date ===== */
+.field input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);   /* ทำให้ icon เป็นสีขาว */
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+/* ======================= */
+/* CHANGE PASSWORD CARD    */
+/* ======================= */
+
+.password-card {
+  margin-top: 26px;
+}
+
+.password-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px 30px;
+  margin-bottom: 22px;
+}
+
+/* ปุ่มเปลี่ยนรหัสผ่าน */
+.password-save-btn {
+  background: #3b82f6;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.password-save-btn:hover {
+  background: #2563eb;
+}

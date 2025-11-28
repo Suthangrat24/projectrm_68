@@ -1,0 +1,444 @@
+.future-page {
+  padding: 24px 40px 40px;
+}
+
+/* ===== TOP ROW: back + horizon ===== */
+.future-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: transparent;
+  border: none;
+  color: #e5e7eb;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.back-icon-img {
+  width: 18px;
+  height: 18px;
+}
+
+/* horizon select (ย้ายจาก header ออกมา) */
+.future-horizon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.future-horizon-label {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.future-horizon-selectwrap {
+  position: relative;
+}
+
+.future-horizon-select {
+  padding: 6px 32px 6px 12px;
+  border-radius: 999px;
+  border: 1px solid #4b5563;
+  background: #111827;
+  color: #e5e7eb;
+  font-size: 13px;
+  appearance: none;
+  cursor: pointer;
+}
+
+.future-horizon-arrow {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+/* ===== HEADER CARD ===== */
+.future-header-card {
+  background: #1f2937;
+  border-radius: 18px;
+  border: 1px solid #374151;
+  padding: 22px 26px;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 18px;
+}
+
+.future-header-left {
+  display: flex;
+  gap: 18px;
+  flex: 1;
+}
+
+.future-header-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.future-metrics-row {
+  display: flex;
+  gap: 16px;
+}
+
+.future-metric-card {
+  flex: 1;
+  width: 190px;
+  height: 120px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: #111827;
+  border: 1px solid #374151;
+
+  display: flex;              /* <<< ใช้ flex */
+  flex-direction: column;     /* <<< เรียง label + value แนวตั้ง */
+  align-items: center;        /* <<< จัดตรงกลางตามแนวนอน */
+  justify-content: center;    /* <<< จัดกลางตามแนวตั้ง */
+}
+
+.future-metric-label {
+  font-size: 14px;
+  color: #9ca3af;
+  text-align: center;       /* <<< ทำให้ตัวเลขอยู่กลาง */
+  width: 100%;              /* <<< เพื่อให้กลางจริง */
+  display: block;
+  margin-bottom: 6px;
+}
+
+.future-metric-value {
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;       /* <<< ทำให้ตัวเลขอยู่กลาง */
+  width: 100%;              /* <<< เพื่อให้กลางจริง */
+  display: block;
+  padding-top: 6px;
+}
+
+.future-metric-value--green {
+  color: #22c55e;
+}
+
+/* ===== TABS ===== */
+.future-tabs-row {
+  display: inline-flex;
+  gap: 6px;
+  padding: 6px;
+  background: #1f2937;
+  border-radius: 20px;
+  border: 1px solid #374151;
+  margin-bottom: 18px;
+}
+
+.future-tab {
+  border-radius: 999px;
+  border: none;
+  padding: 8px 24px;
+  background: transparent;
+  color: #e5e7eb;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.future-tab--active {
+  background: #374151;
+}
+
+/* ===== GRID PRICE TAB ===== */
+.future-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.future-grid--price {
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+}
+
+.future-card {
+  background: #1f2937;
+  border-radius: 18px;
+  border: 1px solid #374151;
+  padding: 18px 20px;
+}
+
+/* ===== chart header ===== */
+.future-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.future-chart-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* ปุ่มประเภทกราฟ = icon active/inactive */
+.future-chart-type-row {
+  display: flex;
+  gap: 8px;
+}
+
+/* ปุ่มพื้นฐาน – สีเทา ๆ แบบไม่ได้เลือก */
+.chart-type-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #D9D9D9;          /* เทาเข้มคล้ายปุ่ม filter 5 อันดับ */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.chart-type-btn:hover {
+  background: #7D7D7D;
+}
+
+/* ตอน active – พื้นเขียวแบบเดียวกับ accent */
+.chart-type-btn--active {
+  background: #00D9A3;          /* เขียว accent เดียวกับกราฟ/5อันดับ */
+  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.4);
+}
+
+/* icon ข้างใน */
+.chart-type-img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  display: block;
+}
+
+/* chart body */
+.future-chart-body {
+  margin-top: 14px;
+}
+
+.future-chart-placeholder {
+  min-height: 340px;
+  border-radius: 14px;
+  background: #334155;
+  border: 1px dashed #334155;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  font-size: 13px;
+
+}
+
+/* legend */
+.future-chart-footer {
+  margin-top: 10px;
+}
+
+.future-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+}
+
+.legend-dot--actual {
+  background: #22c55e;
+}
+
+.legend-dot--forecast {
+  background: #38bdf8;
+}
+
+.legend-dot--confidence {
+  background: #fbbf24;
+}
+
+/* ===== SUPPORT / RESIST CARD (2x2 tile) ===== */
+/* ===== โครงการ์ดแนวรับ–แนวต้าน แบบเดียวกับ stocks-filter-card ===== */
+
+.future-support-section {
+  /* ให้มันกินพื้นที่ขวาใน future-grid */
+  height: 100%;
+}
+
+/* ===== SHELL แบบเขียวแบบเดียวกับ filter ===== */
+.future-support-shell {
+  background: #00D9A3;         /* เขียว */
+  border-radius: 20px;
+  padding: 6px 0 0;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.45);
+  height: 100%;
+}
+
+/* ===== CARD แบบ stocks-filter-card ===== */
+.future-support-card {
+  background: #1F2937;
+  border-radius: 18px;
+  padding: 20px 24px 28px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== Header แบบเดียวกัน ===== */
+.future-support-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.future-support-title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* ===== GRID 4 การ์ด ===== */
+.support-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;                  /* เพิ่มช่องไฟให้ดูโปร */
+  width: 100%;
+  height: 100%;
+}
+
+/* ===== Tile ===== */
+.support-tile {
+  background: #111827;        /* เข้มขึ้นให้ contrast ดี */
+  border-radius: 16px;
+  border: 1px solid #374151;  /* เทาอ่อนขึ้น = ดูแพงขึ้น */
+  padding: 18px 20px;         /* padding เยอะขึ้น = ดูโล่งขึ้น */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;    /* จัดให้อยู่กลาง tile */
+  gap: 12px;                  /* ระยะระหว่าง tag กับ price */
+  min-height: 180px;          /* ทำให้ก้อนสมดุลเท่ากัน */
+}
+
+/* Tag แนวรับ/แนวต้าน */
+.support-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 14px;
+  font-size: 13px;
+  border-radius: 20px;
+  width: fit-content;
+  font-weight: 600;
+}
+
+.support-tag--support {
+  color: #00D9A3;
+  border: 1px solid #00D9A3;
+  background: rgba(0, 217, 163, 0.08);
+}
+
+.support-tag--resist {
+  color: #ef4444;
+  border: 1px solid #ef4444;
+  background: rgba(239, 68, 68, 0.09);
+}
+
+.support-price-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.support-price {
+  font-size: 28px;            /* ขยายใหญ่ให้บาลานซ์พื้นที่ */
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.support-sub {
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+/* ===== DIVIDEND TAB ===== */
+.future-div-chart {
+  margin-top: 4px;
+}
+
+/* ===== WARNING BOX ===== */
+.future-warning {
+  margin-top: 18px;
+  background: rgba(120,53,15,0.20);
+  border-radius: 18px;
+  border: 1px solid #B45309;
+  padding: 16px 20px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.warning-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.future-warning-des {
+  font-size: 14px;
+  font-weight: 300;
+  color: #FDE68A;
+}
+
+.future-warning-title {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 2px 0 10px;
+  color: #FBBF24;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 980px) {
+  .future-page {
+    padding: 16px;
+  }
+
+  .future-top-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .future-header-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .future-header-right {
+    align-items: flex-start;
+  }
+
+  .future-metrics-row {
+    flex-wrap: wrap;
+  }
+
+  .future-grid--price {
+    grid-template-columns: 1fr;
+  }
+}

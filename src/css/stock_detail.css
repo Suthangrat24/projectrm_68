@@ -1,0 +1,1105 @@
+.detail-page {
+  padding: 24px 40px 40px;
+}
+
+/* ย้อนกลับ */
+.detail-back-row {
+  margin-bottom: 12px;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: transparent;
+  border: none;
+  color: #e5e7eb;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.back-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* การ์ดใหญ่ */
+.detail-main-card {
+  background: #1F2937;
+  border-radius: 18px;
+  border: 1px solid #374151;
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 18px;
+}
+
+/* ซ้าย */
+.detail-main-left {
+  display: flex;
+  gap: 18px;
+}
+
+.detail-logo {
+  width: 72px;
+  height: 72px;
+  border-radius: 26px;
+  background: #020617;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #111827;
+}
+
+.detail-logo-mark {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  background: radial-gradient(circle at 30% 30%, #0ea5e9, #1d4ed8);
+}
+
+/* อยากใส่โลโก้จริงค่อยเปลี่ยนเป็น background-image เอา */
+
+.detail-name-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.detail-symbol-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.detail-symbol {
+  font-size: 40px;
+  font-weight: 800;
+}
+
+.detail-status-badge {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #16a34a;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.detail-heart {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: none;
+  background: #0f172a;
+  color: #f97373;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-fullname {
+  margin: 0;
+  font-size: 14px;
+  color: #e5e7eb;
+}
+
+.detail-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.detail-tag {
+  padding: 4px 10px;
+  border-radius: 10px;
+  background: transparent;
+  border: 1px solid #4B5563;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+/* ขวา: ราคา */
+.detail-main-right {
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.detail-price-block {
+  text-align: right;
+}
+
+.detail-price-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.detail-price-arrow {
+  font-size: 20px;
+}
+
+.detail-price-arrow.up {
+  color: #22c55e;
+}
+
+.detail-price-arrow.down {
+  color: #ef4444;
+}
+
+.detail-price {
+  font-size: 40px;
+  font-weight: 800;
+}
+
+.detail-change {
+  font-size: 13px;
+  margin-top: 2px;
+}
+.detail-change.up {
+  color: #22c55e;
+}
+
+.detail-change.down {
+  color: #ef4444;
+}
+
+/* meta ปริมาณ/มูลค่า */
+.detail-meta-block {
+  display: flex;
+  gap: 24px;
+  font-size: 13px;
+}
+
+.detail-meta-col {
+  text-align: right;
+}
+
+.detail-meta-label {
+  color: #9ca3af;
+}
+
+.detail-meta-value {
+  font-weight: 600;
+}
+
+.detail-main-update {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* แท็บ */
+.detail-tabs-card {
+  margin-top: 12px;
+  margin-bottom: 18px;
+}
+
+.detail-tabs-row {
+  display: inline-flex;
+  gap: 4px;
+  padding: 6px;
+  background: #1F2937;
+  border-radius: 20px;
+  border: 1px solid #374151;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+}
+
+.detail-tab {
+  border-radius: 999px;
+  border: none;
+  padding: 8px 24px;
+  background: transparent;
+  color: #e5e7eb;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.detail-tab--active {
+  background: #374151;
+}
+
+/* ===== GRID MAIN (กราฟ + การ์ดขวา) ===== */
+.detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 18px;
+}
+
+.detail-card {
+  background: #1F2937;
+  border-radius: 18px;
+  border: 1px solid #374151;
+  padding: 18px 20px;
+}
+
+/* ===== CHART CARD ===== */
+.chart-card {
+  display: flex;
+  flex-direction: column;
+  padding: 18px 20px 14px;
+}
+
+.chart-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.chart-title {
+  font-size: 18px;
+  font-weight: 700;
+}
+/* กล่องสองฝั่ง: ซ้าย(ราคา) | ขวา(ประสิทธิภาพ) */
+.chart-two-col {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 2px;
+}
+
+/* แต่ละคอลัมน์ = 2 แถว (label + ปุ่ม) */
+.chart-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chart-col-right {
+  margin-left: 4px;
+}
+
+.chart-label-main {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.chart-label-muted {
+  font-size: 14px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+/* เส้นคั่นแนวตั้ง ระหว่างสองคอลัมน์ (ยาวครอบ 2 แถว) */
+.chart-divider-vert {
+  display: inline-block;
+  width: 1px;
+  background: #4b5563;
+  margin: 0 20px;
+  align-self: stretch;   /* ให้สูงเต็มระหว่างบรรทัด 2–3 */
+}
+
+/* ปุ่มช่วงเวลา (ฝั่งขวา) */
+.chart-range-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ปุ่ม pill เดิมใช้ต่อได้เลย */
+.range-pill {
+  min-width: 50px;
+  padding: 6px 14px;
+  border-radius: 10px;
+  background: #d9d9d9;
+  color: #000000;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.range-pill--active {
+  background: #00d9a3;
+  color: #ffffff;
+}
+
+/* body กราฟ */
+.chart-body {
+  margin-top: 14px;
+  flex: 1;
+}
+
+.chart-placeholder {
+  min-height: 240px;
+  border-radius: 14px;
+  border: 1px dashed #334155;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* footer กราฟ */
+.chart-footer {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.btn-future {
+  padding: 8px 24px;
+  border-radius: 10px;
+  border: none;
+  background: #2563EB;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;          /* ระยะห่าง icon กับข้อความ */
+}
+
+.btn-future-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+/* ===== RIGHT COLUMN ===== */
+.detail-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* shell สีเขียวแบบเดียวกับการ์ดค้นหาในหน้า AllStocks */
+.info-card-shell {
+  background: #22c55e;
+  border-radius: 20px;
+  padding: 6px 0 0; /* ให้เขียวโผล่ด้านบนรอบ ๆ การ์ด */
+}
+
+/* การ์ดข้อมูลการซื้อขาย (ตัวที่มีแถบเขียว) */
+.info-card--border {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* เส้นคั่นแนวนอนเหนือ ปริมาณ/มูลค่า */
+.info-bottom-separator {
+  height: 1px;
+  background: #4B5563;
+  opacity: 0.6;
+  margin: 14px 0 10px;
+}
+
+
+/* อันนี้ไม่ใช้แล้ว ถ้าอยากลบได้เลย */
+.info-topstrip {
+  display: none;
+}
+
+.info-inner {
+  padding: 16px 18px 14px;
+}
+
+.info-header {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+/* 4 ช่อง: ล่าสุด / เปิด / สูงสุด / ต่ำสุด */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 20px;
+}
+
+.info-label {
+  font-size: 13px;
+  color: #9ca3af;
+}
+.info-value {
+  margin-top: 2px;
+  font-size: 20px;
+  font-weight: 700;
+}
+.info-value--up {
+  color: #22c55e;
+}
+.info-value--down {
+  color: #ef4444;
+}
+
+/* กล่องปริมาณ/มูลค่า */
+.info-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.info-meta-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.info-meta-label {
+  color: #9ca3af;
+}
+
+.info-meta-value {
+  font-weight: 600;
+}
+
+/* การ์ด ratio */
+.info-card:not(.info-card--border) .info-header {
+  margin-bottom: 8px;
+}
+
+.ratio-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+.ratio-label {
+  color: #9ca3af;
+}
+.ratio-value {
+  font-weight: 600;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 980px) {
+  .detail-page {
+    padding: 16px;
+  }
+
+  .detail-main-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .detail-main-right {
+    align-items: flex-start;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-tabs-row {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* ====== SECTION: ราคาย้อนหลัง ====== */
+
+.detail-history-section {
+  margin-top: 18px;
+}
+
+.history-card {
+  padding: 18px 20px 14px;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.history-title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.history-latest {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.history-table-scroll {
+  overflow-x: auto;
+  margin-top: 6px;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.history-table thead {
+  background: #374151;
+}
+
+.history-table th,
+.history-table td {
+  padding: 8px 14px;
+  border-bottom: 1px solid #1f2937;
+  text-align: right;
+}
+
+.history-table th:first-child,
+.history-table td:first-child {
+  text-align: left;
+  border-right: 3px solid #374151;
+}
+
+.history-table th {
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.history-up {
+  color: #22c55e;
+}
+.history-down {
+  color: #ef4444;
+}
+
+/* footer ด้านล่างตาราง */
+.history-footer {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.history-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.history-rows-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.history-rows-select {
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid #374151;
+  background: #020617;
+  color: #e5e7eb;
+  padding: 0 8px;
+  font-size: 12px;
+}
+
+.history-pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.history-page-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  border: 1px solid #374151;
+  background: #020617;
+  color: #e5e7eb;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.history-page-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* ให้การ์ดซ้าย-ขวาใน tab "ราคา" สูงใกล้เคียงกัน */
+.detail-card.chart-card,
+.detail-right-col .detail-card {
+  height: 100%;
+}
+
+
+
+
+.fin-wrapper {
+  padding: 20px 0;
+  color: #fff;
+  font-family: "Prompt", sans-serif;
+}
+
+/* Filter Row */
+.fin-filter-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.fin-filter-text {
+  border: none;
+  padding: 10px 16px;
+  color: #fff;
+}
+
+.fin-year-select-wrapper {
+  position: relative;
+}
+
+.fin-year-select {
+  background: #2d3748;
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 40px 10px 16px;
+  border: none;
+  appearance: none;
+}
+
+.fin-select-arrow {
+  width: 16px;
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* GRID */
+.fin-grid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 24px;
+}
+
+/* LEFT SECTION */
+.fin-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Small Cards */
+.fin-card-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.fin-small-card {
+  background: #1e2533;
+  padding: 18px;
+  border-radius: 16px;
+}
+
+.fin-small-card h4 {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.fin-small-card p {
+  font-size: 28px;
+  margin-top: 8px;
+}
+
+/* Colors */
+.fin-small-card.green h4 { color: #38d9a9; }
+.fin-small-card.blue h4 { color: #4dabf7; }
+.fin-small-card.yellow h4 { color: #fcc419; }
+.fin-small-card.purple h4 { color: #cc5de8; }
+
+/* Chart Cards */
+.fin-chart-card {
+  background: #1e2533;
+  padding: 20px;
+  border-radius: 16px;
+}
+
+.fin-chart-placeholder {
+  height: 220px;
+  background: #2a3142;
+  border-radius: 12px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.5;
+}
+
+/* RIGHT TABLE */
+.fin-right {
+  background: #1e2533;
+  border-radius: 16px;
+  padding: 20px;
+}
+.fin-summary-card {
+    background: #1e2533;
+    padding: 20px;
+    border-radius: 16px;
+}
+
+.fin-summary-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.fin-summary-section {
+    margin-top: 12px;
+    margin-bottom: 4px;
+    font-weight: 600;
+    color: #8aa0c2;
+    font-size: 14px;
+    border-bottom: 1px solid #2b3242;
+    padding-bottom: 4px;
+}
+
+.fin-sum-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 14px;
+}
+
+.fin-sum-row span:last-child {
+    font-weight: 600;
+}
+
+
+
+
+
+/* ========== HOLDERS TAB (ข้อมูลผู้ถือหุ้น) ========== */
+
+.detail-holders-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+/* แถวบน KPI 3 ใบ */
+.holders-summary-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.holders-kpi-card {
+  padding: 16px 18px 14px;
+}
+
+.holders-kpi-label {
+  font-size: 13px;
+  color: #00D9A3;
+  margin-bottom: 6px;
+}
+
+.holders-kpi-value {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.holders-kpi-sub {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* แถวกลาง: grid ซ้าย-ขวา */
+.holders-main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
+  gap: 16px;
+}
+
+/* ======= การ์ดแบบเรียบ ======= */
+.holders-plain-card {
+    background: #242c3c;
+    border-radius: 22px;
+    padding: 24px;
+    width: 100%;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.holders-plain-header {
+    margin-bottom: 16px;
+}
+
+.holders-plain-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.holders-plain-body {
+    flex: 1;
+    background: #1e2533;
+    border-radius: 18px;
+    padding: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed rgba(255,255,255,0.15);
+}
+
+.holders-plain-placeholder {
+    color: rgba(255,255,255,0.35);
+    font-size: 16px;
+}
+
+.holders-card-header {
+  margin-bottom: 12px;
+}
+
+.holders-card-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* โครงสร้างผู้ถือหุ้น (ซ้าย) */
+.holders-chart-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.holders-chart-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+/* donut placeholder */
+.holders-donut-shell {
+  margin-top: 8px;
+}
+
+.holders-donut-ring {
+  width: 220px;
+  height: 220px;
+  border-radius: 999px;
+  background: conic-gradient(
+    #22c55e 0deg 184deg,
+    #f97373 184deg 258deg,
+    #f59e0b 258deg 290deg,
+    #a855f7 290deg 318deg,
+    #3b82f6 318deg 360deg
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.holders-donut-center {
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  background: #111827;
+}
+
+/* legend */
+.holders-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 20px;
+  font-size: 13px;
+}
+
+.holders-legend-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+}
+
+.legend-dot--teal {
+  background: #22c55e;
+}
+.legend-dot--blue {
+  background: #3b82f6;
+}
+.legend-dot--orange {
+  background: #f59e0b;
+}
+.legend-dot--purple {
+  background: #a855f7;
+}
+.legend-dot--red {
+  background: #f97373;
+}
+
+/* ผู้ถือหุ้นรายใหญ่ 5 อันดับแรก (ขวา) */
+.holders-top5-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.holders-top5-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.holders-top5-item {
+  padding: 8px 4px;
+  border-bottom: 1px solid #111827;
+}
+
+.holders-top5-item:last-child {
+  border-bottom: none;
+}
+
+.holders-top5-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.holders-rank-badge {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #f9fafb;
+}
+
+/* สี badge ตามลำดับ */
+.holders-rank-badge--teal,
+.holders-top5-item--teal .holders-rank-badge {
+  background: #16a34a;
+}
+
+.holders-rank-badge--blue,
+.holders-top5-item--blue .holders-rank-badge {
+  background: #2563eb;
+}
+
+.holders-rank-badge--orange,
+.holders-top5-item--orange .holders-rank-badge {
+  background: #f59e0b;
+}
+
+.holders-rank-badge--purple,
+.holders-top5-item--purple .holders-rank-badge {
+  background: #a855f7;
+}
+
+.holders-rank-badge--red,
+.holders-top5-item--red .holders-rank-badge {
+  background: #f97373;
+}
+
+.holders-top5-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.holders-top5-name {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.holders-top5-shares {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.holders-top5-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.holders-top5-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: #020617;
+  overflow: hidden;
+}
+
+.holders-top5-bar-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #22c55e;
+}
+
+.holders-top5-percent {
+  font-size: 13px;
+}
+
+/* รายชื่อผู้ถือหุ้นทั้งหมด (ล่าง) */
+.holders-list-card {
+  margin-top: 4px;
+}
+
+.holders-list-header {
+  margin-bottom: 14px;
+}
+
+.holders-list-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.2fr);
+  gap: 10px 40px;
+}
+
+.holders-list-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.holders-list-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.holders-list-name {
+  font-size: 14px;
+}
+
+.holders-chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #064e3b;
+  color: #a7f3d0;
+  font-size: 12px;
+}
+
+/* responsive */
+@media (max-width: 1024px) {
+  .holders-summary-row {
+    grid-template-columns: 1fr;
+  }
+
+  .holders-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .holders-list-grid {
+    grid-template-columns: 1fr;
+  }
+}
