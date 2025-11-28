@@ -15,7 +15,7 @@ html, body { background:#111827; color:#fff; }
   border-bottom: 1px solid rgba(255,255,255,.06);
 
   /* รูปพื้นหลัง */
-  background-image: url("../public/pics/recommend_stock.jpeg"); /* ปรับ path ตามโปรเจกต์: public/recommend_stock.jpeg จะง่ายสุด */
+  background-image: url("pics/recommend_stock.jpeg"); /* ปรับ path ตามโปรเจกต์: public/recommend_stock.jpeg จะง่ายสุด */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
