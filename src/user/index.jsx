@@ -186,22 +186,22 @@ export default function Navbar() {
                     <div className="top_tabs">
                         <button className={`tab_btn ${tab === "value" ? "is-active" : ""}`} onClick={() => setTab("value")}>
                             {/* icon มูลค่า (ตัวอย่าง path) */}
-                            <img className="btn_icon" src={ tab === "value" ? "../public/pics/value_active.png" : "../public/pics/value_norm.png"} alt="" />
+                            <img className="btn_icon" src={ tab === "value" ? "/pics/value_active.png" : "/pics/value_norm.png"} alt="" />
                             มูลค่าการซื้อขาย
                         </button>
                         <button className={`tab_btn ${tab === "volume" ? "is-active" : ""}`} onClick={() => setTab("volume")}>
                             {/* icon ปริมาณ (ตัวอย่าง path) */}
-                            <img className="btn_icon" src={ tab === "volume" ? "../public/pics/volume_active.png" : "../public/pics/volume_norm.png"} alt="" />
+                            <img className="btn_icon" src={ tab === "volume" ? "/pics/volume_active.png" : "/pics/volume_norm.png"} alt="" />
                             ปริมาณการซื้อขาย
                         </button>
                         <button className={`tab_btn ${tab === "up" ? "is-active" : ""}`} onClick={() => setTab("up")}>
                             {/* icon ราคาเพิ่มขึ้น */}
-                            <img className="btn_icon" src={ tab === "up" ? "../public/pics/up_active.png" : "../public/pics/up_norm.png"} alt="" />
+                            <img className="btn_icon" src={ tab === "up" ? "/pics/up_active.png" : "/pics/up_norm.png"} alt="" />
                             ราคาเพิ่มขึ้น
                         </button>
                         <button className={`tab_btn ${tab === "down" ? "is-active" : ""}`} onClick={() => setTab("down")}>
                             {/* icon ราคาลดลง */}
-                            <img className="btn_icon" src={ tab === "down" ? "../public/pics/down_active.png" : "../public/pics/down_norm.png"} alt="" />
+                            <img className="btn_icon" src={ tab === "down" ? "/pics/down_active.png" : "/pics/down_norm.png"} alt="" />
                             ราคาลดลง
                         </button>
                     </div>
