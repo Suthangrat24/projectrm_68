@@ -1,21 +1,22 @@
 .edit-profile-page {
-  padding: 24px 40px 60px;
+  padding: 24px 100px 60px;
   font-family: "Prompt", sans-serif;
   color: #e6e6e6;
 }
 
 /* ===== HEADER ===== */
-/* ===== HEADER GENERAL ===== */
 .edit-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   width: 100%;
-  margin-bottom: 24px;
 }
 
 /* Row 1 — Back Button */
-.edit-header-top {
+.edit-header-back {
+  width: 100%;
   display: flex;
-  align-items: center;
-  margin-bottom: 12px;
+  justify-content: flex-start;
 }
 
 .edit-back-btn {
@@ -38,11 +39,12 @@
   height: 18px;
 }
 
-/* Row 2 — Title + Save Button */
-.edit-header-bottom {
+.edit-header-main {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+  margin-top: 5px;
 }
 
 .edit-title {
@@ -52,17 +54,18 @@
 }
 
 .edit-save-btn {
-  background: #22c55e;
+  background: #10b981;
+  color: white;
   border: none;
-  padding: 10px 20px;
   border-radius: 10px;
-  font-weight: 600;
+  padding: 8px 18px;
+  font-size: 15px;
   cursor: pointer;
-  color: #fff;
+  transition: 0.2s;
 }
 
 .edit-save-btn:hover {
-  background: #1da851;
+  filter: brightness(1.07);
 }
 
 /* ===== MAIN CARD ===== */

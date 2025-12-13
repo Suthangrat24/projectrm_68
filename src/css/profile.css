@@ -1,6 +1,6 @@
 .profile-page {
   padding: 32px;
-  max-width: 1400px;
+  max-width: 1300px;
   margin: 0 auto;
   color: #e5e7eb;
 }
@@ -176,13 +176,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 22px;
 }
 
 .profile-section-left {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.profile-section-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .user-icon {
@@ -206,7 +211,7 @@
 }
 
 /* ปุ่มแก้ไข */
-.profile-edit-btn {
+.profile-user-edit-btn {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -255,13 +260,21 @@
 }
 
 /* ===== การ์ดประวัติความเสี่ยง ===== */
+
+.tab-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px; 
+}
+
 .risk-card {
+  width: 100%;
   background: #1F2937;
   border: 1px solid #374151;
   padding: 20px 24px;
   border-radius: 16px;
-  margin-top: 18px;
   box-shadow: 0 10px 28px rgba(0,0,0,0.45);
+  margin: 8px 0;     /* แยกการ์ดออกชัวร์ ไม่โดน margin collapse */
 }
 
 /* header การประเมิน */
@@ -272,34 +285,56 @@
   margin-bottom: 14px;
 }
 
+.risk-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .risk-title {
   font-size: 18px;
   font-weight: 600;
 }
 
 /* badge ระดับความเสี่ยง */
-.risk-badge {
+.risk-history-badge {
   display: inline-block;
   padding: 4px 12px;
-  border-radius: 10px;
+  border-radius: 60px;
   font-size: 13px;
-  margin-top: 6px;
   font-weight: 600;
 }
 
-.risk-mid {
-  background: #d1a300;
-  color: #1f2937;
+.risk-history-mid {
+  background: #765f0954;
+  border: 1px solid #d1a300;
+  color: #d1a300;
 }
 
-.risk-low {
-  background: #22c55e;
-  color: #0f172a;
+.risk-history-low {
+  background: #0b76325f;
+  border: 1px solid #22c55e;
+  color: #22c55e;
 }
 
 .fav-price-block {
   margin-top: 8px;   /* ให้หายชิดโลโก้เกินไป */
   margin-bottom: 16px;
+}
+
+.risk-detail-btn {
+  background: #e5e7eb;
+  padding: 7px 16px;
+  border-radius: 10px;
+  color: #334155;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.risk-detail-btn:hover {
+  background: #3b465a;
+  border-color: #6b7280;
 }
 
 /* ปุ่มดูรายละเอียด */
@@ -309,7 +344,7 @@
   border: none;
   padding: 7px 16px;
   border-radius: 10px;
-  font-size: 13px;
+  font-size: 14px;
   cursor: pointer;
   
   align-self: flex-end;   /* ให้ปุ่มไปขวาเหมือนเดิม */
@@ -436,7 +471,6 @@
 
 /* การ์ดใหญ่ */
 .settings-container {
-  margin-top: 16px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -451,6 +485,7 @@
   justify-content: space-between;
   align-items: center;
   border: 1px solid #374151;
+  margin-bottom: 10px;
 }
 
 .settings-title {
@@ -505,7 +540,7 @@
   background: #374151;
 }
 
-.logout-btn {
+.logout-user-btn {
   background: #DC2626;
   border: none;
   color: white;

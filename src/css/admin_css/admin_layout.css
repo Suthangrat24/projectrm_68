@@ -1,0 +1,26 @@
+/* ===== LAYOUT หลักของ admin ===== */
+.admin-layout {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  background: #0f172a;
+  overflow: hidden;
+}
+
+/* ===== MAIN CONTENT ZONE ===== */
+.admin-main {
+  margin-left: 260px;
+  width: calc(100% - 260px);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+
+/* ===== CONTENT SECTION ===== */
+.admin-content {
+  padding: 0 32px ;
+  flex: 1;
+  overflow-y: auto;
+}

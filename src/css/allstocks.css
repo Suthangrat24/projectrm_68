@@ -34,10 +34,11 @@
   position: absolute;
   bottom: 70px;
   left: 40px;
+  margin-left: 40px;
   color: #fff;
 }
 
-.hero-eyebrow {
+.hero-desc {
   font-size: 18px;
   font-weight: 400;
   opacity: 0.9;
@@ -59,22 +60,21 @@
 
 /* การ์ดเขียวด้านหลัง */
 .stocks-filter-shell {
-  max-width: 1400px;
+  max-width: 1300px;
   margin: 0 auto;               /* ให้อยู่กลาง */
   background: #00D9A3;          /* เขียว */
   border-radius: 20px;
   padding: 6px 0 0 0;                  /* ทำให้เขียวโผล่รอบการ์ด */
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
 }
 
 .stocks-filter-card {
-  max-width: 1400px;         /* ไม่ให้เต็มจอเกินไป */
+  max-width: 1300px;         /* ไม่ให้เต็มจอเกินไป */
   margin: 0 auto;            /* จัดให้อยู่กลางจอ */
   position: relative;
   background: #1F2937;
+  border: 1px solid #374151;
   border-radius: 18px;
   padding: 20px 24px 24px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
 }
 
 .stocks-filter-header {
@@ -115,7 +115,7 @@
 
 .filter-input {
   width: 100%;
-  height: 58px;
+  height: 50px;
   border-radius: 12px;
   border: 1px solid #4B5563;
   background: #374151;
@@ -133,7 +133,7 @@
 /* card ครอบทั้งกล่อง */
 .filter-selectcard {
   width: 100%;
-  height: 58px;
+  height: 50px;
   border-radius: 12px;
   border: 1px solid #4b5563;
   background: #374151;
@@ -194,33 +194,51 @@
   align-items: stretch;
 }
 
-.btn-search,
-.btn-reset {
-  border-radius: 14px;
-  padding: 0 24px;
-  font-weight: 400;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
+.buttons button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    opacity: 0.9;
 }
 
 .btn-search {
-  background: #00D9A3;
-  color: #ffffff;
+    background: #00d9a3;
+    height: 50px;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
 .btn-search:hover {
-  filter: brightness(1.05);
+    filter: brightness(1.07);
 }
 
 .btn-reset {
-  background: #f9fafb;
-  color: #7D7D7D;
+    background: #ffffff;
+    color: #7D7D7D;
+    height: 50px;
+    border: 1px solid #d1d5db;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
 .btn-reset:hover {
-  filter: brightness(0.97);
+    background: #f3f4f6;
 }
+
 
 /* มือถือ */
 @media (max-width: 900px) {
@@ -249,7 +267,9 @@
 /* ===== TABLE ===== */
 
 .stocks-table-section {
-  margin: 6px 36px;
+  max-width: 1300px;
+  margin: 0 auto 20px;            /* จัดให้อยู่กลางจอ */
+  position: relative;
 }
 
 .stocks-table-wrapper {
@@ -312,6 +332,18 @@
 .col-factsheet {
   width: 100px;
   text-align: center;
+}
+
+.market-set {
+  background: #0f816456;
+  border: 1px solid #00d9a3;
+  color: #00d9a3;
+}
+
+.market-mai {
+  background: rgba(132, 109, 7, 0.296);
+  border: 1px solid #facc15;
+  color: #facc15;
 }
 
 /* ===== หัวคอลัมน์แบบ sort ได้ ===== */
@@ -429,8 +461,6 @@
   display: inline-flex;
   padding: 4px 10px;
   border-radius: 999px;
-  background: #020617;
-  border: 1px solid #4b5563;
   font-size: 12px;
 }
 

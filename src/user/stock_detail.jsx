@@ -424,7 +424,7 @@ export default function StockDetail() {
                                 <span>อัปเดต: {data.lastUpdate}</span>
                                 <button
                                     className="btn-future"
-                                    onClick={() => navigate(`/detail/${data.symbol}/future`)}
+                                    onClick={() => navigate(`/detail/future`)}
                                 >
                                     <img src="/pics/future.png" alt="future" className="btn-future-icon" />
                                     <span>ดูแนวโน้มในอนาคต</span>

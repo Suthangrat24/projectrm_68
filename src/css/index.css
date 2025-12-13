@@ -11,11 +11,11 @@ html, body { background:#111827; color:#fff; }
 .rec{
   position: relative;
   color: var(--white);
-  min-height: 420px;                     /* ใกล้เคียงฟิกม่า */
+  min-height: 520px;                     /* ใกล้เคียงฟิกม่า */
   border-bottom: 1px solid rgba(255,255,255,.06);
 
   /* รูปพื้นหลัง */
-  background-image: url("../public/pics/recommend_stock.jpeg"); /* ปรับ path ตามโปรเจกต์: public/recommend_stock.jpeg จะง่ายสุด */
+  background-image: url("/pics/recommend_stock.jpeg"); /* ปรับ path ตามโปรเจกต์: public/recommend_stock.jpeg จะง่ายสุด */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -25,7 +25,8 @@ html, body { background:#111827; color:#fff; }
 .rec::before{
   content:"";
   position:absolute; inset:0;
-  background: linear-gradient(90deg, rgba(17,24,39,.85) 0%, rgba(17,24,39,.6) 45%, rgba(17,24,39,0) 75%);
+  min-height: 520px; 
+  background: linear-gradient(90deg, rgb(17,24,39), rgba(17,24,39,.85), rgba(17,24,39,.75), rgba(17,24,39,.5), rgba(17,24,39,.0));
 }
 
 /* คอนเทนเนอร์ด้านใน */
@@ -70,30 +71,18 @@ html, body { background:#111827; color:#fff; }
 .rec_des{
   font-size: 16px;
   line-height: 2;
+  max-width: 95%;
   color: rgba(255,255,255,.9);
   max-width: 100%;
-  margin: 20px 0;
+  margin: 48px 0;
 }
 
 .rec_note {
-  font-size: 1rem;
+  font-size: 14px;
   line-height: 1.9;
-  color: rgba(255, 255, 255, 0.9);
+  color: #ef4444;
   max-width: 95%;
-  margin-top: 24px;
-  white-space: pre-line; /* ให้ขึ้นบรรทัดใหม่เมื่อมี \n */
-}
-
-/* ตัวหนาสำหรับ “หมายเหตุ” */
-.rec_note .fw-bold {
-  font-weight: 700;
-  color: #ffffff;
-}
-
-/* สีแดงสำหรับ “การลงทุนมีความเสี่ยง” */
-.rec_note .text-danger {
-  color: #ff4b4b;
-  font-weight: 600;
+  margin-top: 64px;
 }
 
 /* ปุ่ม ขวาล่าง */
@@ -138,7 +127,7 @@ html, body { background:#111827; color:#fff; }
 /* layout หลัก */
 .invest{
   max-width: 1300px;
-  margin: 28px auto 56px;
+  margin: 46px auto 56px;
   padding: 0 16px;
 }
 
@@ -324,7 +313,7 @@ html, body { background:#111827; color:#fff; }
   --gap: 12px;            /* ระยะห่างระหว่างการ์ด */
   --list-pad: 8px;        /* padding บนของลิสต์ */
 }
-.top_container{ max-width: 1300px; margin: 0 auto; padding: 28px 16px 56px; }
+.top_container{ max-width: 1300px; margin: 0 auto; padding: 22px 16px 32px; }
 .top_header{
   display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;
 }
@@ -470,7 +459,8 @@ html, body { background:#111827; color:#fff; }
 .arrow_icon{
   font-weight: 800;
   line-height: 1;
-  margin-top: 4px;              /* ให้กลาง ๆ กับตัวเลข */
+  margin-top: 4px;
+  
 }
 
 .arrow_icon.up{
@@ -676,7 +666,7 @@ html, body { background:#111827; color:#fff; }
   font-weight: 400;
 }
 .fav_all:hover{
-  background: rgba(0,217,163,0.08);
+  transform: translateY(-1px);
 }
 
 /* แถวการ์ดเลื่อนแนวนอน */
@@ -688,9 +678,7 @@ html, body { background:#111827; color:#fff; }
   margin-top:4px;
   scroll-snap-type: x mandatory;
 }
-.fav_scroller::-webkit-scrollbar{
-  height:6px;
-}
+
 .fav_scroller::-webkit-scrollbar-track{
   background: transparent;
 }
@@ -701,11 +689,11 @@ html, body { background:#111827; color:#fff; }
 
 /* การ์ดแต่ละใบ */
 .fav_card{
-  flex:0 0 280px;              /* ความกว้างประมาณ Figma */
+  flex:0 0 300px;              /* ความกว้างประมาณ Figma */
   background: var(--panel);
   border:1px solid var(--border);
   border-radius:14px;
-  padding:16px 16px 18px;
+  padding: 16px 16px 18px;
   box-shadow:0 10px 25px rgba(0,0,0,0.28);
   scroll-snap-align:start;
 }
@@ -736,7 +724,8 @@ html, body { background:#111827; color:#fff; }
 
 /*หัวใจบนการ์ด*/
 .fav_heart{
-  font-size:18px;
+  width: 18px;
+  height: 18px;
   color:#f97373;   /* ถ้าใช้รูป ให้แทนด้วย <img class="fav_heart"> */
 }
 
@@ -774,6 +763,22 @@ html, body { background:#111827; color:#fff; }
 .fav_bar_fill.down{
   background: linear-gradient(90deg, #fb7185, #ef4444);
 }
+
+.section-divider {
+  width: 100%;
+  height: 1px;
+  margin: 40px 0 30px;
+  background: linear-gradient(
+      90deg,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,0.10) 15%,
+      rgba(255,255,255,0.20) 50%,
+      rgba(255,255,255,0.10) 85%,
+      rgba(255,255,255,0) 100%
+  );
+  opacity: 0.7;
+}
+
 
 /* มือถือ */
 @media (max-width:768px){

@@ -1,10 +1,19 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import "../css/profile.css";
 
 export default function Profile() {
-  const [activeTab, setActiveTab] = useState("info");
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // อ่าน tab จาก URL
+  const tabFromURL = searchParams.get("tab");
+
+  const [activeTab, setActiveTab] = useState("info");
+
+  useEffect(() => {
+    if (tabFromURL) setActiveTab(tabFromURL);
+  }, [tabFromURL]);
 
   /* user data */
   const userInfo = {
@@ -175,15 +184,22 @@ export default function Profile() {
 
                     {/* Header ของ section ข้อมูลส่วนตัว */}
                     <div className="profile-section-header">
-                    <div className="profile-section-left">
-                        <img src="/pics/user.png" alt="user" className="user-icon" />
-                        <span className="profile-section-title">ข้อมูลส่วนตัว</span>
-                    </div>
+                        <div className="profile-section-left">
+                            <img src="/pics/user.png" alt="user" className="user-icon" />
+                            <span className="profile-section-title">ข้อมูลส่วนตัว</span>
+                        </div>
 
-                    <button className="profile-edit-btn" onClick={() => navigate("/edit-profile")}>
-                        <img src="/pics/edit.png" className="edit-icon" />
-                        แก้ไข
-                    </button>
+                        <button className="profile-user-edit-btn" onClick={() => navigate("/edit-profile")}>
+                            <img src="/pics/edit.png" className="edit-icon" />
+                            แก้ไข
+                            </button>
+
+                        {/* <div className="profile-section-right">
+                            <button className="profile-edit-btn" onClick={() => navigate("/edit-profile")}>
+                            <img src="/pics/edit.png" className="edit-icon" />
+                            แก้ไข
+                            </button>
+                        </div> */}
                     </div>
 
                     {/* ช่องกรอกข้อมูล */}
@@ -203,43 +219,43 @@ export default function Profile() {
             {activeTab === "risk" && (
                 <div className="tab-section">
 
-                <div className="profile-section-header">
-                    <div className="profile-section-left">
-                    <img src="/pics/history.png" className="history-icon" />
-                    <span className="profile-section-title">ประวัติการประเมินความเสี่ยง</span>
-                    </div>
-                </div>
-
-                {riskHistory.map((item) => (
-                    <div key={item.id} className="risk-card">
-
-                    <div className="risk-card-header">
-                        <div>
-                        <div className="risk-title">การประเมินครั้งที่ {item.id}</div>
-                        <span className={`risk-badge risk-${item.levelColor}`}>{item.level}</span>
-                        </div>
-
-                        <button className="risk-detail-btn">ดูรายละเอียด</button>
-                    </div>
-
-                    <div className="risk-row">
-                        <span className="risk-label">วันที่ประเมิน:</span>
-                        <span className="risk-text">{item.date}</span>
-                    </div>
-
-                    <div className="risk-row">
-                        <span className="risk-label">คะแนน:</span>
-                        <span className="risk-score">{item.score}</span>
-                    </div>
-
-                    <div className="risk-row">
-                        <span className="risk-label">หุ้นแนะนำ:</span>
-                        <div className="risk-stock-list">
-                        {item.stocks.map((s) => (
-                            <span key={s} className="risk-stock">{s}</span>
-                        ))}
+                    <div className="profile-section-header">
+                        <div className="profile-section-left">
+                        <img src="/pics/history.png" className="history-icon" />
+                        <span className="profile-section-title">ประวัติการประเมินความเสี่ยง</span>
                         </div>
                     </div>
+
+                    {riskHistory.map((item) => (
+                        <div key={item.id} className="risk-card">
+
+                        <div className="risk-card-header">
+                            <div className="risk-title-row">
+                                <div className="risk-title">การประเมินครั้งที่ {item.id}</div>
+                                <span className={`risk-history-badge risk-history-${item.levelColor}`}>{item.level}</span>
+                            </div>
+
+                            <button className="risk-detail-btn">ดูรายละเอียด</button>
+                        </div>
+
+                        <div className="risk-row">
+                            <span className="risk-label">วันที่ประเมิน:</span>
+                            <span className="risk-text">{item.date}</span>
+                        </div>
+
+                        <div className="risk-row">
+                            <span className="risk-label">คะแนน:</span>
+                            <span className="risk-score">{item.score}</span>
+                        </div>
+
+                        <div className="risk-row">
+                            <span className="risk-label">หุ้นแนะนำ:</span>
+                            <div className="risk-stock-list">
+                            {item.stocks.map((s) => (
+                                <span key={s} className="risk-stock">{s}</span>
+                            ))}
+                            </div>
+                        </div>
 
                     </div>
                 ))}
@@ -339,7 +355,7 @@ export default function Profile() {
                     <p className="settings-desc">ออกจากระบบในอุปกรณ์นี้</p>
                     </div>
 
-                    <button className="logout-btn">
+                    <button className="logout-user-btn">
                     <img src="/pics/logout.png" className="logout-icon" />
                     ออกจากระบบ
                     </button>
