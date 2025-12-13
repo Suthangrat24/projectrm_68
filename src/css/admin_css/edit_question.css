@@ -1,0 +1,172 @@
+.edit-question-page {
+  padding: 30px 0;
+  color: white;
+}
+
+.edit-question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.edit-question-title {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.edit-question-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.cancel-btn,
+.save-btn {
+  padding: 8px 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background: #6b7280;
+  color: white;
+}
+
+.save-btn {
+  background: #10b981;
+  color: white;
+}
+
+.edit-card {
+  background: #1f2937;
+  border: 1px solid #374151;
+  padding: 30px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* Form group */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 15px;
+  color: #d1d5db;
+}
+
+.form-group input,
+.form-group select {
+  background: #374151;
+  border: 1px solid #4b5563;
+  padding: 12px 14px;
+  border-radius: 10px;
+  color: white;
+  font-size: 15px;
+}
+
+/* Choice item layout */
+.choice-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.choice-item input {
+  flex: 1;
+}
+
+.choice-index {
+  font-size: 16px;
+  color: #e5e7eb;
+  width: 28px; /* ขนาดพอดีกับเลข */
+  text-align: right;
+}
+
+.choice-input {
+  flex: 1;
+  padding: 12px 14px;
+  background: #374151;
+  border: 1px solid #4b5563;
+  border-radius: 10px;
+  color: white;
+  font-size: 14px;
+}
+
+/* wrapper คุม select + icon */
+.select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* select ดั้งเดิม */
+.custom-select {
+  width: 100%;
+  padding: 14px 16px;
+  padding-right: 40px; /* เผื่อที่ให้ icon */
+  
+  background: #374151;
+  border: 1px solid #4b5563;
+  border-radius: 10px;
+  color: #e5e7eb;
+
+  font-size: 15px;
+  cursor: pointer;
+
+  /* เอาลูกศร default ออก */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* icon dropdown */
+.select-arrow {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  pointer-events: none; /* ป้องกันไม่ให้บังการคลิก select */
+  opacity: 0.8;
+}
+
+.delete-choice-btn {
+  background: #dc2626;
+  border: none;
+  border-radius: 8px;
+  padding: 16px 16px;
+  cursor: pointer;
+}
+
+.delete-choice-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+.add-choice-btn {
+  width: 100%;
+  padding: 16px 0;
+  margin-top: 10px;
+
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px dashed #4b5563;
+  border-radius: 14px;
+
+  color: #d1d5db;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.add-choice-btn:hover {
+  color: #00D9A3;
+  border-color: #00D9A3;
+  background: rgba(110, 231, 183, 0.08);
+}

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "../css/index.css"; 
 
 export default function Navbar() {
@@ -8,7 +8,7 @@ export default function Navbar() {
 
     // ------ Top Five (ไม่ fetch) ------
     const top_five = [
-        { rank: 1, symbol: "PT",   name: "ปตท.",                     price: 33.25, change: +0.25, pct: +0.76, value: 151136551, amount: 4996684.08 },
+        { rank: 1, symbol: "PTT",   name: "ปตท.",                     price: 33.25, change: +0.25, pct: +0.76, value: 151136551, amount: 4996684.08 },
         { rank: 2, symbol: "DELTA", name: "เดลต้า อีเลคโทรนิคส์",     price: 91.50, change: -0.30, pct: -0.21, value: 98765432,  amount: 3210000.50 },
         { rank: 3, symbol: "BDMS",  name: "กรุงเทพดุสิตเวชการ",       price: 28.75, change: +0.10, pct: +0.35, value: 75643123,  amount: 2755000.20 },
         { rank: 4, symbol: "ADVANC",name: "แอดวานซ์ อินโฟร์ เซอร์วิส", price: 189.0, change: +0.50, pct: +0.26, value: 65431234,  amount: 1669000.10 },
@@ -34,18 +34,17 @@ export default function Navbar() {
                 <div className="rec_text">
                     <h1 className="rec_title">แนะนำหุ้นที่เหมาะสมกับคุณในการลงทุนระยะยาว</h1>
                     <p className="rec_des">
-                        จากข้อมูลที่คุณกรอกในแบบประเมิน ระบบจะวิเคราะห์โปรไฟล์และพฤติกรรมการลงทุนของคุณ
+                        จากข้อมูลที่คุณกรอกในแบบประเมิน ระบบจะวิเคราะห์โปรไฟล์และพฤติกรรมการลงทุนของคุณ<br />
                         และแนะนำหุ้นที่ตรงกับคุณ เพื่อเลือกหุ้นที่สอดคล้องกับผลการประเมิน ช่วยให้คุณตัดสินใจลงทุนได้ง่ายและมั่นใจยิ่งขึ้น
                     </p>
                     <p className="rec_note">
-                        <span className="fw-bold">หมายเหตุ: </span>
+                        หมายเหตุ:
                         ระบบนี้เป็นเพียงเครื่องมือช่วยแนะนำ ไม่ใช่คำแนะนำการลงทุนโดยตรง<br />
-                        <span className="text-danger">การลงทุนมีความเสี่ยง</span><br />
-                        กรุณาศึกษาข้อมูลให้รอบคอบ และตัดสินใจลงทุนตามความเหมาะสมของตนเอง
+                        การลงทุนมีความเสี่ยง กรุณาศึกษาข้อมูลให้รอบคอบ และตัดสินใจลงทุนตามความเหมาะสมของตนเอง
                     </p>
                 </div>
                 <div className="rec_button">
-                    <button className="rec_cta" onClick={() => navigate("/risk-evaluation")}>
+                    <button className="rec_cta" onClick={() => navigate("/risk")}>
                         เริ่มต้นใช้งาน
                         <img src="/pics/next.png" alt="next" className="next-icon" />
                     </button>
@@ -63,7 +62,7 @@ export default function Navbar() {
                     <p>เปรียบเทียบราคาปัจจุบัน ณ เวลาที่ล็อกอิน และการคาดการณ์</p>
                 </div>
                 </div>
-                <a className="invest_manage" href="#">
+                <a className="invest_manage" href="/portfolio">
                 จัดการพอร์ต →
                 </a>
             </div>
@@ -81,8 +80,8 @@ export default function Navbar() {
                     </div>
                     </div>
                     <div className="stockcard_right">
-                    <div className="price">33.25 B</div>
-                    <div className="chg">+750.00 ฿</div>
+                    <div className="price">฿ 33.25</div>
+                    <div className="chg">+฿750.00</div>
                     <div className="pct pct--up">+2.31%</div>
                     </div>
                 </div>
@@ -97,8 +96,8 @@ export default function Navbar() {
                     </div>
                     </div>
                     <div className="stockcard_right">
-                    <div className="price">23.40 B</div>
-                    <div className="chg">+1,200.00 ฿</div>
+                    <div className="price">฿ 23.40</div>
+                    <div className="chg">+฿1,200.00</div>
                     <div className="pct pct--up">+2.63%</div>
                     </div>
                 </div>
@@ -113,8 +112,8 @@ export default function Navbar() {
                     </div>
                     </div>
                     <div className="stockcard_right">
-                    <div className="price">189.00 B</div>
-                    <div className="chg">+2,000.00 ฿</div>
+                    <div className="price">฿ 189.00</div>
+                    <div className="chg">+฿2,000.00</div>
                     <div className="pct pct--up">+2.16%</div>
                     </div>
                 </div>
@@ -129,13 +128,14 @@ export default function Navbar() {
                     </div>
                     </div>
                     <div className="stockcard_right">
-                    <div className="price">142.50 B</div>
-                    <div className="chg">+1,350.00 ฿</div>
+                    <div className="price">฿ 142.50</div>
+                    <div className="chg">+฿1,350.00</div>
                     <div className="pct pct--up">+3.26%</div>
                     </div>
                 </div>
-
-                <button className="invest_add">+ เพิ่มหุ้นใหม่</button>
+                <Link to="/add-investment">
+                    <button className="invest_add">+ เพิ่มหุ้นใหม่</button>
+                </Link>
                 </aside>
 
                 <div className="invest_panel">
@@ -145,24 +145,26 @@ export default function Navbar() {
                         <div className="panel_sub">บริษัท ปตท. จำกัด (มหาชน)</div>
                         <div className="panel_line">
                             <span className="muted">ราคาปัจจุบัน: </span>
-                            <span className="panel_price">33.25 B</span>
-                            <span className="panel_pct">+0.75 (+2.31%)</span>
+                            <span className="panel_price">฿ 33.25</span>
+                            <span className="panel_pct">+฿0.75 (+2.31%)</span>
                         </div>
                         </div>
-                        <button className="btn--pill">ดูรายละเอียด</button>
+                        <Link to="/detail">
+                            <button className="btn--pill">ดูรายละเอียด</button>
+                        </Link>
                     </div>
 
                     <div className="panel_chart">
                         [ พื้นที่สำหรับกราฟจริง ]
                     </div>
 
-                    <div className="panel_legend">
+                    {/* <div className="panel_legend">
                         <span className="dot dot--actual" /> Actual (Real-time)
                         <span className="dot dot--base" /> Baseline @ Login
                         <span className="dot dot--model" /> Predicted (model)
                         <span className="ghost">predictedHigh</span>
                         <span className="ghost">predictedLow</span>
-                    </div>
+                    </div> */}
 
                     <div className="panel_foot">
                         แสดงราคาจริง ณ เวลาเดียวกับข้อมูล | Baseline = ราคาตอนผู้ใช้ล็อกอินครั้งล่าสุด
@@ -172,13 +174,15 @@ export default function Navbar() {
             </div>
         </section>
 
+        <div className="section-divider"></div>
+
         {/* ===== Top Five ===== */}
         <section className="top_five">
             <div className="top_container">
 
                 {/* หัวข้อ + แท็บ */}
                 <div className="top_header">
-                    <h3>5 อันดับสูงสุด</h3>
+                    <h3>TOP 5</h3>
                     <div className="top_tabs">
                         <button className={`tab_btn ${tab === "value" ? "is-active" : ""}`} onClick={() => setTab("value")}>
                             {/* icon มูลค่า (ตัวอย่าง path) */}
@@ -244,7 +248,7 @@ export default function Navbar() {
                                 <div className="price_block">
                                     <div className="price_now_row">
                                         <span className={`arrow_icon ${s.change >= 0 ? "up" : "down"}`}>{s.change >= 0 ? "▲" : "▼"}</span>
-                                        <span className="price_now">฿{s.price.toFixed(2)}</span>
+                                        <span className="price_now">฿ {s.price.toFixed(2)}</span>
                                     </div>
                                     <div className={`price_chg ${s.change >= 0 ? "up" : "down"}`}>
                                         {(s.change >= 0 ? "+" : "") + s.change.toFixed(2)}{" "}
@@ -282,13 +286,17 @@ export default function Navbar() {
                                     <span className="foot_val">32.75</span>
                                 </div>
 
-                                <button className="btn-soft">ดูรายละเอียด →</button>
+                                <Link to="/detail">
+                                    <button className="btn-soft">ดูรายละเอียด →</button>
+                                </Link>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+
+        <div className="section-divider"></div>
 
         <section className="favorite">
             <div className="fav_container">
@@ -299,8 +307,9 @@ export default function Navbar() {
                             <p>หุ้นที่คุณสนใจและติดตาม</p>
                         </div>
                     </div>
-
-                    <button className="fav_all">ดูทั้งหมด →</button>
+                    <Link to="/profile?tab=favorite">
+                        <button className="fav_all">ดูทั้งหมด →</button>
+                    </Link>
                 </div>
 
                 {/* การ์ดแบบเลื่อนแนวนอน */}
@@ -317,7 +326,8 @@ export default function Navbar() {
 
                                     {/* ไอคอนหัวใจขวาบน – เปลี่ยนเป็น <img> ใช้รูปจริงภายหลังได้ */}
                                     {/* ตัวอย่าง: <img className="fav_heart" src="/icons/heart_fill.png" alt="" /> */}
-                                    <span className="fav_heart">♡</span>
+                                    {/* <span className="fav_heart">♡</span> */}
+                                    <img src="/pics/heart.png" className="fav_heart" />
                                 </header>
 
                                 <div className="fav_price">฿ {f.price.toFixed(2)}</div>

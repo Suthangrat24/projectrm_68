@@ -126,8 +126,8 @@ export default function Portfolio() {
         <div className="hero-overlay"></div>
 
         <div className="hero-content">
-          <h1 className="hero-title">พอร์ตการลงทุนของฉัน</h1>
           <p className="hero-eyebrow">จัดการและติดตามการลงทุนของคุณ</p>
+          <h1 className="hero-title">พอร์ตการลงทุนของฉัน</h1>
         </div>
     </section>
 

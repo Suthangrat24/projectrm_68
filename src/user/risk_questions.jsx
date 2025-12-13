@@ -152,34 +152,54 @@ export default function RiskQuestions() {
   const [current, setCurrent] = useState(1);
   const [answers, setAnswers] = useState({});
 
-  const percent = Math.floor(((current - 1) / total) * 100);
+  // เช็คว่ามีข้อไหนยังไม่ได้ตอบ
+  const checkIncomplete = () => {
+    for (let i = 1; i <= total; i++) {
+      if (!answers[i] || answers[i].length === 0) return i;
+    }
+    return null;
+  };
 
+  // -----------------------------
+  // Next Button (กดถัดไป)
+  // -----------------------------
   const handleNext = () => {
-    if (!answers[current]) {
-        Swal.fire({
-            icon: "warning",
-            title: questions[current - 1].type === "text"
-                ? "กรุณากรอกคำตอบ"
-                : "โปรดเลือกคำตอบ",
-            text: questions[current - 1].type === "text"
-                ? "กรุณากรอกคำตอบก่อนกดถัดไป"
-                : "กรุณาเลือกคำตอบก่อนกดถัดไป",
-            confirmButtonColor: "#22c55e"
-        });
-        return;
+    // อนุญาตให้ข้ามข้อได้ → ไม่ขึ้น alert
+    if (current < total) {
+      setCurrent(current + 1);
+      return;
     }
 
-    if (current === total) {
-        navigate("/risk-result");
-        return;
+    // ถ้ากดดูผล → ต้องเช็คว่าทำครบไหม
+    const missing = checkIncomplete();
+    if (missing) {
+      Swal.fire({
+        icon: "warning",
+        title: "ยังตอบคำถามไม่ครบ",
+        text: `กรุณาตอบข้อที่ ${missing} ให้เรียบร้อยก่อนดูผลประเมิน`,
+        confirmButtonColor: "#22c55e",
+      });
+      return;
     }
-    setCurrent(current + 1);
+
+    // ถ้าครบแล้ว ไปผลประเมิน
+    navigate("/risk-result");
   };
 
   const handleBack = () => {
     if (current > 1) setCurrent(current - 1);
   };
 
+  // -----------------------------
+  // ลบคำตอบข้อปัจจุบัน
+  // -----------------------------
+  const clearCurrentAnswer = () => {
+    setAnswers({ ...answers, [current]: undefined });
+  };
+
+  // -----------------------------
+  // Render Choices
+  // -----------------------------
   const renderChoices = () => {
     const q = questions[current - 1];
 
@@ -187,7 +207,12 @@ export default function RiskQuestions() {
     if (q.type === "multiple") {
       return q.choices.map((c, i) => (
         <label key={i} className="risk-option">
-          <span className={`checkbox ${answers[current]?.includes(c) ? "active" : ""}`}></span>
+          <span className={`checkbox ${answers[current]?.includes(c) ? "active" : ""}`}>
+            {answers[current]?.includes(c) && (
+              <img src="/pics/checked.png" className="tick" />
+            )}
+          </span>
+
           <input
             type="checkbox"
             checked={answers[current]?.includes(c) || false}
@@ -204,28 +229,73 @@ export default function RiskQuestions() {
       ));
     }
 
-    // TEXT
+    // TEXT INPUT WITH VALIDATION
     if (q.type === "text") {
+      // ฟังก์ชัน format ใส่ comma
+      const formatNumber = (num) => {
+        if (!num) return "";
+        let parts = num.toString().split(".");
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return parts.join(".");
+      };
+
       return (
         <div className="risk-input-wrap">
           <input
-            type="number"
+            type="text"
             className="risk-input"
             placeholder="กรอกจำนวน..."
             value={answers[current] || ""}
-            onChange={(e) =>
-              setAnswers({ ...answers, [current]: e.target.value })
-            }
+            onChange={(e) => {
+              let v = e.target.value;
+
+              // ลบ comma ก่อนประมวลผล
+              v = v.replace(/,/g, "");
+
+              // ⛔ ห้ามตัวอักษรหรือสัญลักษณ์แปลก ๆ
+              if (!/^[0-9.]*$/.test(v)) return;
+
+              // ========== เงื่อนไขพิเศษแต่ละข้อ ==========
+
+              // ❗ ข้อ 19 → ต้องเป็นจำนวนเต็ม
+              if (q.id === 19) {
+                v = v.replace(/\./g, ""); // ไม่อนุญาตจุด
+                if (v === "") {
+                  setAnswers({ ...answers, [current]: "" });
+                  return;
+                }
+                v = formatNumber(v);
+                setAnswers({ ...answers, [current]: v });
+                return;
+              }
+
+              // ❗ ข้อ 18 & 20 → อนุญาตทศนิยม 2 ตำแหน่ง
+              const parts = v.split(".");
+              if (parts.length > 2) return;
+
+              if (parts[1]) parts[1] = parts[1].slice(0, 2); // จำกัดทศนิยม 2 หลัก
+
+              v = parts.join(".");
+
+              // ใส่ comma
+              let formatted = formatNumber(v);
+
+              setAnswers({ ...answers, [current]: formatted });
+            }}
           />
+
           {q.id === 20 && <span className="unit">%</span>}
         </div>
       );
     }
 
-    // SINGLE
+    // SINGLE CHOICE
     return q.choices.map((c, i) => (
       <label key={i} className="risk-option">
+        
         <span className={`radio ${answers[current] === c ? "active" : ""}`}></span>
+
+
         <input
           type="radio"
           name="choice"
@@ -240,25 +310,67 @@ export default function RiskQuestions() {
 
   return (
     <>
+    <button 
+      className="exit-btn"
+      onClick={() => {
+        Swal.fire({
+          title: "ต้องการออกจากแบบประเมิน?",
+          text: "ข้อมูลที่ตอบไว้จะไม่ถูกบันทึก",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "ออก",
+          cancelButtonText: "ยกเลิก",
+          confirmButtonColor: "#ef4444",
+          cancelButtonColor: "#6b7280"
+        }).then(result => {
+          if (result.isConfirmed) navigate("/");
+        });
+      }}
+    >
+      ✕
+    </button>
     <section className="risk-page">
 
       <h1 className="risk-title">แบบประเมินความเสี่ยงการลงทุนเพื่อใช้ในการแนะนำหุ้น</h1>
       <p className="risk-desc">กรุณาตอบคำถามทั้งหมด 20 ข้อเพื่อให้ระบบแนะนำหุ้นที่เหมาะสมกับคุณ</p>
 
-      <div className="risk-progress-header">
-        <span className="risk-left">ข้อ {current} จาก {total}</span>
-        <span className="risk-right">{percent}% เสร็จสิ้น</span>
+      {/* Progress Circles */}
+      <div className="progress-circles">
+        {[...Array(total)].map((_, i) => {
+          const qNum = i + 1;
+          const answered = answers[qNum];
+
+          return (
+            <div
+              key={i}
+              className={`circle 
+                ${current === qNum ? "current" : ""} 
+                ${answered ? "done" : ""}
+              `}
+              onClick={() => setCurrent(qNum)}
+            >
+              {qNum}
+            </div>
+          );
+        })}
       </div>
 
-      <div className="risk-progress-bar">
-        <div className="risk-progress-fill" style={{ width: `${percent}%` }} />
-      </div>
-
+      {/* Card */}
       <div className="risk-card">
-        <>
-          <h2 className="risk-question">{questions[current - 1].id}. {questions[current - 1].question}</h2>
-          <div className="risk-choices">{renderChoices()}</div>
-        </>
+        <div className="card-header">
+          <h2 className="risk-question">
+            {questions[current - 1].id}. {questions[current - 1].question}
+          </h2>
+
+          {/* ปุ่มเคลียร์คำตอบ */}
+          <button className="clear-btn" onClick={clearCurrentAnswer}>
+            ล้างคำตอบ
+          </button>
+        </div>
+
+        <div className="risk-choices">
+          {renderChoices()}
+        </div>
       </div>
 
       <div className={`risk-card-buttons ${current === 1 ? "first-page" : ""}`}>

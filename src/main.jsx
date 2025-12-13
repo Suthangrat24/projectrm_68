@@ -1,8 +1,9 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
+// import './index.css'
+import './css/admin_css/admin_layout.css'
 import App from './App.jsx'
-import Index from './admin/StockHome.jsx'
+
 import Dashboard from './dashboard.jsx'
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
@@ -11,6 +12,8 @@ import Index2 from './user/index_test.jsx'
 
 import Login from "./user/login.jsx";
 import Register from "./user/register.jsx";
+
+//user
 
 import Navbar from "./component/navbar.jsx";
 import HomePage from './user/index.jsx'
@@ -28,9 +31,50 @@ import Portfolio from "./user/portfolio.jsx";
 import AddInvestment from "./user/add_investment.jsx";
 import EditProfile from "./user/edit_profile.jsx";
 import EditInvestment from "./user/edit_investment";
+
+import RiskIntro from "./user/risk_intro.jsx";
 import RiskQuestions from "./user/risk_questions.jsx";
 import RiskResult from "./user/risk_result.jsx";
 
+// admin
+
+import Sidebar from "./component/sidebar.jsx";
+import Topbar from "./component/topbar.jsx";
+
+import Overview from "./admin/overview.jsx";
+
+import Users from "./admin/users.jsx";
+import AddUser from "./admin/add_user.jsx";
+import UserDetail from "./admin/user_detail.jsx";
+import EditUser from "./admin/edit_user.jsx";
+
+import Questions from "./admin/question.jsx";
+import AddQuestion from "./admin/add_question.jsx";
+import EditQuestion from "./admin/edit_question.jsx";
+
+function UserLayout({ children }) {
+  return (
+    <>
+      <Navbar />
+      <div className="user-wrapper">
+        {children}
+      </div>
+    </>
+  );
+}
+
+function AdminLayout({ children }) {
+  return (
+    <div className="admin-layout">
+      <Sidebar />
+
+      <div className="admin-main">
+        <Topbar />
+        <div className="admin-content">{children}</div>
+      </div>
+    </div>
+  );
+}
 
 createRoot(document.getElementById('root')).render(
   // <StrictMode>
@@ -38,7 +82,6 @@ createRoot(document.getElementById('root')).render(
   // </StrictMode>,
   <BrowserRouter>
 
-    <Navbar />
     <Routes>
       {/* <Route path="/kai" element={<Index />}></Route>
         <Route path="/" element={<Dashboard />}></Route> */}
@@ -46,28 +89,40 @@ createRoot(document.getElementById('root')).render(
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
-      <Route path="/" element={<HomePage />} />
-      <Route path="/stocks" element={<AllStocks />} />
-      <Route path="/detail" element={<StockDetail />}>
+      {/* user */}
+
+      <Route path="/" element={<UserLayout><HomePage /></UserLayout>} />
+      <Route path="/stocks" element={<UserLayout><AllStocks /></UserLayout>} />
+      <Route path="/detail" element={<UserLayout><StockDetail /></UserLayout>} />
         {/*<Route index element={<PriceTab />} />
           <Route path="history" element={<HistoryTab />} />
           <Route path="finance" element={<FinanceTab />} />
           <Route path="holders" element={<HoldersTab />} />*/}
-      </Route>
-      <Route path="/detail/future" element={<StockFuture />} />
+      <Route path="/detail/future" element={<UserLayout><StockFuture /></UserLayout>} />
 
+      <Route path="/profile" element={<UserLayout><Profile /></UserLayout>} />
+      <Route path="/edit-profile" element={<UserLayout><EditProfile /></UserLayout>} />
 
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/edit-profile" element={<EditProfile />} />
+      <Route path="/portfolio" element={<UserLayout><Portfolio /></UserLayout>} />
+      <Route path="/add-investment" element={<UserLayout><AddInvestment /></UserLayout>} />
+      <Route path="/edit-investment" element={<UserLayout><EditInvestment /></UserLayout>} />
 
+      <Route path="/risk" element={<UserLayout><RiskIntro /></UserLayout>} />
+      <Route path="/risk-evaluation" element={<UserLayout><RiskQuestions /></UserLayout>} />
+      <Route path="/risk-result" element={<UserLayout><RiskResult /></UserLayout>} />
 
-      <Route path="/portfolio" element={<Portfolio />} />
-      <Route path="/add-investment" element={<AddInvestment />} />
-      <Route path="/edit-investment" element={<EditInvestment />} />
+      {/* admin */}
 
+      <Route path="/admin/" element={<AdminLayout><Overview /></AdminLayout>} />
 
-      <Route path="/risk-evaluation" element={<RiskQuestions />} />
-      <Route path="/risk-result" element={<RiskResult />} />
+      <Route path="/admin/users" element={<AdminLayout><Users /></AdminLayout>} />
+      <Route path="/admin/user/add" element={<AdminLayout><AddUser /></AdminLayout>} />
+      <Route path="/admin/user/detail" element={<AdminLayout><UserDetail /></AdminLayout>} />
+      <Route path="/admin/user/edit" element={<AdminLayout><EditUser /></AdminLayout>} />
+
+      <Route path="/admin/question" element={<AdminLayout><Questions /></AdminLayout>} />
+      <Route path="/admin/question/add" element={<AdminLayout><AddQuestion /></AdminLayout>} />
+      <Route path="/admin/question/edit" element={<AdminLayout><EditQuestion /></AdminLayout>} />
 
     </Routes>
   </BrowserRouter>

@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import "../css/allstocks.css";
 
 export default function AllStocks() {
-
     const navigate = useNavigate(); 
 
     const MOCK_STOCKS = [
@@ -80,7 +79,7 @@ export default function AllStocks() {
                 <div className="hero-overlay"></div>
 
                 <div className="hero-content">
-                    <p className="hero-eyebrow">ข้อมูลชื่อย่อ</p>
+                    <p className="hero-desc">ข้อมูลชื่อย่อ</p>
                     <h1 className="hero-title">หุ้นไทยทั้งหมด</h1>
                 </div>
             </section>
@@ -90,51 +89,49 @@ export default function AllStocks() {
                 <div className="stocks-filter-shell">
                     <div className="stocks-filter-card">
                         <div className="stocks-filter-header">
-                        {/* ตรงนี้เดี๋ยวค่อยเอา img filter.png มาใส่แทน background ก็ได้ */}
-                        <div className="filter-icon-wrap">
-                            <img src="/pics/filter.png" alt="filter" className="filter-icon" />
-                        </div>
+                            {/* ตรงนี้เดี๋ยวค่อยเอา img filter.png มาใส่แทน background ก็ได้ */}
+                            <div className="filter-icon-wrap">
+                                <img src="/pics/filter.png" alt="filter" className="filter-icon" />
+                            </div>
                         <span className="stocks-filter-title">ค้นหาและกรองข้อมูล</span>
                         </div>
 
                         <div className="stocks-filter-row">
-                        {/* ค้นหาตามชื่อย่อ / ชื่อเต็ม */}
-                        <div className="filter-item grow">
-                            <input
-                            type="text"
-                            className="filter-input"
-                            placeholder="ใส่ชื่อย่อหลักทรัพย์ / ชื่อเต็มหลักทรัพย์"
-                            />
-                        </div>
+                            <div className="filter-item grow">
+                                <input
+                                type="text"
+                                className="filter-input"
+                                placeholder="ใส่ชื่อย่อหลักทรัพย์ / ชื่อเต็มหลักทรัพย์"
+                                />
+                            </div>
 
-                        {/* กลุ่มอุตสาหกรรม / หมวดธุรกิจ */}
-                        <div className="filter-item">
-                            <div className="filter-selectcard">
-                                <span className="filter-select-caption">
-                                    กลุ่มอุตสาหกรรม / หมวดธุรกิจ
-                                </span>
+                            <div className="filter-item">
+                                <div className="filter-selectcard">
+                                    <span className="filter-select-caption">กลุ่มอุตสาหกรรม / หมวดธุรกิจ</span>
 
-                                <div className="filter-select-wrapper">
-                                    <select
-                                        className="filter-select-native"
-                                        defaultValue="all"
-                                    >
-                                        <option value="all">ทั้งหมด</option>
-                                        <option value="SET">SET</option>
-                                        <option value="mai">MAI</option>
-                                    </select>
+                                    <div className="filter-select-wrapper">
+                                        <select className="filter-select-native" defaultValue="all">
+                                            <option value="all">ทั้งหมด</option>
+                                            <option value="SET">SET</option>
+                                            <option value="mai">MAI</option>
+                                        </select>
 
-                                    {/* เว้นที่ไว้สำหรับ icon ลูกศร (drop-down.png) */}
-                                    <img src="/pics/drop-down.png" alt="drop-down" className="filter-select-arrow" />
+                                        <img src="/pics/drop-down.png" alt="drop-down" className="filter-select-arrow" />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {/* ปุ่มค้นหา / ล้างตัวกรอง */}
-                        <div className="filter-item buttons">
-                            <button className="btn-search">ค้นหา</button>
-                            <button className="btn-reset">ล้างตัวกรอง</button>
-                        </div>
+                            <div className="filter-item buttons">
+                                <button className="btn-search">
+                                    <img src="/pics/search_white.png" className="btn-icon" />
+                                    ค้นหา
+                                </button>
+
+                                <button className="btn-reset">
+                                    <img src="/pics/clear_filter.png" className="btn-icon" />
+                                    ล้างตัวกรอง
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -257,15 +254,17 @@ export default function AllStocks() {
                             <td className="col-symbol">
                             <span
                             className="badge-symbol"
-                            style={{ cursor: "pointer" }}          // มี cursor ให้รู้ว่ากดได้
-                            onClick={() => navigate("/detail")}    // เปลี่ยนหน้าไป /detail
+                            style={{ cursor: "pointer" }}
+                            onClick={() => navigate("/detail")}
                             >
                             {s.symbol}
                             </span>
                             </td>
                             <td>{s.name}</td>
-                            <td className="col-market">
-                            <span className="badge-market">{s.market}</span>
+                            <td>
+                                <span className={`badge-market market-${s.market?.toLowerCase() || ""}`}>
+                                    {s.market}
+                                </span>
                             </td>
                             <td>{s.sector}</td>
                             <td>{s.industry}</td>

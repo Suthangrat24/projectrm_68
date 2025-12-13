@@ -27,25 +27,25 @@ export default function EditProfile() {
     <>
     <section className="edit-profile-page">
 
-      {/* ===== HEADER ===== */}
       <div className="edit-header">
 
-        {/* row 1 — back button */}
-        <div className="edit-header-top">
-            <button className="edit-back-btn" onClick={() => navigate("/profile")}>
-              <img src="/pics/back.png" className="edit-back-icon" />
-              ย้อนกลับ
-            </button>
-        </div>
-
-        {/* row 2 — title + save button */}
-        <div className="edit-header-bottom">
-            <h1 className="edit-title">แก้ไขข้อมูลส่วนตัว</h1>
-
-            <button className="edit-save-btn" onClick={handleSave}>
-              บันทึก
-            </button>
+          {/* บรรทัด 1: ปุ่มย้อนกลับ */}
+          <div className="edit-header-back">
+              <button className="edit-back-btn" onClick={() => navigate("/profile")}>
+                  <img src="/pics/back.png" className="edit-back-icon" />
+                  ย้อนกลับ
+              </button>
           </div>
+
+          {/* บรรทัด 2: ชื่อหัวข้อ + ปุ่มบันทึก */}
+          <div className="edit-header-main">
+              <h1 className="edit-title">แก้ไขข้อมูลส่วนตัว</h1>
+
+              <button className="edit-save-btn" onClick={handleSave}>
+                  บันทึก
+              </button>
+          </div>
+
       </div>
 
       {/* ===== MAIN CARD ===== */}

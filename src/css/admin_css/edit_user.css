@@ -1,0 +1,122 @@
+.edit-user-page {
+  padding: 24px 0;
+  color: #fff;
+}
+
+/* ===== HEADER ===== */
+.edit-user-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.edit-user-header h2 {
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-cancel {
+  background: #374151;
+  color: #e5e7eb;
+  padding: 10px 22px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-cancel:hover {
+  background: #4b5563;
+}
+
+.btn-save {
+  background: #10b981;
+  color: white;
+  padding: 10px 22px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-save:hover {
+  background: #0ea371;
+}
+
+/* ===== CARD ===== */
+.edit-user-card {
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 18px;
+  padding: 30px;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 25px;
+  width: 100%;
+}
+
+.edit-profile-img {
+  width: 180px;
+  height: 180px;
+  border-radius: 999px;
+  object-fit: cover;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.btn-change-img {
+  background: #374151;
+  border: 1px solid #4b5563;
+  padding: 8px 18px;
+  border-radius: 10px;
+  color: #e5e7eb;
+  cursor: pointer;
+}
+
+/* ฟอร์ม 2 คอลัมน์ */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.form-group label {
+  font-size: 14px;
+  opacity: 0.85;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.form-group input,
+.form-group select {
+  background: #374151;
+  border: 1px solid #4b5563;
+  padding: 12px;
+  border-radius: 10px;
+  color: #f3f4f6;
+  font-size: 15px;
+  width: 100%;
+}
+
+.form-group input:disabled {
+  opacity: 0.6;
+}
+
+.form-group input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);   /* ทำให้ icon เป็นสีขาว */
+  opacity: 0.8;
+  cursor: pointer;
+}
