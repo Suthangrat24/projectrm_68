@@ -12,14 +12,14 @@ export default function Login() {
     };
 
     const handleLogin = () => {
-        if (!form.email || !form.password) return;
+        // if (!form.email || !form.password) return;
 
-        const mockUser = {
-            name: "User Demo",
-            avatar: "/pics/default-user.png",
-        };
+        // const mockUser = {
+        //     name: "User Demo",
+        //     avatar: "/pics/default-user.png",
+        // };
 
-        localStorage.setItem("user", JSON.stringify(mockUser));
+        // localStorage.setItem("user", JSON.stringify(mockUser));
         navigate("/");
     };
 
@@ -77,7 +77,7 @@ export default function Login() {
 
                     <div className="login-social-row">
                         <div className="login-social-circle">
-                            <img src="/pics/facebook_icon.png" className="login-social-icon" />
+                            <img src="/pics/facebook_icon.png" className="login-social-icon" onClick={() => navigate("/admin")} />
                         </div>
 
                         <div className="login-social-circle">
