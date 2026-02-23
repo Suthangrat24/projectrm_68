@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { getdataUser } from "../fetchapi/call_api_admin";
 import "../css/admin_css/user_detail.css";
 
 export default function AdminUserDetail() {
@@ -7,8 +8,35 @@ export default function AdminUserDetail() {
 
   const [activeTab, setActiveTab] = useState("info");
 
+  const { user_id } = useParams();
+
+  const [user, setUser] = useState([]);
+  useEffect(() => {
+      async function fetchData() {
+          try {
+            const res = await getdataUser(user_id);
+            console.log("res data user: ", res);
+            setUser(res.data);
+          } catch (err) {
+            console.error("Error loading data:", err);
+          }
+      }
+    fetchData();
+  }, [user_id]);
+
+  const getRiskClass = (level) => {
+    switch (level) {
+      case "ต่ำ":
+        return "low";
+      case "ปานกลาง":
+        return "mid";
+      default:
+        return "high";
+    }
+  };
+
   /* ========== SAMPLE USER DATA ========== */
-  const user = {
+  const us = {
     name: "โกจิ",
     lastname: "เบอรี่",
     username: "goji_berry",
@@ -71,12 +99,6 @@ export default function AdminUserDetail() {
   return (
     <div className="admin-user-detail-page">
 
-      {/* BACK */}
-      <div className="admin-back-row" onClick={() => navigate(-1)}>
-        <img src="/pics/back.png" className="admin-back-icon" />
-        <span>ย้อนกลับ</span>
-      </div>
-
       <h1 className="admin-title">ข้อมูลผู้ใช้งาน</h1>
 
       {/* ===== PROFILE HEADER ===== */}
@@ -84,30 +106,36 @@ export default function AdminUserDetail() {
         <div className="profile-top">
 
           <div className="profile-avatar">
-            <img src={user.avatar} className="profile-picture" />
+            <img src={user.photo_path} className="profile-picture" />
           </div>
 
           <div className="profile-info">
-            <h2 className="profile-name">{user.name} {user.lastname}</h2>
-            <p className="profile-username">@{user.username}</p>
+            <h2 className="profile-name">{user.first_name} {user.last_name}</h2>
+            <p className="profile-username">{user.email}</p>
 
             <div className="profile-badges">
-              <span className={`badge badge-${user.riskColor}`}>
-                ความเสี่ยง{user.riskLevel}
+              <span className={`badge badge-${getRiskClass(user.level_name)}`}>
+                ความเสี่ยง{user.level_name}
               </span>
 
               <span className="badge badge-small">
                 <img src="/pics/history.png" alt="history" className="history-icon"/>
-                {user.evaluateCount} ครั้งที่ประเมิน
+                {user.assessment_count} ครั้งที่ประเมิน
               </span>
 
               <span className="badge badge-small">
                 <img src="/pics/favorite.png" alt="favorite" className="favorite-icon"/>
-                {user.favoriteCount} หุ้นรายการโปรด
+                {user.favorite_stock_count} หุ้นรายการโปรด
               </span>
             </div>
 
-            <div className="profile-join">เข้าร่วมเมื่อ {user.joined}</div>
+            <div className="profile-join">
+              เข้าร่วมเมื่อ{" "}
+              {new Date(user.created_at).toLocaleString("th-TH", {
+                dateStyle: "medium",
+                timeStyle: "short",
+              })}
+            </div>
           </div>
         </div>
       </section>
@@ -173,12 +201,12 @@ export default function AdminUserDetail() {
             </div>
 
             <div className="info-grid">
-              <div className="info-field"><label>ชื่อ</label><input value={user.name} readOnly /></div>
-              <div className="info-field"><label>นามสกุล</label><input value={user.lastname} readOnly /></div>
+              <div className="info-field"><label>ชื่อ</label><input value={user.first_name} readOnly /></div>
+              <div className="info-field"><label>นามสกุล</label><input value={user.last_name} readOnly /></div>
               <div className="info-field"><label>อีเมล</label><input value={user.email} readOnly /></div>
-              <div className="info-field"><label>เบอร์โทรศัพท์</label><input value={user.phone} readOnly /></div>
-              <div className="info-field"><label>วันเกิด</label><input value={user.birthday} readOnly /></div>
-              <div className="info-field"><label>เพศ</label><input value={user.gender} readOnly /></div>
+              <div className="info-field"><label>เบอร์โทรศัพท์</label><input value={user.phone_num} readOnly /></div>
+              <div className="info-field"><label>วันเกิด</label><input value={user.birth_date} readOnly /></div>
+              <div className="info-field"><label>เพศ</label><input value={user.gender_name} readOnly /></div>
             </div>
 
           </div>

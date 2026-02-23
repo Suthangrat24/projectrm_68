@@ -10,13 +10,13 @@
 /* ===== MAIN CONTENT ZONE ===== */
 .admin-main {
   margin-left: 260px;
+  
   width: calc(100% - 260px);
+
+
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
 }
-
 
 /* ===== CONTENT SECTION ===== */
 .admin-content {

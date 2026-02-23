@@ -1,6 +1,6 @@
 .portfolio-page {
-  max-width: 1300px;
-  margin: 0 auto;
+  max-width: 1250px;
+  margin: 0 auto 20px;
 }
 
 /* ---------- HERO ---------- */
@@ -30,7 +30,7 @@
 .portfolio-hero .hero-content {
   position: absolute;
   bottom: 70px;
-  left: 40px;
+  left: 70px;
   margin-left: 40px;
   color: white;
 }

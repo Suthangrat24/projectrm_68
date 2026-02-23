@@ -44,37 +44,12 @@ export default function Register() {
                 {/* CARD */}
                 <div className="register-card">
 
-                    <div className="addinv-row-back">
-                        <button className="addinv-back" onClick={() => navigate("/portfolio")}>
-                            <img src="/pics/back.png" alt="back" className="back-icon" />
-                            ย้อนกลับ
-                        </button>
-                    </div>
+
 
                     <h2 className="register-title">สมัครสมาชิก</h2>
 
                     {/* FORM GRID */}
                     <div className="register-grid">
-
-                        {/* ชื่อผู้ใช้ */}
-                        <div className="input-group">
-                            <label>ชื่อผู้ใช้</label>
-                            <input
-                                name="username"
-                                onChange={handleChange}
-                                placeholder="ชื่อผู้ใช้"
-                            />
-                        </div>
-
-                        {/* Birthdate */}
-                        <div className="input-group">
-                            <label>วัน/เดือน/ปี เกิด</label>
-                            <input
-                                name="birthdate"
-                                type="date"
-                                onChange={handleChange}
-                            />
-                        </div>
 
                         {/* ชื่อ */}
                         <div className="input-group">
@@ -96,6 +71,26 @@ export default function Register() {
                             />
                         </div>
 
+                        {/* Email */}
+                        <div className="input-group">
+                            <label>อีเมล</label>
+                            <input
+                                name="email"
+                                onChange={handleChange}
+                                placeholder="อีเมล"
+                            />
+                        </div>
+
+                        {/* Phone */}
+                        <div className="input-group">
+                            <label>เบอร์โทรศัพท์</label>
+                            <input
+                                name="phone"
+                                onChange={handleChange}
+                                placeholder="เบอร์โทรศัพท์"
+                            />
+                        </div>
+
                         {/* เพศ */}
                         <div className="input-group">
                             <label>เพศ</label>
@@ -112,37 +107,15 @@ export default function Register() {
                             </div>
                         </div>
 
-                        {/* Phone */}
+                        {/* Birthdate */}
                         <div className="input-group">
-                            <label>เบอร์โทรศัพท์</label>
+                            <label>วัน/เดือน/ปี เกิด</label>
                             <input
-                                name="phone"
+                                name="birthdate"
+                                type="date"
                                 onChange={handleChange}
-                                placeholder="เบอร์โทรศัพท์"
                             />
                         </div>
-
-                        {/* Email */}
-                        <div className="input-group">
-                            <label>อีเมล</label>
-                            <input
-                                name="email"
-                                onChange={handleChange}
-                                placeholder="อีเมล"
-                            />
-                        </div>
-
-                        {/* Password */}
-                        <div className="input-group">
-                            <label>รหัสผ่าน</label>
-                            <input
-                                type="password"
-                                name="password"
-                                onChange={handleChange}
-                                placeholder="รหัสผ่าน"
-                            />
-                        </div>
-
                     </div>
 
                     {/* BUTTON */}

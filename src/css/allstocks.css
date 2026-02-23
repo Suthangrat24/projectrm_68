@@ -33,7 +33,7 @@
 .hero-content {
   position: absolute;
   bottom: 70px;
-  left: 40px;
+  left: 70px;
   margin-left: 40px;
   color: #fff;
 }
@@ -60,15 +60,15 @@
 
 /* การ์ดเขียวด้านหลัง */
 .stocks-filter-shell {
-  max-width: 1300px;
+  max-width: 1250px;
   margin: 0 auto;               /* ให้อยู่กลาง */
-  background: #00D9A3;          /* เขียว */
+  background: #16A34A;          /* เขียว */
   border-radius: 20px;
   padding: 6px 0 0 0;                  /* ทำให้เขียวโผล่รอบการ์ด */
 }
 
 .stocks-filter-card {
-  max-width: 1300px;         /* ไม่ให้เต็มจอเกินไป */
+  max-width: 1250px;         /* ไม่ให้เต็มจอเกินไป */
   margin: 0 auto;            /* จัดให้อยู่กลางจอ */
   position: relative;
   background: #1F2937;
@@ -109,6 +109,10 @@
   gap: 12px;
 }
 
+.filter-item {
+  position: relative;
+}
+
 .filter-item.grow {
   width: 100%;
 }
@@ -130,26 +134,15 @@
 
 /* ===== กล่อง select แบบมีหัวข้อ ===== */
 
-/* card ครอบทั้งกล่อง */
-.filter-selectcard {
-  width: 100%;
-  height: 50px;
-  border-radius: 12px;
-  border: 1px solid #4b5563;
-  background: #374151;
-  padding: 6px 16px 8px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
 
 /* หัวข้อเล็กด้านบน */
 .filter-select-caption {
+  position: absolute;
+  top: -18px;
+  left: 4px;
   font-size: 12px;
   color: #d1d5db;
-  margin-bottom: 2px;
 }
-
 /* ครอบ select + ลูกศร */
 .filter-select-wrapper {
   position: relative;
@@ -208,7 +201,7 @@
 }
 
 .btn-search {
-    background: #00d9a3;
+    background: #16A34A;
     height: 50px;
     color: white;
     border: none;
@@ -267,7 +260,7 @@
 /* ===== TABLE ===== */
 
 .stocks-table-section {
-  max-width: 1300px;
+  max-width: 1250px;
   margin: 0 auto 20px;            /* จัดให้อยู่กลางจอ */
   position: relative;
 }
@@ -374,7 +367,7 @@
   right: 0;
   bottom: 0;
   height: 4px;
-  background: #00D9A3;
+  background: #16A34A;
 }
 
 /* ตัวจะงอยตรงกลาง */
@@ -388,7 +381,7 @@
   height: 0;
   border-left: 7px solid transparent;
   border-right: 7px solid transparent;
-  border-top: 7px solid #22c55e;
+  border-top: 7px solid #16A34A;
 }
 
 /* เปลี่ยนสีข้อความหัวคอลัมน์เวลา active นิดหน่อย */
@@ -427,7 +420,7 @@
 
 /* เวลา column นี้ถูกเลือกให้ sort → เปลี่ยนสีลูกศรที่ทิศทางตรงกันให้เขียว */
 .sort-icon.is-asc {
-  color: #00D9A3;              /* ให้ทั้งกล่องเป็นเขียว แล้วไปทำข้างล่างทึบ/จาง */
+  color: #16A34A;              /* ให้ทั้งกล่องเป็นเขียว แล้วไปทำข้างล่างทึบ/จาง */
 }
 
 .sort-icon.is-asc::after {     /* ลูกศรล่างให้จางลงหน่อย */
@@ -435,7 +428,7 @@
 }
 
 .sort-icon.is-desc {
-  color: #22c55e;
+  color: #16A34A;
 }
 
 .sort-icon.is-desc::before {   /* ลูกศรบนให้จางลงหน่อย */
@@ -503,7 +496,90 @@
   top: -2px;
 }
 
-/* ===== FOOTER / PAGINATION ===== */
+
+/* ===== Pagination Wrapper ===== */
+.ant-pagination {
+  color: #cbd5e1;
+}
+
+/* ปุ่มปกติ */
+.ant-pagination-item {
+  background: transparent !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+/* ปุ่มปกติ */
+.ant-pagination-item a {
+  color: #cbd5e1 !important;
+  font-size: 12px;
+}
+
+/* hover */
+.ant-pagination-item:hover {
+  border-color: #22c55e !important;
+  color: #22c55e !important;
+}
+
+/* ปุ่ม active */
+.ant-pagination-item-active {
+  background: transparent !important;
+  border-color: #22c55e !important;
+}
+
+.ant-pagination-item-active a {
+  color: #22c55e !important;
+  font-weight: 600;
+}
+
+/* ปุ่ม next / prev */
+.ant-pagination-prev button,
+.ant-pagination-next button {
+  color: #cbd5e1 !important;
+}
+
+.ant-pagination-item-ellipsis {
+  color: #cbd5e1 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ant-pagination-item-ellipsis:hover {
+  color: #22c55e !important;
+}
+
+.ant-pagination-options {
+  color: #cbd5e1 !important;
+}
+
+.ant-pagination-options .ant-select {
+  background: transparent !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #cbd5e1 !important;
+  border-radius: 8px !important;
+}
+
+/* ลูกศร dropdown */
+.ant-pagination-options .ant-select-suffix {
+  color: #cbd5e1 !important;
+}
+
+/* hover */
+.ant-pagination-options .ant-select-selector:hover {
+  border-color: #22c55e !important;
+}
+
+/* ===== Footer Layout ===== */
+.stocks-table-footer {
+  padding: 8px 20px 4px;
+  display: flex;
+  justify-content: flex-end;   /* ชิดขวา */
+  align-items: center;
+  gap: 16px;
+}
+
+/* 
+/* ===== FOOTER / PAGINATION ===== 
 
 .stocks-table-footer {
   padding: 8px 20px 4px;
@@ -549,4 +625,4 @@
 .page-btn:disabled {
   opacity: 0.3;
   cursor: default;
-}
+} */

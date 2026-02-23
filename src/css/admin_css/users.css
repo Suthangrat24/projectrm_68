@@ -122,18 +122,116 @@
   font-size: 14px;
 }
 
+/* ===== USERS TABLE ===== */
+
 .users-table thead {
   background: #374151;
 }
 
 .users-table th {
-  padding: 14px 20px;
-  text-align: left;
-  color: #E5E7EB;
+  position: relative;
+  padding: 14px 16px;
   font-weight: 600;
+  color: #e5e7eb;
   white-space: nowrap;
-  font-size: 14px;
-  border-bottom: 1px solid #1F2937;
+}
+
+/* ===== SORTABLE COLUMN ===== */
+
+.users-table th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* content ในหัวคอลัมน์ */
+.users-table th .th-inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* label */
+.th-label {
+  font-weight: 600;
+}
+
+/* ===== SORT ICON (▲▼) ===== */
+
+.sort-icon {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: #9ca3af; /* default เทา */
+  font-size: 0;
+}
+
+.sort-icon::before,
+.sort-icon::after {
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+}
+
+/* ▲ */
+.sort-icon::before {
+  border-bottom: 6px solid currentColor;
+}
+
+/* ▼ */
+.sort-icon::after {
+  border-top: 6px solid currentColor;
+}
+
+/* ===== ACTIVE SORT ===== */
+
+/* หัวคอลัมน์ที่กำลัง sort */
+.users-table th.sortable.is-sorted {
+  color: #f9fafb;
+}
+
+/* แถบเขียวใต้หัว */
+.users-table th.sortable.is-sorted::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background: #22c55e;
+}
+
+/* จะงอยสามเหลี่ยมตรงกลาง */
+.users-table th.sortable.is-sorted::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -6px;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 7px solid #22c55e;
+}
+
+/* ลูกศรขึ้น */
+.sort-icon.is-asc {
+  color: #22c55e;
+}
+
+.sort-icon.is-asc::after {
+  border-top-color: #6b7280; /* ลูกศรล่างจาง */
+}
+
+/* ลูกศรลง */
+.sort-icon.is-desc {
+  color: #22c55e;
+}
+
+.sort-icon.is-desc::before {
+  border-bottom-color: #6b7280; /* ลูกศรบนจาง */
 }
 
 .users-table td {
@@ -148,30 +246,36 @@
 }
 
 /* Risk Badge */
-.risk-badge {
+.risk-user-badge {
   width: 80px;
   text-align: center;
   padding: 6px 0;
   border-radius: 60px !important;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 400;
   display: inline-block;
 }
 
 /* สีระดับความเสี่ยง */
-.risk-badge.low {
+.risk-user-badge.none {
+  background: rgba(128, 128, 128, 0.15);
+  color: #d3d3d3;
+  border: 1px solid #d3d3d3;
+}
+
+.risk-user-badge.low {
   background: rgba(16, 185, 129, 0.15);
   color: #10B981;
   border: 1px solid #10B981;
 }
 
-.risk-badge.mid {
+.risk-user-badge.mid {
   background: rgba(250, 204, 21, 0.20);
   color: #EAB308;
   border: 1px solid #EAB308;
 }
 
-.risk-badge.high {
+.risk-user-badge.high {
   background: rgba(239, 68, 68, 0.15);
   color: #EF4444;
   border: 1px solid #EF4444;

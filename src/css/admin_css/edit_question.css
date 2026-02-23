@@ -20,24 +20,6 @@
   gap: 12px;
 }
 
-.cancel-btn,
-.save-btn {
-  padding: 8px 18px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-}
-
-.cancel-btn {
-  background: #6b7280;
-  color: white;
-}
-
-.save-btn {
-  background: #10b981;
-  color: white;
-}
-
 .edit-card {
   background: #1f2937;
   border: 1px solid #374151;
@@ -169,4 +151,38 @@
   color: #00D9A3;
   border-color: #00D9A3;
   background: rgba(110, 231, 183, 0.08);
+}
+
+.form-actions-bottom {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.cancel-btn {
+  background: #374151;
+  color: #e5e7eb;
+  padding: 10px 22px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.cancel-btn:hover {
+  background: #4b5563;
+}
+
+.save-btn {
+  background: #10b981;
+  color: white;
+  padding: 10px 22px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.save-btn:hover {
+  background: #0ea371;
 }

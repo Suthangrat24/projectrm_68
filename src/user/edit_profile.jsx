@@ -1,26 +1,104 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { updateUser, getUserById } from "../fetchapi/call_api_user";
+import Swal from "sweetalert2";
 import "../css/edit_profile.css";
 
 export default function EditProfile() {
   const navigate = useNavigate();
 
+  const { user_id } = useParams();
   const [form, setForm] = useState({
-    firstName: "โกจิ",
-    lastName: "เบอร์รี่",
-    email: "gojiberry007@gmail.com",
-    phone: "063-063-6540",
-    birthday: "2005-05-01",
-    gender: "ไม่"
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    birthday: "",
+    gender: ""
   });
+
+  useEffect(() => {
+    async function loadUser() {
+      try {
+        const data = await getUserById(user_id);
+
+        setForm({
+          firstName: data.first_name || "",
+          lastName: data.last_name || "",
+          email: data.email || "",
+          phone: data.phone_num || "",
+          birthday: data.birth_date ? data.birth_date.split("T")[0] : "",
+          gender:
+            data.gender_id === 1
+              ? "ชาย"
+              : data.gender_id === 2
+              ? "หญิง"
+              : "ไม่ระบุ"
+        });
+
+      } catch (err) {
+        console.error("โหลดข้อมูลผู้ใช้ล้มเหลว", err);
+      }
+    }
+
+    if (user_id) {
+      loadUser();
+    }
+  }, [user_id]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSave = () => {
-    alert("บันทึกข้อมูลเรียบร้อย!");
-    navigate("/profile");
+  const handleSave = async () => {
+    const result = await Swal.fire({
+      title: "ยืนยันการบันทึกข้อมูล?",
+      text: "คุณต้องการบันทึกข้อมูลใช่หรือไม่",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "บันทึก",
+      cancelButtonText: "กลับไปแก้ไข",
+      confirmButtonColor: "#22c55e",
+      cancelButtonColor: "#6b7280",
+      reverseButtons: true
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      const payload = {
+        first_name: form.firstName,
+        last_name: form.lastName,
+        email: form.email,
+        phone_num: form.phone,
+        birth_date: form.birthday,
+        gender_id:
+          form.gender === "ชาย"
+            ? 1
+            : form.gender === "หญิง"
+            ? 2
+            : 3
+      };
+
+      await updateUser(user_id, payload);
+
+      await Swal.fire({
+        title: "สำเร็จ!",
+        text: "บันทึกข้อมูลเรียบร้อยแล้ว",
+        icon: "success",
+        confirmButtonColor: "#22c55e"
+      });
+
+      navigate(`/profile/${user_id}`);
+
+    } catch (error) {
+      Swal.fire({
+        title: "เกิดข้อผิดพลาด",
+        text: "ไม่สามารถบันทึกข้อมูลได้",
+        icon: "error",
+        confirmButtonColor: "#ef4444"
+      });
+    }
   };
 
   return (
@@ -28,36 +106,21 @@ export default function EditProfile() {
     <section className="edit-profile-page">
 
       <div className="edit-header">
-
-          {/* บรรทัด 1: ปุ่มย้อนกลับ */}
-          <div className="edit-header-back">
-              <button className="edit-back-btn" onClick={() => navigate("/profile")}>
-                  <img src="/pics/back.png" className="edit-back-icon" />
-                  ย้อนกลับ
-              </button>
-          </div>
-
-          {/* บรรทัด 2: ชื่อหัวข้อ + ปุ่มบันทึก */}
-          <div className="edit-header-main">
-              <h1 className="edit-title">แก้ไขข้อมูลส่วนตัว</h1>
-
-              <button className="edit-save-btn" onClick={handleSave}>
-                  บันทึก
-              </button>
-          </div>
-
+        <div className="edit-header-main">
+            <h1 className="edit-title">แก้ไขข้อมูลส่วนตัว</h1>
+            <button className="edit-save-btn" onClick={handleSave}>
+                บันทึก
+            </button>
+        </div>
       </div>
 
-      {/* ===== MAIN CARD ===== */}
       <div className="edit-card">
-
         <div className="edit-section-title">
           <img src="/pics/user.png" className="section-icon" />
           <span>ข้อมูลส่วนตัว</span>
         </div>
 
         <div className="edit-grid">
-
           <div className="field">
             <label>ชื่อ</label>
             <input
@@ -112,7 +175,7 @@ export default function EditProfile() {
           <div className="field">
             <label>เพศ</label>
 
-            <div className="select-wrapper">
+            <div className="select-wrapper-edit">
               <select
                 name="gender"
                 value={form.gender}
@@ -131,7 +194,6 @@ export default function EditProfile() {
         </div>
       </div>
 
-      {/* ===== CHANGE PASSWORD CARD ===== */}
       <div className="edit-card password-card">
 
         <div className="edit-section-title">

@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
 .main-nav {
+  position: fixed;      /* ทำให้ลอยอยู่ด้านบน */
+  top: 0;
+  left: 0;
+  z-index: 999; 
   background: #1F2937;            /* ดำอมฟ้าแบบในหน้าอื่น */
   color: #ffffff;
   width: 100%;
@@ -60,7 +64,7 @@
 /* แท็บที่ active – แบบเม็ดเขียวใน figma */
 .nav-link.is-active {
   background: #4B5563;
-  color: #00d9a3;
+  color: #4ADE80;
   transform: translateY(-1px);
 }
 
@@ -103,6 +107,59 @@
   color: #9CA3AF;
 }
 
+/* ตัวครอบ search + dropdown */
+.nav-search-wrapper {
+  position: relative;   /* ⬅️ จุดสำคัญที่สุด */
+}
+
+/* กล่อง dropdown */
+.nav-search-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 360px;
+
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 14px;
+  box-shadow: 0 20px 40px rgba(0,0,0,.45);
+  z-index: 9999;
+
+  overflow: hidden;
+}
+
+/* item */
+.search-item {
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.search-item:hover {
+  background: #111827;
+}
+
+.nav-login {
+  background-color: #16A34A; /* สีเหลือง */
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.nav-login:hover {
+  transform: scale(1.05);
+}
+
+.nav-login:focus {
+  outline: none;
+}
+
 /* user ขวาสุด */
 .nav-user {
   display: flex;
@@ -132,24 +189,31 @@
 }
 
 .nav-username {
-  font-size: 16px;
-  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  color: #fff;
 }
 
-/* ==== ส่วนเดิมของ navbar.css ไม่ลบ ==== */
-/* ... (โค้ดเดิมทั้งหมดคงไว้) ... */
-
+.dropdown-icon {
+  width: 12px;
+  height: 12px;
+  object-fit: contain;
+  opacity: 0.8;
+}
 
 /* ============= DROPDOWN ============= */
 .user-dropdown {
   position: absolute;
   top: 70px;
-  right: 24px;
+  right: 106px;
   width: 220px;
+
   background: #1f2937;
   border: 1px solid #374151;
   border-radius: 14px;
-  padding: 10px 0;
+  padding: 12px;
   box-shadow: 0 12px 28px rgba(0,0,0,0.35);
   animation: fadeIn 0.15s ease-in-out;
   z-index: 999;

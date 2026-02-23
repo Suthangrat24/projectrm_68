@@ -25,14 +25,6 @@ export default function StockFuture() {
     <section className="future-page">
       {/* ===== แถวบนสุด: ย้อนกลับ + เลือกระยะเวลา ===== */}
       <div className="future-top-row">
-        <button className="back-btn" onClick={() => navigate(-1)}>
-          <img
-            src="/pics/back.png"
-            alt="ย้อนกลับ"
-            className="back-icon-img"
-          />
-          <span>ย้อนกลับ</span>
-        </button>
 
         <div className="future-horizon">
           <span className="future-horizon-label">ระยะเวลาที่ดูแนวโน้ม</span>
@@ -214,60 +206,60 @@ export default function StockFuture() {
 
             {/* ขวา: แนวรับ–แนวต้าน (ดีไซน์เหมือนการ์ด filter + การ์ดข้อมูลการซื้อขาย) */}
             {/* ขวา: แนวรับ–แนวต้าน (ใช้โครงแบบ stocks-filter-card) */}
-<aside className="future-support-section">
-  <div className="future-support-shell">
-    <div className="future-support-card">
+          <aside className="future-support-section">
+            <div className="future-support-shell">
+              <div className="future-support-card">
 
-      {/* Header เหมือน filter-card */}
-      <div className="future-support-header">
-        <div className="future-support-title">แนวรับ–แนวต้าน</div>
-      </div>
+                {/* Header เหมือน filter-card */}
+                <div className="future-support-header">
+                  <div className="future-support-title">แนวรับ–แนวต้าน</div>
+                </div>
 
-      {/* Body */}
-      <div className="future-support-body">
-        <div className="support-grid">
+                {/* Body */}
+                <div className="future-support-body">
+                  <div className="support-grid">
 
-          {/* แนวรับหลัก */}
-          <div className="support-tile">
-            <span className="support-tag support-tag--support">แนวรับ</span>
-            <div className="support-price-block">
-              <div className="support-price support-price--up">฿30.59</div>
-              <div className="support-sub">แนวรับหลัก</div>
+                    {/* แนวรับหลัก */}
+                    <div className="support-tile">
+                      <span className="support-tag support-tag--support">แนวรับ</span>
+                      <div className="support-price-block">
+                        <div className="support-price support-price--up">฿30.59</div>
+                        <div className="support-sub">แนวรับหลัก</div>
+                      </div>
+                    </div>
+
+                    {/* แนวรับรอง */}
+                    <div className="support-tile">
+                      <span className="support-tag support-tag--support">แนวรับ</span>
+                      <div className="support-price-block">
+                        <div className="support-price support-price--up">฿28.26</div>
+                        <div className="support-sub">แนวรับรอง</div>
+                      </div>
+                    </div>
+
+                    {/* แนวต้านหลัก */}
+                    <div className="support-tile">
+                      <span className="support-tag support-tag--resist">แนวต้าน</span>
+                      <div className="support-price-block">
+                        <div className="support-price support-price--down">฿35.91</div>
+                        <div className="support-sub">แนวต้านหลัก</div>
+                      </div>
+                    </div>
+
+                    {/* แนวต้านระยะกลาง */}
+                    <div className="support-tile">
+                      <span className="support-tag support-tag--resist">แนวต้าน</span>
+                      <div className="support-price-block">
+                        <div className="support-price support-price--down">฿38.24</div>
+                        <div className="support-sub">แนวต้านระยะกลาง</div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-
-          {/* แนวรับรอง */}
-          <div className="support-tile">
-            <span className="support-tag support-tag--support">แนวรับ</span>
-            <div className="support-price-block">
-              <div className="support-price support-price--up">฿28.26</div>
-              <div className="support-sub">แนวรับรอง</div>
-            </div>
-          </div>
-
-          {/* แนวต้านหลัก */}
-          <div className="support-tile">
-            <span className="support-tag support-tag--resist">แนวต้าน</span>
-            <div className="support-price-block">
-              <div className="support-price support-price--down">฿35.91</div>
-              <div className="support-sub">แนวต้านหลัก</div>
-            </div>
-          </div>
-
-          {/* แนวต้านระยะกลาง */}
-          <div className="support-tile">
-            <span className="support-tag support-tag--resist">แนวต้าน</span>
-            <div className="support-price-block">
-              <div className="support-price support-price--down">฿38.24</div>
-              <div className="support-sub">แนวต้านระยะกลาง</div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</aside>
+          </aside>
 
           </section>
 
@@ -362,17 +354,7 @@ export default function StockFuture() {
             </div>
           </section>
 
-          <section className="future-warning">
-            <img src="/pics/warning.png" alt="warning" className="warning-icon" />
-            <div className="future-warning-text">
-              <div className="future-warning-title">ข้อควรระวัง</div>
-              <div className="future-warning-des">
-                การพยากรณ์นี้เป็นเพียงการประมาณการจากแบบจำลองทางสถิติและไม่รับประกันความแม่นยำ
-                ผู้ลงทุนควรศึกษาข้อมูลเพิ่มเติม วิเคราะห์ปัจจัยต่าง ๆ
-                และปรึกษาผู้เชี่ยวชาญก่อนตัดสินใจลงทุน
-              </div>
-            </div>
-          </section>
+          
         </>
       )}
     </section>

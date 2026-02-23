@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+
 import "../css/index.css"; 
 
 export default function Navbar() {
@@ -32,10 +33,12 @@ export default function Navbar() {
         <section className="rec">
             <div className="rec_container">
                 <div className="rec_text">
-                    <h1 className="rec_title">แนะนำหุ้นที่เหมาะสมกับคุณในการลงทุนระยะยาว</h1>
+                    <h1 className="rec_title">แนะนำหุ้นที่เหมาะสมกับคุณ</h1>
+                    <h1 className="rec_title t2">ในการลงทุนระยะยาว</h1>
                     <p className="rec_des">
-                        จากข้อมูลที่คุณกรอกในแบบประเมิน ระบบจะวิเคราะห์โปรไฟล์และพฤติกรรมการลงทุนของคุณ<br />
-                        และแนะนำหุ้นที่ตรงกับคุณ เพื่อเลือกหุ้นที่สอดคล้องกับผลการประเมิน ช่วยให้คุณตัดสินใจลงทุนได้ง่ายและมั่นใจยิ่งขึ้น
+                        จากข้อมูลที่คุณกรอกในแบบประเมิน ระบบจะวิเคราะห์โปรไฟล์การลงทุนและพฤติกรรมการลงทุนของคุณ<br/>
+                        โดยการนำข้อมูลเหล่านี้มาประมวลผลเพื่อแนะนำหุ้นที่ตรงกับความต้องการและเป้าหมายการลงทุนของคุณ<br/>
+                        เพื่อให้คุณสามารถเลือกหุ้นที่เหมาะสมกับผลการประเมิน ช่วยเพิ่มความมั่นใจในการตัดสินใจลงทุนชองคุณ
                     </p>
                     <p className="rec_note">
                         หมายเหตุ:
