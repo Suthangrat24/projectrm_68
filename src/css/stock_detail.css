@@ -1,5 +1,6 @@
 .detail-page {
-  padding: 24px 100px 40px;
+  max-width: 1250px;
+  margin: 30px auto;
 }
 
 /* ย้อนกลับ */
@@ -46,11 +47,10 @@
   width: 72px;
   height: 72px;
   border-radius: 26px;
-  background: #020617;
+  background: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #111827;
 }
 
 .detail-logo-mark {
@@ -88,17 +88,36 @@
   font-weight: 700;
 }
 
+.detail-status-badge mid {
+  background: #CA8A04;
+  color: #fff;
+}
+
+.detail-status-badge low {
+  background: #CA8A04;
+  color: #fff;
+}
+
+.detail-status-badge high {
+  background: #EF4444;
+  color: #fff;
+}
+
 .detail-heart {
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
+  background: none;
   border: none;
-  background: #0f172a;
-  color: #f97373;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 0;
+}
+
+.detail-heart-icon {
+  width: 28px;
+  height: 28px;
+  transition: transform 0.2s ease;
+}
+
+.detail-heart-icon:hover {
+  transform: scale(1.15);
 }
 
 .detail-fullname {
@@ -142,6 +161,7 @@
   gap: 6px;
 }
 
+
 .detail-price-arrow {
   font-size: 20px;
 }
@@ -169,6 +189,10 @@
 
 .detail-change.down {
   color: #ef4444;
+}
+
+.detail-change.neutral {
+  color: #9ca3af;
 }
 
 /* meta ปริมาณ/มูลค่า */
@@ -236,7 +260,6 @@
   background: #1F2937;
   border-radius: 18px;
   border: 1px solid #374151;
-  padding: 18px 20px;
 }
 
 /* ===== CHART CARD ===== */
@@ -246,17 +269,13 @@
   padding: 18px 20px 14px;
 }
 
-.chart-header {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-}
-
 .chart-title {
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 600;
+  color: #e5e7eb;
+  margin-bottom: 10px;
 }
+
 /* กล่องสองฝั่ง: ซ้าย(ราคา) | ขวา(ประสิทธิภาพ) */
 .chart-two-col {
   display: flex;
@@ -320,8 +339,7 @@
 
 /* body กราฟ */
 .chart-body {
-  margin-top: 14px;
-  flex: 1;
+  padding: 10px 0 0 0;
 }
 
 .chart-placeholder {
@@ -330,9 +348,10 @@
   border: 1px dashed #334155;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; 
   color: #6b7280;
   font-size: 13px;
+  padding: 30px 20px 30px 0; 
 }
 
 /* footer กราฟ */
@@ -399,13 +418,13 @@
 }
 
 .info-inner {
-  padding: 16px 18px 14px;
+  padding: 16px 20px 14px;
 }
 
 .info-header {
   font-size: 16px;
   font-weight: 700;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 /* 4 ช่อง: ล่าสุด / เปิด / สูงสุด / ต่ำสุด */
@@ -461,8 +480,8 @@
 .ratio-row {
   display: flex;
   justify-content: space-between;
-  font-size: 13px;
-  margin-top: 10px;
+  margin: 16px 0;
+  font-size: 14px;
 }
 
 .ratio-label {
@@ -557,11 +576,11 @@
   color: #e5e7eb;
 }
 
-.history-up {
-  color: #22c55e;
+.text-up {
+  color: #1EFF39;
 }
-.history-down {
-  color: #ef4444;
+.text-down {
+  color: #F40303;
 }
 
 /* footer ด้านล่างตาราง */
@@ -623,9 +642,6 @@
 .detail-right-col .detail-card {
   height: 100%;
 }
-
-
-
 
 .fin-wrapper {
   padding: 20px 0;

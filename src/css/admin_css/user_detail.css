@@ -3,18 +3,6 @@
   color: #e5e7eb;
 }
 
-.admin-back-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  margin-bottom: 12px;
-}
-
-.admin-back-icon {
-  width: 20px;
-}
-
 .admin-title {
   font-size: 28px;
   font-weight: 700;
@@ -83,7 +71,12 @@
 
 .badge-low {
   background: #22c55e;
-  color: #072e12;
+  color: white;
+}
+
+.badge-high {
+  background: #EF4444;
+  color: white;
 }
 
 .badge-small {

@@ -93,11 +93,11 @@
   color: #fff;
 }
 
-.cat-ฐานะการเงิน { background: #0EA5E9; }
-.cat-เป้าหมาย { background: #10B981; }
-.cat-ความเสี่ยง { background: #F59E0B; }
-.cat-พฤติกรรม { background: #A78BFA; }
-.cat-ความรู้ { background: #EF4444; }
+.cat-financial { background: #0EA5E9; }
+.cat-goal { background: #10B981; }
+.cat-risk { background: #F59E0B; }
+.cat-behavior { background: #A78BFA; }
+.cat-knowledge { background: #EF4444; }
 
 
 .q-question {

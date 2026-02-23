@@ -12,10 +12,6 @@ export default function Sidebar() {
 
   return (
     <aside className="admin-sidebar">
-      <div className="sidebar-title">
-        <img src="/pics/logo_test.png" className="side-logo" />
-        <span>ระบบแนะนำหุ้นระยะยาว</span>
-      </div>
 
       <nav className="side-menu">
 

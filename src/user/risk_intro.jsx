@@ -139,17 +139,6 @@ export default function RiskIntro() {
             </label>
           </div>
 
-          {/* START BUTTON */}
-          <div className="intro-start-wrap">
-            <button
-              className={`intro-start-btn ${agree ? "active" : ""}`}
-              disabled={!agree}
-              onClick={() => agree && navigate("/risk-evaluation")}
-            >
-              เริ่มทำแบบประเมิน
-            </button>
-          </div>
-
           {/* WARNING */}
           <div className="intro-warning">
             <img src="/pics/warning.png" className="warning-icon" />
@@ -161,6 +150,17 @@ export default function RiskIntro() {
                 ผู้ลงทุนควรศึกษาข้อมูลเพิ่มเติม และปรึกษาผู้เชี่ยวชาญก่อนตัดสินใจลงทุนจริง
               </p>
             </div>
+          </div>
+
+          {/* START BUTTON */}
+          <div className="intro-start-wrap">
+            <button
+              className={`intro-start-btn ${agree ? "active" : ""}`}
+              disabled={!agree}
+              onClick={() => agree && navigate("/risk-evaluation")}
+            >
+              เริ่มทำแบบประเมิน
+            </button>
           </div>
 
         </div>

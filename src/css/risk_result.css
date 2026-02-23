@@ -3,7 +3,8 @@
 /* ===================== */
 
 .risk-result-page {
-  padding: 40px 100px;
+  max-width: 1250px;
+  margin: 40px auto;
   font-family: "Prompt", sans-serif;
   color: #fff;
 }
@@ -79,13 +80,13 @@
 }
 
 .risk-row-2 {
-  margin-top: 6px;
+  margin: 20px 0;
   display: flex;
   align-items: center;
   gap: 14px;
 }
 
-.risk-badge { 
+.risk-ans-badge { 
     padding: 6px 16px; 
     border-radius: 20px; 
     font-size: 14px; 
@@ -97,8 +98,8 @@
   background: #ef4444;
 }
 
-.risk-desc {
-    padding-top: 30px;
+.risk-ans-desc {
+
   color: #cbd5e1;
   font-size: 15px;
 }
@@ -261,8 +262,9 @@
   background: #f59e0b;
 }
 
-.risk-badge {
+.risk-result-badge {
   padding: 4px 12px;
+  margin-left: 10px;
   font-size: 12px;
   border-radius: 999px;
 }

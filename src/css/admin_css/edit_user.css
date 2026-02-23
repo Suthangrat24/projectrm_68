@@ -96,7 +96,7 @@
 .form-group label {
   font-size: 14px;
   opacity: 0.85;
-  margin-bottom: 6px;
+
   display: block;
 }
 
@@ -111,8 +111,55 @@
   width: 100%;
 }
 
-.form-group input:disabled {
+.form-group input:disabled,
+.form-group select:disabled {
   opacity: 0.6;
+}
+
+/* wrapper */
+.filter-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* select */
+.filter-select-native {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background: #374151;
+  color: #e5e7eb;
+  border: 1px solid #4b5563;
+  border-radius: 12px;
+  padding: 12px 44px 12px 14px; /* เผื่อที่ลูกศร */
+  font-size: 15px;
+}
+
+/* disabled = เหมือน input */
+.filter-select-native:disabled {
+  background: #2f3948;
+  color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+/* ลูกศร */
+.filter-select-arrow {
+  position: absolute;
+  right: 18px;          /* 👈 ขยับซ้าย/ขวาตรงนี้ */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+/* disabled arrow */
+.filter-select-native:disabled ~ .filter-select-arrow {
+  opacity: 0.4;
 }
 
 .form-group input[type="date"]::-webkit-calendar-picker-indicator {

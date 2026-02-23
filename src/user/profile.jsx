@@ -1,10 +1,30 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useParams } from "react-router-dom";
+import { getUserById } from "../fetchapi/call_api_user";
 import "../css/profile.css";
 
 export default function Profile() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const { user_id } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const data = await getUserById(user_id);
+        setUser(data);
+      } catch (err) {
+        console.error("โหลดข้อมูลผู้ใช้ล้มเหลว", err);
+      }
+    }
+    load();
+  }, [user_id]);
+
+  const handleTab = (newTab) => {
+    setSearchParams({ tab: newTab });
+  };
 
   // อ่าน tab จาก URL
   const tabFromURL = searchParams.get("tab");
@@ -15,21 +35,20 @@ export default function Profile() {
     if (tabFromURL) setActiveTab(tabFromURL);
   }, [tabFromURL]);
 
-  /* user data */
-  const userInfo = {
-    name: "โกจิ",
-    lastname: "เบอรี่",
-    username: "goji_berry",
-    riskLevel: "ปานกลาง",
-    riskLevelColor: "mid", // mid | low | high
-    email: "gojiberry007@gmail.com",
-    phone: "063-063-6540",
-    gender: "ไก่",
-    birthday: "01/05/2548",
-    joinDate: "01/01/2567",
-    evaluateCount: 2,
-    favoriteCount: 4,
-  };
+  if (!user) return <div className="loading">กำลังโหลด...</div>;
+
+    const getRiskClass = (level) => {
+        switch (level) {
+        case "ตํ่า":
+            return "low";
+        case "ปานกลาง":
+            return "mid";
+        default:
+            return "high";
+        }
+    };
+    console.log("risk level:", user.level_name);
+    console.log("class:", getRiskClass(user.level_name));
 
   /* history data */
   const riskHistory = [
@@ -93,11 +112,6 @@ export default function Profile() {
 
         {/* ===== BACK HEADER ===== */}
         <div className="back-header">
-            <div className="back-row" onClick={() => navigate(-1)}>
-                <img src="/pics/back.png" className="back-arrow" />
-                <span className="back-text">ย้อนกลับ</span>
-            </div>
-
             <h1 className="page-main-title">โปรไฟล์ผู้ใช้</h1>
         </div>
 
@@ -105,26 +119,32 @@ export default function Profile() {
         <section className="profile-header-card">
             <div className="profile-top">
             <div className="profile-avatar">
-                <img src="/pics/marckris.jpg" alt="profile-picture" className="profile-picture" />
+                <img src={user.photo_path || "/pics/default.png"} alt="profile-picture" className="profile-picture" />
             </div>
 
             <div className="profile-info">
-                <h2 className="profile-name">{userInfo.name} {userInfo.lastname}</h2>
-                <p className="profile-username">@{userInfo.username}</p>
+                <h2 className="profile-name">{user.first_name} {user.last_name}</h2>
+                <p className="profile-username">{user.email}</p>
 
                 <div className="profile-badges">
-                <span className="badge badge-mid">ความเสี่ยง{userInfo.riskLevel}</span>
+                <span className={`badge badge-${getRiskClass(user.level_name)}`}>ความเสี่ยง{user.level_name}</span>
                 <span className="badge badge-small">
                     <img src="/pics/history.png" alt="history" className="history-icon" />
-                    {userInfo.evaluateCount} ครั้งที่ประเมิน
+                    {user.assessment_count} ครั้งที่ประเมิน
                 </span>
                 <span className="badge badge-small">
                     <img src="/pics/favorite.png" alt="favorite" className="favorite-icon" />
-                    {userInfo.favoriteCount} หุ้นรายการโปรด
+                    {user.favorite_stock_count} หุ้นรายการโปรด
                 </span>
                 </div>
 
-                <div className="profile-join">เข้าร่วมเมื่อ {userInfo.joinDate}</div>
+                <div className="profile-join">
+                    เข้าร่วมเมื่อ{" "}
+                    {new Date(user.created_at).toLocaleString("th-TH", {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                    })}
+                </div>
             </div>
             </div>
         </section>
@@ -189,27 +209,20 @@ export default function Profile() {
                             <span className="profile-section-title">ข้อมูลส่วนตัว</span>
                         </div>
 
-                        <button className="profile-user-edit-btn" onClick={() => navigate("/edit-profile")}>
+                        <button className="profile-user-edit-btn" onClick={() => navigate(`/profile/edit/${user_id}`)}>
                             <img src="/pics/edit.png" className="edit-icon" />
                             แก้ไข
-                            </button>
-
-                        {/* <div className="profile-section-right">
-                            <button className="profile-edit-btn" onClick={() => navigate("/edit-profile")}>
-                            <img src="/pics/edit.png" className="edit-icon" />
-                            แก้ไข
-                            </button>
-                        </div> */}
+                        </button>
                     </div>
 
                     {/* ช่องกรอกข้อมูล */}
                     <div className="info-grid">
-                        <div className="info-field"><label>ชื่อ</label><input value={userInfo.name} readOnly /></div>
-                        <div className="info-field"><label>นามสกุล</label><input value={userInfo.lastname} readOnly /></div>
-                        <div className="info-field"><label>อีเมล</label><input value={userInfo.email} readOnly /></div>
-                        <div className="info-field"><label>เบอร์โทรศัพท์</label><input value={userInfo.phone} readOnly /></div>
-                        <div className="info-field"><label>วันเกิด</label><input value={userInfo.birthday} readOnly /></div>
-                        <div className="info-field"><label>เพศ</label><input value={userInfo.gender} readOnly /></div>
+                        <div className="info-field"><label>ชื่อ</label><input value={user.first_name} readOnly /></div>
+                        <div className="info-field"><label>นามสกุล</label><input value={user.last_name} readOnly /></div>
+                        <div className="info-field"><label>อีเมล</label><input value={user.email} readOnly /></div>
+                        <div className="info-field"><label>เบอร์โทรศัพท์</label><input value={user.phone_num} readOnly /></div>
+                        <div className="info-field"><label>วันเกิด</label><input value={user.birth_date} readOnly /></div>
+                        <div className="info-field"><label>เพศ</label><input value={user.gender_name} readOnly /></div>
                     </div>
 
                 </div>

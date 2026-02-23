@@ -1,54 +1,36 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getStocks } from "../fetchapi/call_api_user";
+import { Pagination } from "antd";
+import "antd/dist/reset.css";
 import "../css/allstocks.css";
 
 export default function AllStocks() {
     const navigate = useNavigate(); 
 
-    const MOCK_STOCKS = [
-        {
-            symbol: "24CS",
-            name: "บริษัท ทเวนตี้ โฟร์ คอน แอนด์ ซัพพลาย จำกัด (มหาชน)",
-            market: "mai",
-            sector: "PROPCON",
-            industry: "-",
-        },
-        {
-            symbol: "2S",
-            name: "บริษัท 2 เอส เมทัล จำกัด (มหาชน)",
-            market: "SET",
-            sector: "INDUS",
-            industry: "STEEL",
-        },
-        {
-            symbol: "3BBIF",
-            name: "กองทุนรวมโครงสร้างพื้นฐานบรอดแบนด์อินเทอร์เน็ต จัสมิน",
-            market: "SET",
-            sector: "TECH",
-            industry: "ICT",
-        },
-        {
-            symbol: "A",
-            name: "บริษัท อริยะ พร็อพเพอร์ตี้ จำกัด (มหาชน)",
-            market: "SET",
-            sector: "PROPCON",
-            industry: "PROP",
-        },
-        {
-            symbol: "A5",
-            name: "บริษัท แอสเซท ไฟว์ กรุ๊ป จำกัด (มหาชน)",
-            market: "SET",
-            sector: "PROPCON",
-            industry: "PROP",
-        },
-    ];
+    const [stock, setStock] = useState([]);
+    
+    useEffect(() => {
+        async function fetchStock() {
+            try {
+                const res = await getStocks();
+                console.log("res data stock:", res);
+                setStock(res.data);
+            } catch (err) {
+                console.error("Error loading data:", err);
+            }
+        }
+    
+        fetchStock();
+    }, []);
+         
 
     // ===== state สำหรับ sort =====
     const [sortField, setSortField] = useState("symbol"); // column ที่ใช้ sort
     const [sortDir, setSortDir] = useState("asc");        // 'asc' | 'desc'
 
     const sortedStocks = useMemo(() => {
-        const data = [...MOCK_STOCKS];
+        const data = [...stock];
 
         data.sort((a, b) => {
         const av = String(a[sortField] ?? "");
@@ -60,7 +42,7 @@ export default function AllStocks() {
         });
 
         return data;
-    }, [sortField, sortDir]);
+    }, [stock, sortField, sortDir]);
 
     const handleSort = (field) => {
         if (sortField === field) {
@@ -71,6 +53,30 @@ export default function AllStocks() {
         setSortDir("asc");
         }
     };
+
+    const [keyword, setKeyword] = useState("");
+    const [sector, setSector] = useState("all");
+
+    const filteredStocks = sortedStocks.filter((s) => {
+        const matchKeyword =
+            !keyword ||
+            s.symbol.toLowerCase().includes(keyword.toLowerCase()) ||
+            s.stock_name.toLowerCase().includes(keyword.toLowerCase());
+
+        const matchSector =
+            sector === "all" || s.market_type_name === sector;
+
+        return matchKeyword && matchSector;
+    });
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(20);
+
+    const paginatedStocks = useMemo(() => {
+        const start = (currentPage - 1) * pageSize;
+        const end = start + pageSize;
+        return filteredStocks.slice(start, end);
+    }, [filteredStocks, currentPage, pageSize]);
 
     return (
         <>
@@ -99,25 +105,28 @@ export default function AllStocks() {
                         <div className="stocks-filter-row">
                             <div className="filter-item grow">
                                 <input
-                                type="text"
-                                className="filter-input"
-                                placeholder="ใส่ชื่อย่อหลักทรัพย์ / ชื่อเต็มหลักทรัพย์"
+                                    className="filter-input"
+                                    placeholder="ใส่ชื่อย่อหลักทรัพย์ / ชื่อเต็มหลักทรัพย์"
+                                    value={keyword}
+                                    onChange={(e) => setKeyword(e.target.value)}
                                 />
                             </div>
 
                             <div className="filter-item">
-                                <div className="filter-selectcard">
-                                    <span className="filter-select-caption">กลุ่มอุตสาหกรรม / หมวดธุรกิจ</span>
+                                <span className="filter-select-caption">กลุ่มอุตสาหกรรม / หมวดธุรกิจ</span>
 
-                                    <div className="filter-select-wrapper">
-                                        <select className="filter-select-native" defaultValue="all">
-                                            <option value="all">ทั้งหมด</option>
-                                            <option value="SET">SET</option>
-                                            <option value="mai">MAI</option>
-                                        </select>
+                                <div className="filter-select-wrapper">
+                                    <select
+                                        className="filter-select-native"
+                                        value={sector}
+                                        onChange={(e) => setSector(e.target.value)}
+                                    >
+                                        <option value="all">ทั้งหมด</option>
+                                        <option value="SET">SET</option>
+                                        <option value="mai">MAI</option>
+                                    </select>
 
-                                        <img src="/pics/drop-down.png" alt="drop-down" className="filter-select-arrow" />
-                                    </div>
+                                    <img src="/pics/drop-down.png" alt="drop-down" className="filter-select-arrow" />
                                 </div>
                             </div>
 
@@ -141,7 +150,7 @@ export default function AllStocks() {
             <section className="stocks-table-section">
                 <div className="stocks-table-wrapper">
                 <div className="stocks-result-text">
-                    ผลลัพธ์การค้นหา {sortedStocks.length} รายการ
+                    ผลลัพธ์การค้นหา {filteredStocks.length} รายการ
                 </div>
 
                 <div className="table-scroll">
@@ -173,7 +182,7 @@ export default function AllStocks() {
                                 "sortable " +
                                 (sortField === "name" ? `is-sorted ${sortDir}` : "")
                             }
-                            onClick={() => handleSort("name")}
+                            onClick={() => handleSort("stock_name")}
                             >
                             <div className="th-inner">
                                 <span className="th-label">ชื่อเต็มหลักทรัพย์</span>
@@ -209,16 +218,16 @@ export default function AllStocks() {
                             <th
                             className={
                                 "sortable " +
-                                (sortField === "sector" ? `is-sorted ${sortDir}` : "")
+                                (sortField === "industry" ? `is-sorted ${sortDir}` : "")
                             }
-                            onClick={() => handleSort("sector")}
+                            onClick={() => handleSort("industry")}
                             >
                             <div className="th-inner">
                                 <span className="th-label">กลุ่มอุตสาหกรรม</span>
                                 <span
                                 className={
                                     "sort-icon " +
-                                    (sortField === "sector" ? `is-${sortDir}` : "")
+                                    (sortField === "industry" ? `is-${sortDir}` : "")
                                 }
                                 />
                             </div>
@@ -228,16 +237,16 @@ export default function AllStocks() {
                             <th
                             className={
                                 "sortable " +
-                                (sortField === "industry" ? `is-sorted ${sortDir}` : "")
+                                (sortField === "sector" ? `is-sorted ${sortDir}` : "")
                             }
-                            onClick={() => handleSort("industry")}
+                            onClick={() => handleSort("sector")}
                             >
                             <div className="th-inner">
                                 <span className="th-label">หมวดธุรกิจ</span>
                                 <span
                                 className={
                                     "sort-icon " +
-                                    (sortField === "industry" ? `is-${sortDir}` : "")
+                                    (sortField === "sector" ? `is-${sortDir}` : "")
                                 }
                                 />
                             </div>
@@ -249,25 +258,25 @@ export default function AllStocks() {
                     </thead>
 
                     <tbody>
-                        {sortedStocks.map((s) => (
+                        {paginatedStocks.map((s) => (
                         <tr key={s.symbol}>
                             <td className="col-symbol">
                             <span
                             className="badge-symbol"
                             style={{ cursor: "pointer" }}
-                            onClick={() => navigate("/detail")}
+                            onClick={() => navigate(`/${s.symbol}/detail`)}
                             >
                             {s.symbol}
                             </span>
                             </td>
-                            <td>{s.name}</td>
+                            <td>{s.stock_name}</td>
                             <td>
-                                <span className={`badge-market market-${s.market?.toLowerCase() || ""}`}>
-                                    {s.market}
+                                <span className={`badge-market market-${s.market_type_name?.toLowerCase() || ""}`}>
+                                    {s.market_type_name}
                                 </span>
                             </td>
-                            <td>{s.sector}</td>
-                            <td>{s.industry}</td>
+                            <td>{s.industry_group_symbol}</td>
+                            <td>{s.sector_symbol}</td>
                             <td className="col-factsheet">
                             <button className="factsheet-btn" title="ดู Factsheet">
                                 <span className="factsheet-icon" />
@@ -279,25 +288,22 @@ export default function AllStocks() {
                     </table>
                 </div>
 
-                {/* footer เดิม */}
-                <div className="stocks-table-footer">
-                    <div className="rows-control">
-                    แสดง
-                    <select className="rows-select">
-                        <option>20</option>
-                        <option>50</option>
-                        <option>100</option>
-                    </select>
-                    รายการ
+                    <div className="stocks-table-footer" style={{ marginTop: 24, textAlign: "right" }}>
+                        <Pagination
+                            total={filteredStocks.length}
+                            current={currentPage}
+                            pageSize={pageSize}
+                            showSizeChanger
+                            pageSizeOptions={["20", "50", "100"]}
+                            onChange={(page, size) => {
+                            setCurrentPage(page);
+                            setPageSize(size);
+                            }}
+                            showTotal={(total, range) =>
+                            `${range[0]}-${range[1]} จาก ${total} รายการ`
+                            }
+                        />
                     </div>
-                    <div className="pagination">
-                    <span>หน้า 1</span>
-                    <button className="page-btn" disabled>
-                        ‹
-                    </button>
-                    <button className="page-btn">›</button>
-                    </div>
-                </div>
                 </div>
             </section>
         </>

@@ -19,6 +19,11 @@ export default function Topbar() {
 
   return (
     <header className="admin-topbar">
+      <div className="topbar-left">
+        <img src="/pics/logo_test.png" className="top-logo" />
+        <span className="top-title">ระบบแนะนำหุ้นระยะยาว</span>
+      </div>
+
       <div className="topbar-right" ref={menuRef}>
         <button className="top-profile" onClick={() => setOpen(!open)}>
           <div className="top-avatar">

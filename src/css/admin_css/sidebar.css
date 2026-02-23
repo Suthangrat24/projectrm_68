@@ -3,11 +3,16 @@
   background: #1f2937;
   border-right: 1px solid #374151;
   padding: 20px;
-  height: 100vh;
+  
+  height: calc(100vh - 70px);
   position: fixed;
+
+  top: 70px;   /* ← ดันลงเท่าความสูง topbar */
   left: 0;
-  top: 0;
+
+  overflow-y: auto;
 }
+
 
 .sidebar-title {
   display: flex;

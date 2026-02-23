@@ -116,8 +116,8 @@ export default function RiskResult() {
           </div>
 
           <div className="risk-row-2">
-            <div className="risk-badge risk-high">{riskProfile.level}</div>
-            <p className="risk-desc">{riskProfile.desc}</p>
+            <div className="risk-ans-badge risk-high">{riskProfile.level}</div>
+            <p className="risk-ans-desc">{riskProfile.desc}</p>
           </div>
 
         <div className="risk-row-3">
@@ -179,7 +179,7 @@ export default function RiskResult() {
                     <p className="stock-price">ราคาปัจจุบัน : <span>{stock.price}</span></p>
                     <p className="stock-risk">
                     ความเสี่ยง : 
-                    <span className={`risk-badge risk-${stock.risk === "สูง" ? "high" : "mid"}`}>
+                    <span className={`risk-result-badge risk-${stock.risk === "สูง" ? "high" : "mid"}`}>
                         {stock.risk}
                     </span>
                     </p>
