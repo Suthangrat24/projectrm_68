@@ -70,48 +70,48 @@ export default function Navbar() {
         fetchPortfolio();
     }, [token]);
 
-    useEffect(() => {
-        const fetchAllStocks = async () => {
-            try {
-                const res = await getStocks();
-                const stockList = res.data;
+    // useEffect(() => {
+    //     const fetchAllStocks = async () => {
+    //         try {
+    //             const res = await getStocks();
+    //             const stockList = res.data;
 
-                const results = await Promise.all(
-                    stockList.map(async (s) => {
-                        try {
-                            const latest = await getStockLatest(`${s.symbol}.BK`);
-                            return {
-                                symbol: s.symbol,
-                                name: s.stock_name,
-                                price: latest.price ?? 0,
-                                change: latest.change ?? 0,
-                                change_pct: latest.change_pct ?? 0,
-                                volume: latest.volume ?? 0,
-                                value: latest.value ?? 0,
-                                updated_at: latest.updated_at ?? "",
-                            };
-                        } catch {
-                            return null;
-                        }
-                    })
-                );
+    //             const results = await Promise.all(
+    //                 stockList.map(async (s) => {
+    //                     try {
+    //                         const latest = await getStockLatest(`${s.symbol}.BK`);
+    //                         return {
+    //                             symbol: s.symbol,
+    //                             name: s.stock_name,
+    //                             price: latest.price ?? 0,
+    //                             change: latest.change ?? 0,
+    //                             change_pct: latest.change_pct ?? 0,
+    //                             volume: latest.volume ?? 0,
+    //                             value: latest.value ?? 0,
+    //                             updated_at: latest.updated_at ?? "",
+    //                         };
+    //                     } catch {
+    //                         return null;
+    //                     }
+    //                 })
+    //             );
 
-                const filtered = results.filter(Boolean);
-                setAllStocksLatest(filtered);
+    //             const filtered = results.filter(Boolean);
+    //             setAllStocksLatest(filtered);
 
-                // sort value แล้ว fetch chart อันดับ 1 เลย
-                const sorted = [...filtered].sort((a, b) => b.value - a.value);
-                if (sorted.length > 0) {
-                    await fetchTopChart(sorted[0].symbol);
-                }
+    //             // sort value แล้ว fetch chart อันดับ 1 เลย
+    //             const sorted = [...filtered].sort((a, b) => b.value - a.value);
+    //             if (sorted.length > 0) {
+    //                 await fetchTopChart(sorted[0].symbol);
+    //             }
 
-            } catch (err) {
-                console.error("โหลด allStocksLatest ไม่ได้", err);
-            }
-        };
+    //         } catch (err) {
+    //             console.error("โหลด allStocksLatest ไม่ได้", err);
+    //         }
+    //     };
 
-        fetchAllStocks();
-    }, []);
+    //     fetchAllStocks();
+    // }, []);
 
     const fetchChart = async (symbol) => {
         try {
@@ -161,45 +161,45 @@ export default function Navbar() {
     };
 
     const handleSelectStock = async (symbol) => {
-        setSelectedSymbol(symbol);  // อัปเดต selectedSymbol เมื่อผู้ใช้เลือกหุ้น
+        setSelectedSymbol(symbol); // อัปเดต selectedSymbol เมื่อผู้ใช้เลือกหุ้น
         await fetchChart(symbol);
     };
 
-    const fetchTopChart = async (symbol) => {
-        setTopChartLoading(true);
-        setTopChartData([]);
-        setTopChartHighLow({ high: null, low: null }); // reset
-        try {
-            const history = await getStockHistory({
-                symbol: `${symbol}.BK`,
-                period: "1d",
-                interval: "5m",
-            });
+    // const fetchTopChart = async (symbol) => {
+    //     setTopChartLoading(true);
+    //     setTopChartData([]);
+    //     setTopChartHighLow({ high: null, low: null }); // reset
+    //     try {
+    //         const history = await getStockHistory({
+    //             symbol: `${symbol}.BK`,
+    //             period: "1d",
+    //             interval: "5m",
+    //         });
 
-            const cleaned = history.filter(d => d.close != null && !isNaN(d.close));
-            if (cleaned.length < 2) { setTopChartLoading(false); return; }
+    //         const cleaned = history.filter(d => d.close != null && !isNaN(d.close));
+    //         if (cleaned.length < 2) { setTopChartLoading(false); return; }
 
-            const formatted = cleaned.map((d) => {
-                const date = new Date(d.time);
-                return {
-                    time: date.toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" }),
-                    ts: date.getTime(),
-                    close: d.close,
-                };
-            });
+    //         const formatted = cleaned.map((d) => {
+    //             const date = new Date(d.time);
+    //             return {
+    //                 time: date.toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" }),
+    //                 ts: date.getTime(),
+    //                 close: d.close,
+    //             };
+    //         });
 
-            // คำนวณ high/low จาก close ทั้งวัน
-            const closes = cleaned.map(d => d.close);
-            const high = Math.max(...closes);
-            const low = Math.min(...closes);
-            setTopChartHighLow({ high, low });
+    //         // คำนวณ high/low จาก close ทั้งวัน
+    //         const closes = cleaned.map(d => d.close);
+    //         const high = Math.max(...closes);
+    //         const low = Math.min(...closes);
+    //         setTopChartHighLow({ high, low });
 
-            setTopChartData(formatted);
-        } catch (err) {
-            console.error("โหลด top chart ไม่สำเร็จ", err);
-        }
-        setTopChartLoading(false);
-    };
+    //         setTopChartData(formatted);
+    //     } catch (err) {
+    //         console.error("โหลด top chart ไม่สำเร็จ", err);
+    //     }
+    //     setTopChartLoading(false);
+    // };
 
     // สร้าง function กลางไว้ใช้ร่วมกัน (วางหลัง fetchTopChart)
     const handleTabChange = async (newTab) => {
@@ -442,38 +442,34 @@ export default function Navbar() {
             <section className="top_five">
                 <div className="top_container">
 
-                {/* หัวข้อ + แท็บ */}
-                <div className="top_header">
-                    <h3>TOP 5</h3>
-                    <div className="top_tabs">
-                        <button className={`tab_btn ${tab === "value" ? "is-active" : ""}`} onClick={() => setTab("value")}>
-                            {/* icon มูลค่า (ตัวอย่าง path) */}
-                            <img className="btn_icon" src={ tab === "value" ? "../public/pics/value_active.png" : "../public/pics/value_norm.png"} alt="" />
-                            มูลค่าการซื้อขาย
-                        </button>
-                        <button className={`tab_btn ${tab === "volume" ? "is-active" : ""}`} onClick={() => setTab("volume")}>
-                            {/* icon ปริมาณ (ตัวอย่าง path) */}
-                            <img className="btn_icon" src={ tab === "volume" ? "../public/pics/volume_active.png" : "../public/pics/volume_norm.png"} alt="" />
-                            ปริมาณการซื้อขาย
-                        </button>
-                        <button className={`tab_btn ${tab === "up" ? "is-active" : ""}`} onClick={() => setTab("up")}>
-                            {/* icon ราคาเพิ่มขึ้น */}
-                            <img className="btn_icon" src={ tab === "up" ? "../public/pics/up_active.png" : "../public/pics/up_norm.png"} alt="" />
-                            ราคาเพิ่มขึ้น
-                        </button>
-                        <button className={`tab_btn ${tab === "down" ? "is-active" : ""}`} onClick={() => setTab("down")}>
-                            {/* icon ราคาลดลง */}
-                            <img className="btn_icon" src={ tab === "down" ? "../public/pics/down_active.png" : "../public/pics/down_norm.png"} alt="" />
-                            ราคาลดลง
-                        </button>
+                    {/* หัวข้อ + แท็บ */}
+                    <div className="top_header">
+                        <h3>TOP 5</h3>
+                        <div className="top_tabs">
+                            <button className={`tab_btn ${topTab === "value" ? "is-active" : ""}`} onClick={() => handleTabChange("value")}>
+                                <img className="btn_icon" src={topTab === "value" ? "../public/pics/value_active.png" : "../public/pics/value_norm.png"} alt="" />
+                                มูลค่าการซื้อขาย
+                            </button>
+                            <button className={`tab_btn ${topTab === "volume" ? "is-active" : ""}`} onClick={() => handleTabChange("volume")}>
+                                <img className="btn_icon" src={topTab === "volume" ? "../public/pics/volume_active.png" : "../public/pics/volume_norm.png"} alt="" />
+                                ปริมาณการซื้อขาย
+                            </button>
+                            <button className={`tab_btn ${topTab === "up" ? "is-active" : ""}`} onClick={() => handleTabChange("up")}>
+                                <img className="btn_icon" src={topTab === "up" ? "../public/pics/up_active.png" : "../public/pics/up_norm.png"} alt="" />
+                                ราคาเพิ่มขึ้น
+                            </button>
+                            <button className={`tab_btn ${topTab === "down" ? "is-active" : ""}`} onClick={() => handleTabChange("down")}>
+                                <img className="btn_icon" src={topTab === "down" ? "../public/pics/down_active.png" : "../public/pics/down_norm.png"} alt="" />
+                                ราคาลดลง
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                    {top_five.length === 0 ? (
+                    {/* {top_five.length === 0 ? (
                         <div className="top_loading">กำลังโหลดข้อมูล...</div>
                     ) : (
                         <div className="top_content">
-                            {/* ซ้าย: รายการ 5 อันดับ */}
+                            {/* ซ้าย: รายการ 5 อันดับ 
                             <aside className="top_list">
                                 {top_five.map((it, idx) => (
                                     <button
@@ -510,7 +506,7 @@ export default function Navbar() {
                                 ))}
                             </aside>
 
-                            {/* ขวา: panel รายละเอียด */}
+                            {/* ขวา: panel รายละเอียด 
                             {(() => {
                                 const s = top_five[selectedTop];
                                 if (!s) return null;
@@ -550,7 +546,7 @@ export default function Navbar() {
                                                 </div>
                                             </div>
 
-                                            {/* Chart จริง */}
+                                            {/* Chart จริง 
                                             <div className="top_chartbox">
                                                 {topChartLoading ? (
                                                     <div>กำลังโหลดกราฟ...</div>
@@ -582,7 +578,7 @@ export default function Navbar() {
                                 );
                             })()}
                         </div>
-                    )}
+                    )} */}
                 </div>
             </section>
 
