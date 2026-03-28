@@ -111,7 +111,7 @@ createRoot(document.getElementById('root')).render(
 
       <Route path="/portfolio" element={<UserLayout><Portfolio /></UserLayout>} />
       <Route path="/add-investment" element={<UserLayout><AddInvestment /></UserLayout>} />
-      <Route path="/edit-investment" element={<UserLayout><EditInvestment /></UserLayout>} />
+      <Route path="/edit-investment/:portfolio_id" element={<UserLayout><EditInvestment /></UserLayout>} />
 
       <Route path="/risk" element={<UserLayout><RiskIntro /></UserLayout>} />
       <Route path="/risk-evaluation" element={<UserLayout><RiskQuestions /></UserLayout>} />

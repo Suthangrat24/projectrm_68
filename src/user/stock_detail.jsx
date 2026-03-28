@@ -1,19 +1,29 @@
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { useState, useMemo, useEffect } from "react";
-import { getStock, getStockLatest, getStockHistory, getStockSummary, getStockHistoryPerDay, addFavorite, deleteFavorite, checkFavorite } from "../fetchapi/call_api_user";
+import { getStock, getStockLatest, getStockHistory, getStockSummary, getStockHistoryPerDay, addFavorite, deleteFavorite, checkFavorite, getStockFinancial } from "../fetchapi/call_api_user";
 import StockLineChart from "../component/stock_line_chart";
+import {
+    LineChart,
+    Line,
+    XAxis,
+    YAxis,
+    Tooltip,
+    ResponsiveContainer,
+    Legend
+} from "recharts";
 import "../css/stock_detail.css";
+import Swal from "sweetalert2";
 
 export default function StockDetail() {
 
     const getStockRiskClass = (level) => {
         switch (level) {
-        case "ตํ่า":
-            return "low";
-        case "ปานกลาง":
-            return "mid";
-        default:
-            return "high";
+            case "ตํ่า":
+                return "low";
+            case "ปานกลาง":
+                return "mid";
+            default:
+                return "high";
         }
     };
 
@@ -56,10 +66,10 @@ export default function StockDetail() {
     useEffect(() => {
         async function fetchLatest() {
             try {
-            const data = await getStockLatest(`${symbol}.BK`);
-            setLatest(data);
+                const data = await getStockLatest(`${symbol}.BK`);
+                setLatest(data);
             } catch (err) {
-            console.error("โหลด latest ไม่สำเร็จ", err);
+                console.error("โหลด latest ไม่สำเร็จ", err);
             }
         }
 
@@ -69,56 +79,56 @@ export default function StockDetail() {
     useEffect(() => {
         async function fetchChart() {
             try {
-            setLoadingChart(true);
+                setLoadingChart(true);
 
-            const cfg = RANGE_CONFIG[range];
+                const cfg = RANGE_CONFIG[range];
 
-            const history = await getStockHistory({
-                symbol: `${symbol}.BK`,
-                period: cfg.period,
-                interval: cfg.interval,
-            });
+                const history = await getStockHistory({
+                    symbol: `${symbol}.BK`,
+                    period: cfg.period,
+                    interval: cfg.interval,
+                });
 
-            if (history.length === 0) {
-                console.warn("ไม่มีข้อมูลใหม่ ใช้กราฟเดิมแทน");
-                setChartData((prev) => prev);
-                setLoadingChart(false);
-                return;
-            }
+                if (history.length === 0) {
+                    console.warn("ไม่มีข้อมูลใหม่ ใช้กราฟเดิมแทน");
+                    setChartData((prev) => prev);
+                    setLoadingChart(false);
+                    return;
+                }
 
-            const cleanedHistory = history.filter(
-                (d) => d.close != null && !isNaN(d.close)
-            );
+                const cleanedHistory = history.filter(
+                    (d) => d.close != null && !isNaN(d.close)
+                );
 
-            if (cleanedHistory.length < 2) {
-                console.warn("ข้อมูลไม่พอวาดกราฟ → คงข้อมูลเดิมไว้");
-                setChartData(prev => prev);
-                setLoadingChart(false);
-                return;
-            }
+                if (cleanedHistory.length < 2) {
+                    console.warn("ข้อมูลไม่พอวาดกราฟ → คงข้อมูลเดิมไว้");
+                    setChartData(prev => prev);
+                    setLoadingChart(false);
+                    return;
+                }
 
-            const formatted = cleanedHistory.map((d) => {
-                const date = new Date(d.time);
-                return {
-                    time:
-                        range === "intraday"
-                            ? date.toLocaleTimeString("th-TH", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                            })
-                            : date.toLocaleDateString("th-TH"),
-                    ts: date.getTime(),
-                    close: d.close,
-                    rawTime: d.time,
-                };
-            });
+                const formatted = cleanedHistory.map((d) => {
+                    const date = new Date(d.time);
+                    return {
+                        time:
+                            range === "intraday"
+                                ? date.toLocaleTimeString("th-TH", {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                })
+                                : date.toLocaleDateString("th-TH"),
+                        ts: date.getTime(),
+                        close: d.close,
+                        rawTime: d.time,
+                    };
+                });
 
-            setChartData(formatted);
+                setChartData(formatted);
 
-            if (formatted.length > 0) {
-                const last = formatted[formatted.length - 1];
-                setLastUpdate(new Date(last.rawTime).toLocaleString("th-TH"));
-            }
+                if (formatted.length > 0) {
+                    const last = formatted[formatted.length - 1];
+                    setLastUpdate(new Date(last.rawTime).toLocaleString("th-TH"));
+                }
             } catch (err) {
                 console.error("โหลดกราฟไม่สำเร็จ", err);
             } finally {
@@ -132,10 +142,10 @@ export default function StockDetail() {
     useEffect(() => {
         async function fetchSummary() {
             try {
-            const data = await getStockSummary({ symbol: `${symbol}.BK` });
-            setSummary(data);
+                const data = await getStockSummary({ symbol: `${symbol}.BK` });
+                setSummary(data);
             } catch (err) {
-            console.error("โหลด summary ไม่สำเร็จ", err);
+                console.error("โหลด summary ไม่สำเร็จ", err);
             }
         }
 
@@ -150,19 +160,18 @@ export default function StockDetail() {
 
     useEffect(() => {
         async function checkFav() {
-            if (!user_id || !symbol) return;
+            if (!token || !stock?.stock_id) return;
 
             try {
-            const res = await checkFavorite(
-                token,
-                user_id,
-                stock.stock_id   // ⚠ ใช้ stock_id จาก backend
-            );
+                const res = await checkFavorite(
+                    token,
+                    stock.stock_id
+                );
 
-            setIsFavorite(res.is_favorite);
-            setFavoriteId(res.favorite_id);
+                setIsFavorite(res.is_favorite);
+                setFavoriteId(res.favorite_id);
             } catch (err) {
-            console.error("เช็ค favorite ไม่สำเร็จ", err);
+                console.error("เช็ค favorite ไม่สำเร็จ", err);
             }
         }
 
@@ -172,25 +181,29 @@ export default function StockDetail() {
     }, [stock]);
 
     const handleToggleFavorite = async () => {
-        if (!user_id) {
-            alert("กรุณาเข้าสู่ระบบก่อน");
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            Swal.fire("กรุณาเข้าสู่ระบบก่อน", "", "warning");
             return;
         }
 
+        if (!stock?.stock_id) {
+            console.log("stock_id ยังไม่มา");
+            return;
+        }
+
+        console.log("send fav:", stock.stock_id);
+
         try {
             if (isFavorite) {
-            await deleteFavorite(token, favoriteId);
-            setIsFavorite(false);
-            setFavoriteId(null);
+                await deleteFavorite(token, favoriteId);
+                setIsFavorite(false);
+                setFavoriteId(null);
             } else {
-            const res = await addFavorite(
-                token,
-                user_id,
-                stock.stock_id
-            );
-
-            setIsFavorite(true);
-            setFavoriteId(res.favorite_id);
+                const res = await addFavorite(token, stock.stock_id);
+                setIsFavorite(true);
+                setFavoriteId(res.favorite_id);
             }
         } catch (err) {
             console.error("favorite error", err);
@@ -209,25 +222,6 @@ export default function StockDetail() {
         }
     };
 
-    // mock data PTT เอาไว้จัด layout ก่อน
-    const data = {
-        symbol: symbol || "PTT",
-        name: "บริษัท ปตท. จำกัด (มหาชน)",
-        statusBadge: "หุ้นมั่นคง",
-        marketTags: ["SET", "RESOURC", "ENERG"],
-        lastPrice: 33.25,
-        change: 0.25,
-        changePct: 0.76,
-        volume: 151136551,
-        value: 4996684.08,
-        lastUpdate: "11 ก.ย. 2568 02:30:10",
-        open: 33.0,
-        high: 33.75,
-        low: 32.5,
-        pe: 15.2,
-        pbv: 1.1,
-        dividend: 5.8,
-    };
 
     const [historyTable, setHistoryTable] = useState([]);
     const [loadingHistory, setLoadingHistory] = useState(false);
@@ -238,45 +232,45 @@ export default function StockDetail() {
 
         async function loadHistoryTable() {
             try {
-            setLoadingHistory(true);
+                setLoadingHistory(true);
 
-            const days = 180;
+                const days = 180;
 
-            const data = await getStockHistoryPerDay(`${symbol}.BK`, days);
+                const data = await getStockHistoryPerDay(`${symbol}.BK`, days);
 
-            const formatted = data.map(row => {
-                const open = row.open;
-                const close = row.close;
+                const formatted = data.map(row => {
+                    const open = row.open;
+                    const close = row.close;
 
-                const change = close - open;
-                const changePct = open ? (change / open) * 100 : 0;
+                    const change = close - open;
+                    const changePct = open ? (change / open) * 100 : 0;
 
-                return {
-                    date: row.date,
-                    datetime: row.datetime,
-                    open,
-                    close,
-                    high: row.high,
-                    low: row.low,
-                    volume: row.volume,
-                    value: (row.close * row.volume) / 1000,
-                    change,
-                    changePct,
-                };
-            });
+                    return {
+                        date: row.date,
+                        datetime: row.datetime,
+                        open,
+                        close,
+                        high: row.high,
+                        low: row.low,
+                        volume: row.volume,
+                        value: (row.close * row.volume) / 1000,
+                        change,
+                        changePct,
+                    };
+                });
 
-            setHistoryTable(formatted);
+                setHistoryTable(formatted);
             } catch (err) {
-            console.error("โหลดราคาย้อนหลังรายวันล้มเหลว", err);
+                console.error("โหลดราคาย้อนหลังรายวันล้มเหลว", err);
             } finally {
-            setLoadingHistory(false);
+                setLoadingHistory(false);
             }
         }
 
         loadHistoryTable();
     }, [activeTab, symbol]);
 
-        const sortedHistory = useMemo(() => {
+    const sortedHistory = useMemo(() => {
         const rows = [...historyTable];
 
         rows.sort((a, b) => {
@@ -285,14 +279,14 @@ export default function StockDetail() {
             const bv = b[field];
 
             if (typeof av === "number" && typeof bv === "number") {
-            return historySortDir === "asc" ? av - bv : bv - av;
+                return historySortDir === "asc" ? av - bv : bv - av;
             }
 
             const sa = String(av ?? "");
             const sb = String(bv ?? "");
             return historySortDir === "asc"
-            ? sa.localeCompare(sb, "th-TH")
-            : sb.localeCompare(sa, "th-TH");
+                ? sa.localeCompare(sb, "th-TH")
+                : sb.localeCompare(sa, "th-TH");
         });
 
         return rows;
@@ -315,116 +309,215 @@ export default function StockDetail() {
 
     const [lastUpdate, setLastUpdate] = useState("-");
 
-    const [year, setYear] = useState("2567");
+    const [selectedMetric, setSelectedMetric] = useState("สินทรัพย์รวม");
 
-    function formatNumber(number, digits = 2) {
-        if (number == null || isNaN(number)) return "-";
-        return Number(number).toLocaleString("th-TH", {
-            minimumFractionDigits: digits,
-            maximumFractionDigits: digits,
+    const [financialRaw, setFinancialRaw] = useState([]);
+
+    useEffect(() => {
+        async function load() {
+            const data = await getStockFinancial(symbol);
+            setFinancialRaw(data);
+        }
+
+        if (symbol) load();
+    }, [symbol]);
+
+    function pivotFinancialData(rows) {
+        const map = {};
+        const yearsSet = new Set();
+
+        rows.forEach((row) => {
+            const item = row.item;
+            const year = row.fiscal_year;
+            const value = Number(row.value);
+
+            yearsSet.add(year);
+
+            if (!map[item]) {
+                map[item] = {
+                    item,
+                    values: {},
+                };
+            }
+
+            map[item].values[year] = value;
         });
+
+        const years = Array.from(yearsSet).sort();
+
+        const tableData = Object.values(map).map((row) => {
+            const newRow = { item: row.item };
+
+            years.forEach((y) => {
+                newRow[y] = row.values[y] ?? null;
+            });
+
+            return newRow;
+        });
+
+        return { tableData, years };
     }
 
-    // =============== MOCK DATA แบบตามตารางจริง ===============
-    const financeData = {
-        "2564": {
-            asset: 3078018.83,
-            debt: 1605079.11,
-            equity: 1006696.22,
-            parPaid: 28563.00,
-            revenue: 2287758.51,
-            otherProfit: -29416.61,
-            netProfit: 108363.41,
-            eps: 3.79,
-            roa: 8.82,
-            roe: 11.47,
-            margin: 6.65,
-            lastPrice: 38.00,
-            marketCap: 1085393.86,
-            pe: 11.55,
-            pbv: 1.11,
-            bookValue: 34.26,
-            dividendYield: 2.63,
+    const { tableData, years } = useMemo(() => {
+        return pivotFinancialData(financialRaw);
+    }, [financialRaw]);
+
+
+
+    // // =============== MOCK DATA แบบตามตารางจริง ===============
+    // const financeData = {
+    //     "2564": {
+    //         asset: 3078018.83,
+    //         debt: 1605079.11,
+    //         equity: 1006696.22,
+    //         parPaid: 28563.00,
+    //         revenue: 2287758.51,
+    //         otherProfit: -29416.61,
+    //         netProfit: 108363.41,
+    //         eps: 3.79,
+    //         roa: 8.82,
+    //         roe: 11.47,
+    //         margin: 6.65,
+    //         lastPrice: 38.00,
+    //         marketCap: 1085393.86,
+    //         pe: 11.55,
+    //         pbv: 1.11,
+    //         bookValue: 34.26,
+    //         dividendYield: 2.63,
+    //     },
+    //     "2565": {
+    //         asset: 3415632.29,
+    //         debt: 1881939.53,
+    //         equity: 1052590.88,
+    //         parPaid: 28563.00,
+    //         revenue: 3391622.87,
+    //         otherProfit: -63512.46,
+    //         netProfit: 91174.86,
+    //         eps: 3.20,
+    //         roa: 7.69,
+    //         roe: 8.85,
+    //         margin: 3.60,
+    //         lastPrice: 33.25,
+    //         marketCap: 949719.63,
+    //         pe: 9.42,
+    //         pbv: 0.88,
+    //         bookValue: 37.64,
+    //         dividendYield: 6.02,
+    //     },
+    //     "2566": {
+    //         asset: 3460461.90,
+    //         debt: 1835486.49,
+    //         equity: 1121197.88,
+    //         parPaid: 28563.00,
+    //         revenue: 3185256.08,
+    //         otherProfit: 12103.41,
+    //         netProfit: 112023.88,
+    //         eps: 3.92,
+    //         roa: 8.20,
+    //         roe: 10.31,
+    //         margin: 4.87,
+    //         lastPrice: 35.75,
+    //         marketCap: 1021127.12,
+    //         pe: 10.51,
+    //         pbv: 0.91,
+    //         bookValue: 39.34,
+    //         dividendYield: 5.59,
+    //     },
+    //     "2567": {
+    //         asset: 3438784.28,
+    //         debt: 1781907.19,
+    //         equity: 1149652.17,
+    //         parPaid: 28563.00,
+    //         revenue: 3138378.01,
+    //         otherProfit: 1634.31,
+    //         netProfit: 90072.03,
+    //         eps: 3.15,
+    //         roa: 6.59,
+    //         roe: 7.93,
+    //         margin: 3.62,
+    //         lastPrice: 31.75,
+    //         marketCap: 906875.13,
+    //         pe: 7.99,
+    //         pbv: 0.81,
+    //         bookValue: 39.18,
+    //         dividendYield: 6.30,
+    //     },
+    //     "2568": {
+    //         asset: 3312019.06,
+    //         debt: 1673811.29,
+    //         equity: 1132810.36,
+    //         parPaid: 28563.00,
+    //         revenue: 1397289.78,
+    //         otherProfit: 19737.47,
+    //         netProfit: 44848.37,
+    //         eps: 1.57,
+    //         roa: 5.43,
+    //         roe: 6.09,
+    //         margin: 4.37,
+    //         lastPrice: 33.00,
+    //         marketCap: 942578.88,
+    //         pe: 13.26,
+    //         pbv: 0.83,
+    //         bookValue: 39.98,
+    //         dividendYield: 6.42,
+    //     },
+    // };
+
+    // const d = financeData[year];
+
+    const latestYear = years[years.length - 1];
+
+    const kpiItems = [
+        "สินทรัพย์รวม",
+        "รายได้รวม",
+        "กำไรสุทธิ",
+        "ROE (%)"
+    ];
+
+    const financialData = {
+        assets: {
+            label: "สินทรัพย์รวม",
+            color: "#00E676",
+            data: [3078018, 3415632, 3460461, 3438784, 3312019],
         },
-        "2565": {
-            asset: 3415632.29,
-            debt: 1881939.53,
-            equity: 1052590.88,
-            parPaid: 28563.00,
-            revenue: 3391622.87,
-            otherProfit: -63512.46,
-            netProfit: 91174.86,
-            eps: 3.20,
-            roa: 7.69,
-            roe: 8.85,
-            margin: 3.60,
-            lastPrice: 33.25,
-            marketCap: 949719.63,
-            pe: 9.42,
-            pbv: 0.88,
-            bookValue: 37.64,
-            dividendYield: 6.02,
+        revenue: {
+            label: "รายได้รวม",
+            color: "#4FC3F7",
+            data: [2287758, 3391622, 3185256, 3138378, 1397289],
         },
-        "2566": {
-            asset: 3460461.90,
-            debt: 1835486.49,
-            equity: 1121197.88,
-            parPaid: 28563.00,
-            revenue: 3185256.08,
-            otherProfit: 12103.41,
-            netProfit: 112023.88,
-            eps: 3.92,
-            roa: 8.20,
-            roe: 10.31,
-            margin: 4.87,
-            lastPrice: 35.75,
-            marketCap: 1021127.12,
-            pe: 10.51,
-            pbv: 0.91,
-            bookValue: 39.34,
-            dividendYield: 5.59,
+        netProfit: {
+            label: "กำไรสุทธิ",
+            color: "#FFD54F",
+            data: [108363, 91174, 112023, 90072, 44848],
         },
-        "2567": {
-            asset: 3438784.28,
-            debt: 1781907.19,
-            equity: 1149652.17,
-            parPaid: 28563.00,
-            revenue: 3138378.01,
-            otherProfit: 1634.31,
-            netProfit: 90072.03,
-            eps: 3.15,
-            roa: 6.59,
-            roe: 7.93,
-            margin: 3.62,
-            lastPrice: 31.75,
-            marketCap: 906875.13,
-            pe: 7.99,
-            pbv: 0.81,
-            bookValue: 39.18,
-            dividendYield: 6.30,
-        },
-        "2568": {
-            asset: 3312019.06,
-            debt: 1673811.29,
-            equity: 1132810.36,
-            parPaid: 28563.00,
-            revenue: 1397289.78,
-            otherProfit: 19737.47,
-            netProfit: 44848.37,
-            eps: 1.57,
-            roa: 5.43,
-            roe: 6.09,
-            margin: 4.37,
-            lastPrice: 33.00,
-            marketCap: 942578.88,
-            pe: 13.26,
-            pbv: 0.83,
-            bookValue: 39.98,
-            dividendYield: 6.42,
+        roe: {
+            label: "ROE (%)",
+            color: "#BA68C8",
+            data: [11.47, 8.85, 10.31, 7.93, 6.09],
         },
     };
 
-    const d = financeData[year];
+    const singleLineData = useMemo(() => {
+        return years.map((year) => {
+            const row = tableData.find(
+                (r) => r.item === selectedMetric
+            );
+
+            return {
+                year,
+                value: row?.[year] ?? 0,
+            };
+        });
+    }, [tableData, years, selectedMetric]);
+
+    function formatMillion(value) {
+        if (value === null || value === undefined) return "-";
+
+        return Number(value).toLocaleString("th-TH", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        });
+    }
 
     const majorHolders = [
         { id: 1, name: "กระทรวงการคลัง", sharesText: "1.85B หุ้น", percent: 51.11, color: "teal" },
@@ -448,164 +541,164 @@ export default function StockDetail() {
                 <section className="detail-main-card">
                     {/* ซ้าย: โลโก้ + ชื่อหุ้น */}
                     <div className="detail-main-left">
-                    <div className="detail-logo">
-                        {stock?.logo_path ? (
-                            <img src={stock.logo_path} alt={stock.symbol} className="detail-logo-img" />
-                        ) : (
-                            <div className="detail-logo-mark">
-                                {stock?.symbol?.charAt(0)}
+                        <div className="detail-logo">
+                            {stock?.logo_path ? (
+                                <img src={stock.logo_path} alt={stock.symbol} className="detail-logo-img" />
+                            ) : (
+                                <div className="detail-logo-mark">
+                                    {stock?.symbol?.charAt(0)}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="detail-name-block">
+                            <div className="detail-symbol-row">
+                                <span className="detail-symbol">{stock.symbol}</span>
+                                <span className={`detail-status-badge`}>ความเสี่ยง{stock.level_name}</span>
+                                <button
+                                    className="detail-heart"
+                                    onClick={handleToggleFavorite}
+                                >
+                                    <img
+                                        src={isFavorite ? "/pics/fav.png" : "/pics/notfav.png"}
+                                        alt="favorite"
+                                        className="detail-heart-icon"
+                                    />
+                                </button>
                             </div>
-                        )}
-                    </div>
+                            <p className="detail-fullname">{stock.stock_name}</p>
 
-                    <div className="detail-name-block">
-                        <div className="detail-symbol-row">
-                            <span className="detail-symbol">{stock.symbol}</span>
-                            <span className={`detail-status-badge`}>ความเสี่ยง{stock.level_name}</span>
-                            <button
-                            className="detail-heart"
-                            onClick={handleToggleFavorite}
-                            >
-                            <img
-                                src={isFavorite ? "/pics/fav.png" : "/pics/notfav.png"}
-                                alt="favorite"
-                                className="detail-heart-icon"
-                            />
-                            </button>
+                            <div className="detail-tag-row">
+                                {stock.market_type_name && (
+                                    <span className="detail-tag">{stock.market_type_name}</span>
+                                )}
+
+                                {stock.industry_group_symbol && (
+                                    <span className="detail-tag">{stock.industry_group_symbol}</span>
+                                )}
+
+                                {stock.sector_symbol && (
+                                    <span className="detail-tag">{stock.sector_symbol}</span>
+                                )}
+                            </div>
                         </div>
-                        <p className="detail-fullname">{stock.stock_name}</p>
-
-                        <div className="detail-tag-row">
-                            {stock.market_type_name && (
-                                <span className="detail-tag">{stock.market_type_name}</span>
-                            )}
-
-                            {stock.industry_group_symbol && (
-                                <span className="detail-tag">{stock.industry_group_symbol}</span>
-                            )}
-
-                            {stock.sector_symbol && (
-                                <span className="detail-tag">{stock.sector_symbol}</span>
-                            )}
-                        </div>
-                    </div>
                     </div>
 
                     {/* ขวา: ราคาปัจจุบัน */}
                     {latest && (
-                    <div className="detail-main-right">
-                        <div className="detail-price-block">
-                        <div className="detail-price-row">
-                            <span
-                                className={
-                                    isZero
-                                    ? "detail-price neutral"
-                                    : isUp
-                                    ? "detail-price-arrow up"
-                                    : "detail-price-arrow down"
-                                }
+                        <div className="detail-main-right">
+                            <div className="detail-price-block">
+                                <div className="detail-price-row">
+                                    <span
+                                        className={
+                                            isZero
+                                                ? "detail-price neutral"
+                                                : isUp
+                                                    ? "detail-price-arrow up"
+                                                    : "detail-price-arrow down"
+                                        }
+                                    >
+                                        {isZero ? "" : isUp ? "▲" : "▼"}
+                                    </span>
+
+                                    <span
+                                        className={
+                                            isZero
+                                                ? "detail-price neutral"
+                                                : isUp
+                                                    ? "detail-price up"
+                                                    : "detail-price down"
+                                        }
+                                    >
+                                        {latest?.price?.toFixed(2)}
+                                    </span>
+                                </div>
+
+                                <div
+                                    className={
+                                        isZero
+                                            ? "detail-change neutral"
+                                            : isUp
+                                                ? "detail-change up"
+                                                : "detail-change down"
+                                    }
                                 >
-                                {isZero ? "" : isUp ? "▲" : "▼"}
-                            </span>
+                                    {isZero
+                                        ? `${latest?.change?.toFixed(2)} (${latest?.change_pct?.toFixed(2)}%)`
+                                        : `${isUp ? "+" : ""}${latest?.change?.toFixed(2)} (${isUp ? "+" : ""}${latest?.change_pct?.toFixed(2)}%)`}
+                                </div>
+                            </div>
 
-                            <span
-                                className={
-                                    isZero
-                                    ? "detail-price neutral"
-                                    : isUp
-                                    ? "detail-price up"
-                                    : "detail-price down"
-                                }
-                            >
-                                {latest?.price?.toFixed(2)}
-                            </span>
-                        </div>
+                            <div className="detail-meta-block">
+                                <div className="detail-meta-col">
+                                    <div className="detail-meta-label">ปริมาณ (หุ้น)</div>
+                                    <div className="detail-meta-value">
+                                        {latest?.volume?.toLocaleString("th-TH")}
+                                    </div>
+                                </div>
 
-                        <div
-                            className={
-                                isZero
-                                ? "detail-change neutral"
-                                : isUp
-                                ? "detail-change up"
-                                : "detail-change down"
-                            }
-                        >
-                            {isZero
-                                ? `${latest?.change?.toFixed(2)} (${latest?.change_pct?.toFixed(2)}%)`
-                                : `${isUp ? "+" : ""}${latest?.change?.toFixed(2)} (${isUp ? "+" : ""}${latest?.change_pct?.toFixed(2)}%)`}
-                        </div>
-                        </div>
+                                <div className="detail-meta-col">
+                                    <div className="detail-meta-label">มูลค่า (‘000 บาท)</div>
+                                    <div className="detail-meta-value">
+                                        {latest?.value?.toLocaleString("th-TH", {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2,
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
 
-                        <div className="detail-meta-block">
-                        <div className="detail-meta-col">
-                            <div className="detail-meta-label">ปริมาณ (หุ้น)</div>
-                            <div className="detail-meta-value">
-                            {latest?.volume?.toLocaleString("th-TH")}
+                            <div className="detail-main-update">
+                                อัปเดต:{" "}
+                                {new Date(latest.updated_at).toLocaleString("th-TH")}
                             </div>
                         </div>
-
-                        <div className="detail-meta-col">
-                            <div className="detail-meta-label">มูลค่า (‘000 บาท)</div>
-                            <div className="detail-meta-value">
-                            {latest?.value?.toLocaleString("th-TH", {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                            })}
-                            </div>
-                        </div>
-                        </div>
-
-                        <div className="detail-main-update">
-                            อัปเดต:{" "}
-                            {new Date(latest.updated_at).toLocaleString("th-TH")}
-                        </div>
-                    </div>
                     )}
                 </section>
 
                 {/* Tabs – กรอบโค้ง ๆ เหมือน Figma */}
                 <section className="detail-tabs-card">
-                <div className="detail-tabs-row">
-                    <button
-                    className={
-                        "detail-tab " +
-                        (activeTab === "price" ? "detail-tab--active" : "")
-                    }
-                    onClick={() => setActiveTab("price")}
-                    >
-                    ราคา
-                    </button>
+                    <div className="detail-tabs-row">
+                        <button
+                            className={
+                                "detail-tab " +
+                                (activeTab === "price" ? "detail-tab--active" : "")
+                            }
+                            onClick={() => setActiveTab("price")}
+                        >
+                            ราคา
+                        </button>
 
-                    <button
-                    className={
-                        "detail-tab " +
-                        (activeTab === "history" ? "detail-tab--active" : "")
-                    }
-                    onClick={() => setActiveTab("history")}
-                    >
-                    ราคาย้อนหลัง
-                    </button>
+                        <button
+                            className={
+                                "detail-tab " +
+                                (activeTab === "history" ? "detail-tab--active" : "")
+                            }
+                            onClick={() => setActiveTab("history")}
+                        >
+                            ราคาย้อนหลัง
+                        </button>
 
-                    <button
-                    className={
-                        "detail-tab " +
-                        (activeTab === "finance" ? "detail-tab--active" : "")
-                    }
-                    onClick={() => setActiveTab("finance")}
-                    >
-                    งบการเงิน
-                    </button>
+                        <button
+                            className={
+                                "detail-tab " +
+                                (activeTab === "finance" ? "detail-tab--active" : "")
+                            }
+                            onClick={() => setActiveTab("finance")}
+                        >
+                            งบการเงิน
+                        </button>
 
-                    <button
-                    className={
-                        "detail-tab " +
-                        (activeTab === "holders" ? "detail-tab--active" : "")
-                    }
-                    onClick={() => setActiveTab("holders")}
-                    >
-                    ข้อมูลผู้ถือหุ้น
-                    </button>
-                </div>
+                        <button
+                            className={
+                                "detail-tab " +
+                                (activeTab === "holders" ? "detail-tab--active" : "")
+                            }
+                            onClick={() => setActiveTab("holders")}
+                        >
+                            ข้อมูลผู้ถือหุ้น
+                        </button>
+                    </div>
                 </section>
 
                 {/* ======= TAB: ราคา (กราฟ + การ์ดขวา) ======= */}
@@ -695,14 +788,14 @@ export default function StockDetail() {
                             <div className="chart-body">
                                 {/* พื้นที่สำหรับกราฟจริง – ตอนนี้แค่ placeholder */}
                                 <div className="chart-placeholder">
-                                  {loadingChart ? (
+                                    {loadingChart ? (
                                         <div className="chart-loading">กำลังโหลดข้อมูล...</div>
                                     ) : (
                                         <StockLineChart data={chartData} range={range} />
                                     )}
                                 </div>
                             </div>
-                            
+
                             {/* onClick={() => navigate(`/detail/${data.symbol}/future`)} */}
                             <footer className="chart-footer">
                                 <span>
@@ -819,393 +912,380 @@ export default function StockDetail() {
 
                 {/* ======= TAB: ราคาย้อนหลัง (ตารางเต็มกว้าง) ======= */}
                 {activeTab === "history" && (
-                <section className="detail-history-section">
-                    <article className="detail-card history-card">
-                    <header className="history-header">
-                        <div className="history-title">ราคาย้อนหลัง</div>
-                        <div className="history-latest">
-                            ข้อมูลล่าสุด : {""}
-                                {sortedHistory[0]?.datetime
-                                ? new Date(sortedHistory[0].datetime).toLocaleString("th-TH", {
-                                    year: "numeric",
-                                    month: "short",
-                                    day: "numeric",
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                    second: "2-digit"
-                                    })
-                                : "-"
-                                }
-                        </div>
-                    </header>
-
-                    <div className="history-table-scroll">
-                        <table className="history-table stocks-table">
-                            <thead>
-                                <tr>
-                                {/* วันที่ */}
-                                <th
-                                    className={
-                                    "col-history-date sortable " +
-                                    (historySortField === "date" ? `is-sorted ${historySortDir}` : "")
+                    <section className="detail-history-section">
+                        <article className="detail-card history-card">
+                            <header className="history-header">
+                                <div className="history-title">ราคาย้อนหลัง</div>
+                                <div className="history-latest">
+                                    ข้อมูลล่าสุด : {""}
+                                    {sortedHistory[0]?.datetime
+                                        ? new Date(sortedHistory[0].datetime).toLocaleString("th-TH", {
+                                            year: "numeric",
+                                            month: "short",
+                                            day: "numeric",
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                            second: "2-digit"
+                                        })
+                                        : "-"
                                     }
-                                    onClick={() => handleHistorySort("date")}
-                                >
-                                    <div className="th-inner">
-                                    <span className="th-label">วันที่</span>
-                                    <span
-                                        className={
-                                        "sort-icon " +
-                                        (historySortField === "date" ? `is-${historySortDir}` : "")
-                                        }
-                                    />
+                                </div>
+                            </header>
+
+                            <div className="history-table-scroll">
+                                <table className="history-table stocks-table">
+                                    <thead>
+                                        <tr>
+                                            {/* วันที่ */}
+                                            <th
+                                                className={
+                                                    "col-history-date sortable " +
+                                                    (historySortField === "date" ? `is-sorted ${historySortDir}` : "")
+                                                }
+                                                onClick={() => handleHistorySort("date")}
+                                            >
+                                                <div className="th-inner">
+                                                    <span className="th-label">วันที่</span>
+                                                    <span
+                                                        className={
+                                                            "sort-icon " +
+                                                            (historySortField === "date" ? `is-${historySortDir}` : "")
+                                                        }
+                                                    />
+                                                </div>
+                                            </th>
+
+                                            {/* ราคาปิด */}
+                                            <th
+                                                className={
+                                                    "sortable " +
+                                                    (historySortField === "close" ? `is-sorted ${historySortDir}` : "")
+                                                }
+                                                onClick={() => handleHistorySort("close")}
+                                            >
+                                                <div className="th-inner">
+                                                    <span className="th-label">ราคาปิด</span>
+                                                    <span
+                                                        className={
+                                                            "sort-icon " +
+                                                            (historySortField === "close" ? `is-${historySortDir}` : "")
+                                                        }
+                                                    />
+                                                </div>
+                                            </th>
+
+                                            {/* ราคาสูงสุด */}
+                                            <th
+                                                className={
+                                                    "sortable " +
+                                                    (historySortField === "high" ? `is-sorted ${historySortDir}` : "")
+                                                }
+                                                onClick={() => handleHistorySort("high")}
+                                            >
+                                                <div className="th-inner">
+                                                    <span className="th-label">ราคาสูงสุด</span>
+                                                    <span
+                                                        className={
+                                                            "sort-icon " +
+                                                            (historySortField === "high" ? `is-${historySortDir}` : "")
+                                                        }
+                                                    />
+                                                </div>
+                                            </th>
+
+                                            {/* ราคาต่ำสุด */}
+                                            <th
+                                                className={
+                                                    "sortable " +
+                                                    (historySortField === "low" ? `is-sorted ${historySortDir}` : "")
+                                                }
+                                                onClick={() => handleHistorySort("low")}
+                                            >
+                                                <div className="th-inner">
+                                                    <span className="th-label">ราคาต่ำสุด</span>
+                                                    <span
+                                                        className={
+                                                            "sort-icon " +
+                                                            (historySortField === "low" ? `is-${historySortDir}` : "")
+                                                        }
+                                                    />
+                                                </div>
+                                            </th>
+
+                                            {/* ราคาเปิด */}
+                                            <th
+                                                className={
+                                                    "sortable " +
+                                                    (historySortField === "open" ? `is-sorted ${historySortDir}` : "")
+                                                }
+                                                onClick={() => handleHistorySort("open")}
+                                            >
+                                                <div className="th-inner">
+                                                    <span className="th-label">ราคาเปิด</span>
+                                                    <span
+                                                        className={
+                                                            "sort-icon " +
+                                                            (historySortField === "open" ? `is-${historySortDir}` : "")
+                                                        }
+                                                    />
+                                                </div>
+                                            </th>
+
+                                            {/* เปลี่ยนแปลง */}
+                                            <th
+                                                className={
+                                                    "sortable " +
+                                                    (historySortField === "change" ? `is-sorted ${historySortDir}` : "")
+                                                }
+                                                onClick={() => handleHistorySort("change")}
+                                            >
+                                                <div className="th-inner">
+                                                    <span className="th-label">เปลี่ยนแปลง</span>
+                                                    <span
+                                                        className={
+                                                            "sort-icon " +
+                                                            (historySortField === "change" ? `is-${historySortDir}` : "")
+                                                        }
+                                                    />
+                                                </div>
+                                            </th>
+
+                                            {/* % เปลี่ยนแปลง */}
+                                            <th
+                                                className={
+                                                    "sortable " +
+                                                    (historySortField === "changePct" ? `is-sorted ${historySortDir}` : "")
+                                                }
+                                                onClick={() => handleHistorySort("changePct")}
+                                            >
+                                                <div className="th-inner">
+                                                    <span className="th-label">% เปลี่ยนแปลง</span>
+                                                    <span
+                                                        className={
+                                                            "sort-icon " +
+                                                            (historySortField === "changePct" ? `is-${historySortDir}` : "")
+                                                        }
+                                                    />
+                                                </div>
+                                            </th>
+
+                                            {/* ปริมาณ (หุ้น) */}
+                                            <th
+                                                className={
+                                                    "sortable " +
+                                                    (historySortField === "volume" ? `is-sorted ${historySortDir}` : "")
+                                                }
+                                                onClick={() => handleHistorySort("volume")}
+                                            >
+                                                <div className="th-inner">
+                                                    <span className="th-label">ปริมาณ (หุ้น)</span>
+                                                    <span
+                                                        className={
+                                                            "sort-icon " +
+                                                            (historySortField === "volume" ? `is-${historySortDir}` : "")
+                                                        }
+                                                    />
+                                                </div>
+                                            </th>
+
+                                            {/* มูลค่า (‘000 บาท) */}
+                                            <th
+                                                className={
+                                                    "sortable " +
+                                                    (historySortField === "value" ? `is-sorted ${historySortDir}` : "")
+                                                }
+                                                onClick={() => handleHistorySort("value")}
+                                            >
+                                                <div className="th-inner">
+                                                    <span className="th-label">มูลค่า (‘000 บาท)</span>
+                                                    <span
+                                                        className={
+                                                            "sort-icon " +
+                                                            (historySortField === "value" ? `is-${historySortDir}` : "")
+                                                        }
+                                                    />
+                                                </div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {paginatedHistory.map((row, idx) => (
+                                            <tr key={idx}>
+                                                <td>
+                                                    {new Date(row.date).toLocaleDateString("th-TH", {
+                                                        year: "numeric",
+                                                        month: "short",
+                                                        day: "numeric",
+                                                    })}
+                                                </td>
+                                                <td>{row?.close?.toFixed(2)}</td>
+                                                <td>{row?.high?.toFixed(2)}</td>
+                                                <td>{row?.low?.toFixed(2)}</td>
+                                                <td>{row?.open?.toFixed(2)}</td>
+                                                <td className={row?.change >= 0 ? "text-up" : "text-down"}>
+                                                    {row?.change > 0 ? "+" : ""}
+                                                    {row?.change?.toFixed(2)}
+                                                </td>
+                                                <td className={row?.changePct >= 0 ? "text-up" : "text-down"}>
+                                                    {row?.changePct > 0 ? "+" : ""}
+                                                    {row?.changePct?.toFixed(2)}
+                                                </td>
+                                                <td>{row?.volume?.toLocaleString("th-TH")}</td>
+
+                                                <td>
+                                                    {row?.value?.toLocaleString("th-TH", {
+                                                        minimumFractionDigits: 2,
+                                                        maximumFractionDigits: 2,
+                                                    })}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <footer className="history-footer">
+                                <span>ข้อมูลราคาย้อนหลัง 6 เดือน</span>
+
+                                <div className="history-footer-right">
+                                    <div className="history-rows-control">
+                                        แสดง
+                                        <select
+                                            className="history-rows-select"
+                                            value={rowsPerPage}
+                                            onChange={(e) => {
+                                                setRowsPerPage(Number(e.target.value));
+                                                setPage(1); // reset page
+                                            }}
+                                        >
+                                            <option value={20}>20</option>
+                                            <option value={50}>50</option>
+                                            <option value={100}>100</option>
+                                        </select>
+                                        รายการ
                                     </div>
-                                </th>
 
-                                {/* ราคาปิด */}
-                                <th
-                                    className={
-                                    "sortable " +
-                                    (historySortField === "close" ? `is-sorted ${historySortDir}` : "")
-                                    }
-                                    onClick={() => handleHistorySort("close")}
-                                >
-                                    <div className="th-inner">
-                                    <span className="th-label">ราคาปิด</span>
-                                    <span
-                                        className={
-                                        "sort-icon " +
-                                        (historySortField === "close" ? `is-${historySortDir}` : "")
-                                        }
-                                    />
+                                    <div className="history-pagination">
+                                        <span>หน้า {page} / {totalPages}</span>
+
+                                        <button
+                                            className="history-page-btn"
+                                            disabled={page === 1}
+                                            onClick={() => setPage(page - 1)}
+                                        >
+                                            ‹
+                                        </button>
+
+                                        <button
+                                            className="history-page-btn"
+                                            disabled={page === totalPages}
+                                            onClick={() => setPage(page + 1)}
+                                        >
+                                            ›
+                                        </button>
                                     </div>
-                                </th>
-
-                                {/* ราคาสูงสุด */}
-                                <th
-                                    className={
-                                    "sortable " +
-                                    (historySortField === "high" ? `is-sorted ${historySortDir}` : "")
-                                    }
-                                    onClick={() => handleHistorySort("high")}
-                                >
-                                    <div className="th-inner">
-                                    <span className="th-label">ราคาสูงสุด</span>
-                                    <span
-                                        className={
-                                        "sort-icon " +
-                                        (historySortField === "high" ? `is-${historySortDir}` : "")
-                                        }
-                                    />
-                                    </div>
-                                </th>
-
-                                {/* ราคาต่ำสุด */}
-                                <th
-                                    className={
-                                    "sortable " +
-                                    (historySortField === "low" ? `is-sorted ${historySortDir}` : "")
-                                    }
-                                    onClick={() => handleHistorySort("low")}
-                                >
-                                    <div className="th-inner">
-                                    <span className="th-label">ราคาต่ำสุด</span>
-                                    <span
-                                        className={
-                                        "sort-icon " +
-                                        (historySortField === "low" ? `is-${historySortDir}` : "")
-                                        }
-                                    />
-                                    </div>
-                                </th>
-
-                                {/* ราคาเปิด */}
-                                <th
-                                    className={
-                                    "sortable " +
-                                    (historySortField === "open" ? `is-sorted ${historySortDir}` : "")
-                                    }
-                                    onClick={() => handleHistorySort("open")}
-                                >
-                                    <div className="th-inner">
-                                    <span className="th-label">ราคาเปิด</span>
-                                    <span
-                                        className={
-                                        "sort-icon " +
-                                        (historySortField === "open" ? `is-${historySortDir}` : "")
-                                        }
-                                    />
-                                    </div>
-                                </th>
-
-                                {/* เปลี่ยนแปลง */}
-                                <th
-                                    className={
-                                    "sortable " +
-                                    (historySortField === "change" ? `is-sorted ${historySortDir}` : "")
-                                    }
-                                    onClick={() => handleHistorySort("change")}
-                                >
-                                    <div className="th-inner">
-                                    <span className="th-label">เปลี่ยนแปลง</span>
-                                    <span
-                                        className={
-                                        "sort-icon " +
-                                        (historySortField === "change" ? `is-${historySortDir}` : "")
-                                        }
-                                    />
-                                    </div>
-                                </th>
-
-                                {/* % เปลี่ยนแปลง */}
-                                <th
-                                    className={
-                                    "sortable " +
-                                    (historySortField === "changePct" ? `is-sorted ${historySortDir}` : "")
-                                    }
-                                    onClick={() => handleHistorySort("changePct")}
-                                >
-                                    <div className="th-inner">
-                                    <span className="th-label">% เปลี่ยนแปลง</span>
-                                    <span
-                                        className={
-                                        "sort-icon " +
-                                        (historySortField === "changePct" ? `is-${historySortDir}` : "")
-                                        }
-                                    />
-                                    </div>
-                                </th>
-
-                                {/* ปริมาณ (หุ้น) */}
-                                <th
-                                    className={
-                                    "sortable " +
-                                    (historySortField === "volume" ? `is-sorted ${historySortDir}` : "")
-                                    }
-                                    onClick={() => handleHistorySort("volume")}
-                                >
-                                    <div className="th-inner">
-                                    <span className="th-label">ปริมาณ (หุ้น)</span>
-                                    <span
-                                        className={
-                                        "sort-icon " +
-                                        (historySortField === "volume" ? `is-${historySortDir}` : "")
-                                        }
-                                    />
-                                    </div>
-                                </th>
-
-                                {/* มูลค่า (‘000 บาท) */}
-                                <th
-                                    className={
-                                    "sortable " +
-                                    (historySortField === "value" ? `is-sorted ${historySortDir}` : "")
-                                    }
-                                    onClick={() => handleHistorySort("value")}
-                                >
-                                    <div className="th-inner">
-                                    <span className="th-label">มูลค่า (‘000 บาท)</span>
-                                    <span
-                                        className={
-                                        "sort-icon " +
-                                        (historySortField === "value" ? `is-${historySortDir}` : "")
-                                        }
-                                    />
-                                    </div>
-                                </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {paginatedHistory.map((row, idx) => (
-                                <tr key={idx}>
-                                <td>
-                                    {new Date(row.date).toLocaleDateString("th-TH", {
-                                        year: "numeric",
-                                        month: "short",
-                                        day: "numeric",
-                                    })}
-                                </td>
-                                <td>{row?.close?.toFixed(2)}</td>
-                                <td>{row?.high?.toFixed(2)}</td>
-                                <td>{row?.low?.toFixed(2)}</td>
-                                <td>{row?.open?.toFixed(2)}</td>
-                                <td className={row?.change >= 0 ? "text-up" : "text-down"}>
-                                    {row?.change > 0 ? "+" : ""}
-                                    {row?.change?.toFixed(2)}
-                                </td>
-                                <td className={row?.changePct >= 0 ? "text-up" : "text-down"}>
-                                    {row?.changePct > 0 ? "+" : ""}
-                                    {row?.changePct?.toFixed(2)}
-                                </td>
-                                <td>{row?.volume?.toLocaleString("th-TH")}</td>
-                                
-                                <td>
-                                    {row?.value?.toLocaleString("th-TH", {
-                                        minimumFractionDigits: 2,
-                                        maximumFractionDigits: 2,
-                                    })}
-                                </td>
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <footer className="history-footer">
-                        <span>ข้อมูลราคาย้อนหลัง 6 เดือน</span>
-
-                        <div className="history-footer-right">
-                        <div className="history-rows-control">
-                            แสดง
-                            <select
-                                className="history-rows-select"
-                                value={rowsPerPage}
-                                onChange={(e) => {
-                                    setRowsPerPage(Number(e.target.value));
-                                    setPage(1); // reset page
-                                }}
-                            >
-                                <option value={20}>20</option>
-                                <option value={50}>50</option>
-                                <option value={100}>100</option>
-                            </select>
-                            รายการ
-                        </div>
-
-                        <div className="history-pagination">
-                            <span>หน้า {page} / {totalPages}</span>
-
-                            <button
-                                className="history-page-btn"
-                                disabled={page === 1}
-                                onClick={() => setPage(page - 1)}
-                            >
-                                ‹
-                            </button>
-
-                            <button
-                                className="history-page-btn"
-                                disabled={page === totalPages}
-                                onClick={() => setPage(page + 1)}
-                            >
-                                ›
-                            </button>
-                        </div>
-                        </div>
-                    </footer>
-                    </article>
-                </section>
+                                </div>
+                            </footer>
+                        </article>
+                    </section>
                 )}
 
                 {activeTab === "finance" && (
-                    <section className="fin-wrapper">
+                    <section className="detail-history-section">
+                        <article className="detail-card finance-card">
 
-                        {/* ===== FILTER ===== */}
-                        <div className="fin-filter-row">
-                            <div className="fin-filter-text">ตัวกรอง</div>
+                            <header className="finance-header">
+                                <div className="finance-title">งบการเงิน</div>
+                                <div className="finance-unit">หน่วย : ล้านบาท</div>
+                            </header>
 
-                            <div className="fin-year-select-wrapper">
-                                <select
-                                    className="fin-year-select"
-                                    value={year}
-                                    onChange={(e) => setYear(e.target.value)}
-                                >
-                                    <option value="2568">2568</option>
-                                    <option value="2567">2567</option>
-                                    <option value="2566">2566</option>
-                                    <option value="2565">2565</option>
-                                    <option value="2564">2564</option>
-                                </select>
+                            <div className="finance-body">
 
-                                <img src="/pics/drop-down.png" className="fin-select-arrow" />
-                            </div>
-                        </div>
+                                <div className="kpi_row">
+                                    {kpiItems.map((item) => {
+                                        const row = tableData.find(r => r.item === item);
+                                        const value = row?.[latestYear];
 
-                        <div className="fin-grid">
+                                        return (
+                                            <div
+                                                key={item}
+                                                className={`kpi_card ${selectedMetric === item ? "active" : ""}`}
+                                                onClick={() => setSelectedMetric(prev => prev === item ? null : item)}
+                                            >
+                                                <div className="kpi_title">{item}</div>
 
-                            {/* ============= LEFT SIDE (CARDS + CHARTS) ============= */}
-                            <div className="fin-left">
-
-                                {/* ===== Summary Cards ===== */}
-                                <div className="fin-card-row">
-                                    <div className="fin-small-card green">
-                                        <h4>สินทรัพย์รวม</h4>
-                                        <p>{(d.asset / 1e6).toFixed(2)}M</p>
-                                    </div>
-
-                                    <div className="fin-small-card blue">
-                                        <h4>รายได้รวม</h4>
-                                        <p>{(d.revenue / 1e6).toFixed(2)}M</p>
-                                    </div>
-
-                                    <div className="fin-small-card yellow">
-                                        <h4>กำไรสุทธิ</h4>
-                                        <p>{(d.netProfit / 1e6).toFixed(2)}M</p>
-                                    </div>
-
-                                    <div className="fin-small-card purple">
-                                        <h4>ROE (%)</h4>
-                                        <p>{d.roe}%</p>
-                                    </div>
+                                                <div className="kpi_value">
+                                                    {item.includes("%")
+                                                        ? `${Number(value).toFixed(2)}%`
+                                                        : `${(value / 1000).toFixed(2)}M`}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
 
-                                {/* ===== Chart placeholders ===== */}
-                                <div className="fin-chart-card">
-                                    <h3>รายได้ & กำไรสุทธิ</h3>
-                                    <div className="fin-chart-placeholder">[ กราฟรายได้ / กำไรสุทธิ ]</div>
-                                </div>
-
-                                <div className="fin-chart-card">
-                                    <h3>ROA / ROE / Margin</h3>
-                                    <div className="fin-chart-placeholder">[ กราฟ ROA / ROE / Margin ]</div>
-                                </div>
-                            </div>
-
-                            {/* ===== RIGHT SIDE: FINANCE SUMMARY TABLE ===== */}
-                            <div className="fin-right">
-                                <div className="fin-card fin-summary-card">
-                                    <h3 className="fin-card-title">ข้อมูลการเงินปี {year}</h3>
-
-                                    <div className="fin-summary-grid">
-
-                                        {/* -------- บัญชีทางการเงินที่สำคัญ -------- */}
-                                        <div className="fin-summary-section">บัญชีทางการเงินที่สำคัญ</div>
-
-                                        <div className="fin-sum-row"><span>สินทรัพย์รวม</span><span>{d.asset}</span></div>
-                                        <div className="fin-sum-row"><span>หนี้สินรวม</span><span>{d.debt}</span></div>
-                                        <div className="fin-sum-row"><span>ส่วนของผู้ถือหุ้น</span><span>{d.equity}</span></div>
-                                        <div className="fin-sum-row"><span>มูลค่าหุ้นที่เรียกชำระแล้ว</span><span>{d.parPaid}</span></div>
-                                        <div className="fin-sum-row"><span>รายได้รวม</span><span>{d.revenue}</span></div>
-                                        <div className="fin-sum-row"><span>กำไร (ขาดทุน) อื่น</span><span>{d.otherProfit}</span></div>
-                                        <div className="fin-sum-row"><span>กำไรสุทธิ</span><span>{d.netProfit}</span></div>
-                                        <div className="fin-sum-row"><span>กำไรต่อหุ้น (บาท)</span><span>{d.eps}</span></div>
-
-                                        {/* -------- อัตราส่วนทางการเงิน -------- */}
-                                        <div className="fin-summary-section">อัตราส่วนทางการเงินที่สำคัญ</div>
-
-                                        <div className="fin-sum-row"><span>ROA (%)</span><span>{d.roa}</span></div>
-                                        <div className="fin-sum-row"><span>ROE (%)</span><span>{d.roe}</span></div>
-                                        <div className="fin-sum-row"><span>อัตรากำไรสุทธิ (%)</span><span>{d.margin}</span></div>
-
-                                        {/* -------- ราคา + Market -------- */}
-                                        <div className="fin-summary-section">ข้อมูลราคา</div>
-
-                                        <div className="fin-sum-row"><span>ราคาล่าสุด (บาท)</span><span>{d.lastPrice}</span></div>
-                                        <div className="fin-sum-row"><span>มูลค่าหลักทรัพย์ตามราคาตลาด</span><span>{d.marketCap}</span></div>
-
-                                        {/* -------- การลงทุน -------- */}
-                                        <div className="fin-summary-section">ข้อมูลการลงทุน</div>
-
-                                        <div className="fin-sum-row"><span>P/E (เท่า)</span><span>{d.pe}</span></div>
-                                        <div className="fin-sum-row"><span>P/BV (เท่า)</span><span>{d.pbv}</span></div>
-                                        <div className="fin-sum-row"><span>Book Value (บาท)</span><span>{d.bookValue}</span></div>
-                                        <div className="fin-sum-row"><span>Dividend Yield (%)</span><span>{d.dividendYield}</span></div>
-
+                                {/* 🔥 GRAPH */}
+                                <div className="finance_chart">
+                                    <div className="chart_title">
+                                        {selectedMetric ? selectedMetric : "เปรียบเทียบทุกตัว"}
                                     </div>
+
+                                    <ResponsiveContainer width="100%" height={320}>
+                                        <LineChart data={singleLineData}>
+
+                                            <XAxis dataKey="year" />
+                                            <YAxis />
+
+                                            <Tooltip formatter={(v) => v?.toLocaleString()} />
+
+                                            <Line
+                                                type="monotone"
+                                                dataKey="value"
+                                                stroke="#00E676"
+                                                strokeWidth={3}
+                                                dot={{ r: 4 }}
+                                                activeDot={{ r: 6 }}
+                                            />
+
+                                        </LineChart>
+                                    </ResponsiveContainer>
+                                </div>
+
+                                {/* 🔥 TABLE */}
+                                <div className="finance_table">
+                                    <table className="finance-table stocks-table">
+                                        <thead>
+                                            <tr>
+                                                <th>รายการ</th>
+                                                {years.map((y) => (
+                                                    <th key={y}>{y}</th>
+                                                ))}
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            {tableData.map((row, i) => (
+                                                <tr
+                                                    key={i}
+                                                    onClick={() => setSelectedMetric(row.item)}
+                                                    className={selectedMetric === row.item ? "active-row" : ""}
+                                                >
+                                                    <td>{row.item}</td>
+
+                                                    {years.map((y) => (
+                                                        <td key={y}>
+                                                            {row[y]
+                                                                ? Number(row[y]).toLocaleString()
+                                                                : "-"}
+                                                        </td>
+                                                    ))}
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-
-                        </div>
+                        </article>
                     </section>
                 )}
 

@@ -10,9 +10,10 @@ export default function Login() {
     const [isLoading, setIsLoading] = useState(false); // สำหรับการแสดงสถานะการโหลด
 
     useEffect(() => {
-        const token = localStorage.getItem("access_token");
+        const token = localStorage.getItem("token");
+
         if (token) {
-            navigate("/"); // หรือหน้าโปรไฟล์ เช่น /profile
+            navigate("/");
         }
     }, [navigate]);
 
@@ -32,16 +33,18 @@ export default function Login() {
             // เรียกใช้ GetLogin เพื่อส่งข้อมูลไปยัง API
             const response = await GetLogin(form.email, form.password);
 
-            // ตรวจสอบว่าได้รับข้อมูล token หรือไม่
-            if (response && response.token) {
-                // เก็บ token ใน localStorage
-                localStorage.setItem("access_token", response.token);
+            console.log("LOGIN RES:", response);
 
-                console.log(response.redirect_to);
-                // ตรวจสอบค่า redirect_to ก่อน
-                if (response.redirect_to) {
-                    navigate(response.redirect_to); // ไปยัง / หรือ /admin ตามที่ API ตอบ
-                }
+            const token = response.token;
+const user_id = response.user_id;
+
+            console.log("TOKEN:", token);
+
+            if (token) {
+                localStorage.setItem("token", token);
+                localStorage.setItem("user_id", user_id);
+
+                navigate("/");
             }
         } catch (err) {
             setError("เกิดข้อผิดพลาดในการเข้าสู่ระบบ"); // แสดงข้อความข้อผิดพลาดหากมี
@@ -62,7 +65,7 @@ export default function Login() {
                     <h1 className="login-title">ระบบช่วยแนะนำหุ้นไทย</h1>
                     <p className="login-subtitle">สำหรับการลงทุนระยะยาว</p>
                     <p className="login-desc">
-                        พร้อมฟีเจอร์ดูงบการเงินย้อนหลัง กรองหุ้นตามปัจจัยพื้นฐาน 
+                        พร้อมฟีเจอร์ดูงบการเงินย้อนหลัง กรองหุ้นตามปัจจัยพื้นฐาน
                         และวิเคราะห์ความเสี่ยงของคุณอัตโนมัติในไม่กี่นาที
                     </p>
                 </div>

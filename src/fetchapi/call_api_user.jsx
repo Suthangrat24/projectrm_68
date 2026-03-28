@@ -3,24 +3,24 @@ let api = "http://localhost:8000";
 import axios from "axios";
 
 export async function GetLogin(email, password) {
-    try {
-        const response = await axios.post(
-            `${api}/login`, // ใช้ URL ของ API
-            { email, password }, // ส่ง email และ password ใน request body
-            {
-                headers: {
-                    "Content-Type": "application/json", // กำหนด Content-Type ให้เป็น JSON
-                },
-            }
-        );
+  try {
+    const response = await axios.post(
+      `${api}/login`, // ใช้ URL ของ API
+      { email, password }, // ส่ง email และ password ใน request body
+      {
+        headers: {
+          "Content-Type": "application/json", // กำหนด Content-Type ให้เป็น JSON
+        },
+      }
+    );
 
-        console.log("data : ", response.data); // แสดงข้อมูลที่ได้รับจาก API
+    console.log("data : ", response.data); // แสดงข้อมูลที่ได้รับจาก API
 
-        return response.data; // ส่งข้อมูลที่ได้รับจาก API กลับไป
-    } catch (error) {
-        console.error("Error fetching user data:", error); // แสดงข้อผิดพลาดถ้ามี
-        throw error; // ส่งข้อผิดพลาดออกไปให้ฟังก์ชันที่เรียกใช้จัดการ
-    }
+    return response.data; // ส่งข้อมูลที่ได้รับจาก API กลับไป
+  } catch (error) {
+    console.error("Error fetching user data:", error); // แสดงข้อผิดพลาดถ้ามี
+    throw error; // ส่งข้อผิดพลาดออกไปให้ฟังก์ชันที่เรียกใช้จัดการ
+  }
 }
 
 export async function getdataProducts() {
@@ -29,10 +29,10 @@ export async function getdataProducts() {
     // console.log("token : ", token);
     const response = await axios.get(
       `${api}/users`,
-    //   { id_year },
+      //   { id_year },
       {
         headers: {
-        //   Authorization: `Bearer ${token}`,
+          //   Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       }
@@ -48,7 +48,7 @@ export async function getdataProducts() {
   }
 }
 
-export async function adddataProducts(token,id_year) {
+export async function adddataProducts(token, id_year) {
   //   console.log(id_actionplan);
   try {
     // console.log("token : ", token);
@@ -76,10 +76,10 @@ export async function adddataProducts(token,id_year) {
 export async function getStocks() {
   try {
     const response = await axios.get(
-      `${api}/stocks`,   
+      `${api}/stocks`,
       {
         headers: {
-        //   Authorization: `Bearer ${token}`,
+          //   Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       }
@@ -95,10 +95,10 @@ export async function getStocks() {
 export async function getStock(symbol) {
   try {
     const response = await axios.get(
-      `${api}/stock/${symbol}`,   
+      `${api}/stock/${symbol}`,
       {
         headers: {
-        //   Authorization: `Bearer ${token}`,
+          //   Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       }
@@ -118,6 +118,7 @@ export async function getStockLatest(symbol) {
       params: { symbol }
     }
   );
+  console.log("latest:", response.data);
   return response.data;
 }
 
@@ -164,6 +165,35 @@ export async function getStockHistoryPerDay(symbol, days = 30) {
 
   } catch (err) {
     console.error("Get stock history (per day) error:", err);
+    throw err;
+  }
+}
+
+export async function getStockFinancial(symbol) {
+  const response = await axios.get(
+    `${api}/stock/price/financial`,
+    {
+      params: {
+        symbol
+      }
+    }
+  );
+
+  return response.data;
+}
+
+export async function getTopStocks(sort = "value", limit = 5) {
+  try {
+    const response = await axios.get(
+      `${api}/stock/price/top`,
+      {
+        params: { sort, limit },
+      }
+    );
+    console.log("top stocks:", response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Get top stocks error:", err);
     throw err;
   }
 }
@@ -224,11 +254,27 @@ export async function updateUser(user_id, payload) {
   }
 }
 
+export async function getFavorites(token) {
+  try {
+    const response = await axios.get(`${api}/favorites`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log("favorites:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Get favorite error:", error);
+    throw error;
+  }
+}
+
 // เช็คสถานะ
-export async function checkFavorite(token, user_id, stock_id) {
+export async function checkFavorite(token, stock_id) {
   try {
     const response = await axios.get(
-      `${api}/favorite/check/${user_id}/${stock_id}`,
+      `${api}/favorite/check/${stock_id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -245,12 +291,11 @@ export async function checkFavorite(token, user_id, stock_id) {
 }
 
 // เพิ่ม
-export async function addFavorite(token, user_id, stock_id) {
+export async function addFavorite(token, stock_id) {
   try {
     const response = await axios.post(
       `${api}/add_favorite`,
       {
-        user_id,
         stock_id
       },
       {
@@ -289,6 +334,168 @@ export async function deleteFavorite(token, favorite_id) {
 
   } catch (error) {
     console.error("Delete favorite error:", error);
+    throw error;
+  }
+}
+
+export async function getFilterOptions() {
+  try {
+    const response = await axios.get(
+      `${api}/filter-options`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log("filter options:", response.data);
+    return response.data;
+
+  } catch (error) {
+    console.error("Get filter options error:", error);
+    throw error;
+  }
+}
+
+// Portfolio
+export async function addPortfolio(token, payload) {
+  try {
+    const response = await axios.post(
+      `${api}/add-portfolio`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log("portfolio added:", response.data);
+    return response.data;
+
+  } catch (error) {
+    console.error("Add portfolio error:", error);
+    throw error;
+  }
+}
+
+export async function getPortfolio(token) {
+  try {
+    const response = await axios.get(
+      `${api}/portfolio`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log("portfolio:", response.data);
+    return response.data;
+
+  } catch (error) {
+    console.error("Get portfolio error:", error);
+    throw error;
+  }
+}
+
+export async function getPortfolioById(token, portfolioId) {
+  try {
+    const response = await axios.get(
+      `${api}/portfolio/${portfolioId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log("portfolio by id:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Get portfolio by id error:", error);
+    throw error;
+  }
+}
+
+export async function editPortfolio(token, portfolioId, payload) {
+  try {
+    const response = await axios.put(
+      `${api}/update-portfolio/${portfolioId}`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log("portfolio updated:", response.data);
+    return response.data;
+
+  } catch (error) {
+    console.error("Edit portfolio error:", error);
+    throw error;
+  }
+}
+
+export async function submitAssessment(token, payload) {
+  try {
+    const response = await axios.post(
+      `${api}/assessment`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log("assessment:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Submit assessment error:", error);
+    throw error;
+  }
+}
+
+export async function getRecommendation(token, attempt_id, top_n = 5) {
+  try {
+    const response = await axios.post(
+      `${api}/recommend`,
+      { attempt_id, top_n },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log("recommend:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Get recommendation error:", error);
+    throw error;
+  }
+}
+
+export async function getAssessmentHistory(token) {
+  try {
+    const response = await axios.get(
+      `${api}/assessment/history`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log("assessment history:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Get assessment history error:", error);
     throw error;
   }
 }

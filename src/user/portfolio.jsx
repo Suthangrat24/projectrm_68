@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getPortfolio } from "../fetchapi/call_api_user";
 import "../css/portfolio.css";
 
 export default function Portfolio() {
@@ -32,34 +33,56 @@ export default function Portfolio() {
         }
     ];
 
-    const portfolioList = [
-        {
-            symbol: "PTT",
-            fullname: "ปตท.",
-            date: "15 ม.ค. 2568",
-            type: "ซื้อ",
-            shares: 1000,
-            price: "32.50 ฿",
-            value: "32,500.00 ฿",
-            pl: "+750.00 ฿",
-            percent: "+2.35%",
-            note: "เป็นพอร์ตลงทุนหลัก",
-            plGreen: true
-        },
-        {
-            symbol: "BDMS",
-            fullname: "กรุงเทพดุสิตเวชการ",
-            date: "10 ม.ค. 2568",
-            type: "ซื้อ",
-            shares: 2000,
-            price: "22.80 ฿",
-            value: "45,600.00 ฿",
-            pl: "+1,200.00 ฿",
-            percent: "+2.31%",
-            note: "ถือยาว",
-            plGreen: true
+    const [portfolioList, setPortfolioList] = useState([]);
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+
+        async function loadPortfolio() {
+            try {
+                const data = await getPortfolio(token);
+                // เช็คว่า data เป็น array และไม่ว่าง
+                if (data && Array.isArray(data)) {
+                    setPortfolioList(data);
+                } else {
+                    console.error('ข้อมูลที่ได้ไม่ใช่รูปแบบที่คาดหวัง');
+                }
+            } catch (err) {
+                console.error("เกิดข้อผิดพลาดในการดึงข้อมูลพอร์ต:", err);
+            }
         }
-    ];
+
+        loadPortfolio();
+    }, []);
+
+    // const portfolioList = [
+    //     {
+    //         symbol: "PTT",
+    //         fullname: "ปตท.",
+    //         date: "15 ม.ค. 2568",
+    //         type: "ซื้อ",
+    //         shares: 1000,
+    //         price: "32.50 ฿",
+    //         value: "32,500.00 ฿",
+    //         pl: "+750.00 ฿",
+    //         percent: "+2.35%",
+    //         note: "เป็นพอร์ตลงทุนหลัก",
+    //         plGreen: true
+    //     },
+    //     {
+    //         symbol: "BDMS",
+    //         fullname: "กรุงเทพดุสิตเวชการ",
+    //         date: "10 ม.ค. 2568",
+    //         type: "ซื้อ",
+    //         shares: 2000,
+    //         price: "22.80 ฿",
+    //         value: "45,600.00 ฿",
+    //         pl: "+1,200.00 ฿",
+    //         percent: "+2.31%",
+    //         note: "ถือยาว",
+    //         plGreen: true
+    //     }
+    // ];
 
     const historyList = [
         {
@@ -118,239 +141,192 @@ export default function Portfolio() {
         },
     ];
 
-  return (
-    <>
-    {/* ===== HERO SECTION (เหมือนหน้า stocks) ===== */}
-    <section className="portfolio-hero">
-        <div className="hero-bg"></div>
-        <div className="hero-overlay"></div>
+    return (
+        <>
+            {/* ===== HERO SECTION (เหมือนหน้า stocks) ===== */}
+            <section className="portfolio-hero">
+                <div className="hero-bg"></div>
+                <div className="hero-overlay"></div>
 
-        <div className="hero-content">
-          <p className="hero-eyebrow">จัดการและติดตามการลงทุนของคุณ</p>
-          <h1 className="hero-title">พอร์ตการลงทุนของฉัน</h1>
-        </div>
-    </section>
-
-    <section className="portfolio-page">
-      {/* ===== TOP SUMMARY CARD – 4 การ์ด ===== */}
-        <section className="portfolio-summary-grid">
-            {summaryStats.map((item, index) => (
-                <div 
-                key={index}
-                className={`portfolio-summary-card ${item.green ? "green" : ""}`}
-                >
-                <p className="summary-label">{item.label}</p>
-                <h2 className={`summary-value ${item.green ? "green-text" : ""}`}>
-                    {item.value}
-                </h2>
-                <span className={`summary-sub ${item.green ? "green-text" : ""}`}>
-                    {item.sub}
-                </span>
+                <div className="hero-content">
+                    <p className="hero-eyebrow">จัดการและติดตามการลงทุนของคุณ</p>
+                    <h1 className="hero-title">พอร์ตการลงทุนของฉัน</h1>
                 </div>
-            ))}
-        </section>
+            </section>
 
-      {/* ===== TABS ===== */}
-      <section className="portfolio-tabs-card">
-        <div className="portfolio-tabs-row">
-
-          <button
-            className={
-              "portfolio-tab " + (activeTab === "all" ? "portfolio-tab--active" : "")
-            }
-            onClick={() => setActiveTab("all")}
-          >
-            รายการหุ้นทั้งหมด
-          </button>
-
-          <button
-            className={
-              "portfolio-tab " + (activeTab === "analysis" ? "portfolio-tab--active" : "")
-            }
-            onClick={() => setActiveTab("analysis")}
-          >
-            การวิเคราะห์
-          </button>
-
-          <button
-            className={
-              "portfolio-tab " + (activeTab === "history" ? "portfolio-tab--active" : "")
-            }
-            onClick={() => setActiveTab("history")}
-          >
-            ประวัติการลงทุน
-          </button>
-
-        </div>
-      </section>
-
-        {/* ===== TABLE SECTION (Tab: รายการหุ้นทั้งหมด) ===== */}
-        {activeTab === "all" && (
-        <section className="portfolio-table-card">
-
-          <div className="table-header">
-            <h2 className="table-title">รายการหุ้นทั้งหมด</h2>
-
-            <button className="add-invest-btn" onClick={() => navigate("/add-investment")}>
-              + เพิ่มการลงทุน
-            </button>
-          </div>
-
-          <table className="portfolio-table">
-            <thead>
-              <tr>
-                <th>ชื่อย่อ</th>
-                <th>วันที่ซื้อ</th>
-                <th>ประเภท</th>
-                <th>จำนวนหุ้น</th>
-                <th>ราคาซื้อ</th>
-                <th>มูลค่า</th>
-                <th>กำไร/ขาดทุน</th>
-                <th>หมายเหตุ</th>
-                <th>จัดการ</th>
-              </tr>
-            </thead>
-
-            <tbody>
-                {portfolioList.map((row, i) => (
-                    <tr key={i}>
-                    <td className="stock-name-cell">
-                        <div className="stock-symbol">{row.symbol}</div>
-                        <div className="stock-fullname">{row.fullname}</div>
-                    </td>
-                    <td className="text-muted">{row.date}</td>
-                    <td>
-                        <span className="tag-buy">{row.type}</span>
-                    </td>
-
-                    <td className="text-muted">{row.shares}</td>
-                    <td className="text-muted">{row.price}</td>
-                    <td className="text-muted">{row.value}</td>
-
-                    <td className="pl-wrapper">
-                        <div className={row.plGreen ? "pl-main green-text" : "pl-main red-text"}>
-                            {row.pl}
+            <section className="portfolio-page">
+                {/* ===== TOP SUMMARY CARD – 4 การ์ด ===== */}
+                <section className="portfolio-summary-grid">
+                    {summaryStats.map((item, index) => (
+                        <div
+                            key={index}
+                            className={`portfolio-summary-card ${item.green ? "green" : ""}`}
+                        >
+                            <p className="summary-label">{item.label}</p>
+                            <h2 className={`summary-value ${item.green ? "green-text" : ""}`}>
+                                {item.value}
+                            </h2>
+                            <span className={`summary-sub ${item.green ? "green-text" : ""}`}>
+                                {item.sub}
+                            </span>
                         </div>
-                        <div className={row.plGreen ? "pl-sub green-text" : "pl-sub red-text"}>
-                            {row.percent ?? "(0.00%)"}
+                    ))}
+                </section>
+
+                {/* ===== TABS ===== */}
+                <section className="portfolio-tabs-card">
+                    <div className="portfolio-tabs-row">
+
+                        <button
+                            className={
+                                "portfolio-tab " + (activeTab === "all" ? "portfolio-tab--active" : "")
+                            }
+                            onClick={() => setActiveTab("all")}
+                        >
+                            รายการลงทุนทั้งหมด
+                        </button>
+
+                        <button
+                            className={
+                                "portfolio-tab " + (activeTab === "analysis" ? "portfolio-tab--active" : "")
+                            }
+                            onClick={() => setActiveTab("analysis")}
+                        >
+                            การวิเคราะห์
+                        </button>
+
+                    </div>
+                </section>
+
+                {/* ===== TABLE SECTION (Tab: รายการหุ้นทั้งหมด) ===== */}
+                {activeTab === "all" && (
+                    <section className="portfolio-table-card">
+
+                        <div className="table-header">
+                            <h2 className="table-title">รายการหุ้นทั้งหมด</h2>
+
+                            <button className="add-invest-btn" onClick={() => navigate("/add-investment")}>
+                                + เพิ่มการลงทุน
+                            </button>
                         </div>
-                    </td>
-                    <td className="text-muted">{row.note}</td>
 
-                    <td className="action-icons">
-                        <img src="/pics/edit.png" className="action-icon" onClick={() => navigate("/edit-investment")}/>
-                        <img src="/pics/delete.png" className="action-icon" />
-                    </td>
-                    </tr>
-                ))}
-            </tbody>
-          </table>
+                        <table className="portfolio-table">
+                            <thead>
+                                <tr>
+                                    <th>ชื่อย่อ</th>
+                                    <th>วันที่ซื้อ</th>
+                                    <th>ประเภท</th>
+                                    <th>จำนวนหุ้น</th>
+                                    <th>ราคาซื้อ</th>
+                                    <th>มูลค่า</th>
+                                    {/* <th>กำไร/ขาดทุน</th> */}
+                                    <th>หมายเหตุ</th>
+                                    <th>จัดการ</th>
+                                </tr>
+                            </thead>
 
-        </section>
-        )}
+                            <tbody>
+                                {portfolioList.map((row) => (
+                                    <tr>
+                                        <td className="text-muted">
+                                            <div className="portfolio-stock-symbol">{row.symbol}</div>
+                                        </td>
+                                        <td className="text-muted">
+                                            {new Date(row.invest_date).toLocaleDateString("th-TH")}
+                                        </td>
+                                        <td>
+                                            <span className="tag-buy">
+                                                {row.invest_type_id === 1 ? "ซื้อ" : "ขาย"}
+                                            </span>
+                                        </td>
 
-        {activeTab === "analysis" && (
-          <section className="analysis-wrapper">
+                                        <td className="text-muted">{row.number_of_share}</td>
+                                        <td className="text-muted">{row.price_per_share}</td>
+                                        <td className="text-muted">{row.total}</td>
 
-              {/* ===== GRID: TOP TWO PIE CHARTS ===== */}
-              <div className="analysis-top-grid">
+                                        {/* <td className="pl-wrapper">
+                                            <div className={row.plGreen ? "pl-main green-text" : "pl-main red-text"}>
+                                                {row.pl}
+                                            </div>
+                                            <div className={row.plGreen ? "pl-sub green-text" : "pl-sub red-text"}>
+                                                {row.percent ?? "(0.00%)"}
+                                            </div>
+                                        </td> */}
+                                        <td className="text-muted">{row.note || "-"}</td>
 
-                  {/* =========== การกระจายตามหมวดอุตสาหกรรม =========== */}
-                  <article className="analysis-card chart-card">
-                      <h3 className="analysis-card-title">การกระจายตามหมวดอุตสาหกรรม</h3>
+                                        <td className="portfolio-action-icon">
+                                            <img
+                                                src="/pics/edit.png"
+                                                className="edit-icon"
+                                                onClick={() => navigate(`/edit-investment/${row.portfolio_id}`)}
+                                            />
+                                            <img src="/pics/delete.png" className="delete-icon" />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
 
-                      <div className="analysis-chart-body">
-                          <div className="chart-placeholder">
-                              [ พื้นที่กราฟวงกลม – อุตสาหกรรม ]
-                          </div>
-                      </div>
+                    </section>
+                )}
 
-                      {/* <div className="analysis-legend-row">
+                {activeTab === "analysis" && (
+                    <section className="analysis-wrapper">
+
+                        {/* ===== GRID: TOP TWO PIE CHARTS ===== */}
+                        <div className="analysis-top-grid">
+
+                            {/* =========== การกระจายตามหมวดอุตสาหกรรม =========== */}
+                            <article className="analysis-card chart-card">
+                                <h3 className="analysis-card-title">การกระจายตามหมวดอุตสาหกรรม</h3>
+
+                                <div className="analysis-chart-body">
+                                    <div className="chart-placeholder">
+                                        [ พื้นที่กราฟวงกลม – อุตสาหกรรม ]
+                                    </div>
+                                </div>
+
+                                {/* <div className="analysis-legend-row">
                           <span className="legend-dot legend-red" /> การเงิน
                           <span className="legend-dot legend-green" /> พลังงาน
                           <span className="legend-dot legend-cyan" /> สุขภาพ
                           <span className="legend-dot legend-yellow" /> เทคโนโลยี
                       </div> */}
-                  </article>
+                            </article>
 
-                  {/* =========== การกระจายตามความเสี่ยง =========== */}
-                  <article className="analysis-card chart-card">
-                      <h3 className="analysis-card-title">การกระจายตามความเสี่ยง</h3>
+                            {/* =========== การกระจายตามความเสี่ยง =========== */}
+                            <article className="analysis-card chart-card">
+                                <h3 className="analysis-card-title">การกระจายตามความเสี่ยง</h3>
 
-                      <div className="analysis-chart-body">
-                          <div className="chart-placeholder">
-                              [ พื้นที่กราฟวงกลม – ความเสี่ยง ]
-                          </div>
-                      </div>
+                                <div className="analysis-chart-body">
+                                    <div className="chart-placeholder">
+                                        [ พื้นที่กราฟวงกลม – ความเสี่ยง ]
+                                    </div>
+                                </div>
 
-                      {/* <div className="analysis-legend-row">
+                                {/* <div className="analysis-legend-row">
                           <span className="legend-dot legend-cyan" /> ต่ำ
                           <span className="legend-dot legend-yellow" /> ปานกลาง
                       </div> */}
-                  </article>
+                            </article>
 
-              </div>
+                        </div>
 
-              {/* ===== GRAPH: ผลตอบแทนแต่ละหุ้น ===== */}
-              <article className="analysis-card bar-card">
-                  <h3 className="analysis-card-title">ผลตอบแทนแต่ละหุ้น</h3>
+                        {/* ===== GRAPH: ผลตอบแทนแต่ละหุ้น ===== */}
+                        <article className="analysis-card bar-card">
+                            <h3 className="analysis-card-title">ผลตอบแทนแต่ละหุ้น</h3>
 
-                  <div className="analysis-chart-body">
-                      <div className="bar-placeholder">
-                          [ พื้นที่กราฟแท่ง – ผลตอบแทนรายตัว ]
-                      </div>
-                  </div>
-              </article>
+                            <div className="analysis-chart-body">
+                                <div className="bar-placeholder">
+                                    [ พื้นที่กราฟแท่ง – ผลตอบแทนรายตัว ]
+                                </div>
+                            </div>
+                        </article>
 
-          </section>
-        )}
+                    </section>
+                )}
 
-        {activeTab === "history" && (
-        <section className="portfolio-table-card">
-
-            <div className="table-header">
-            <h2 className="table-title">ประวัติการซื้อขายทั้งหมด</h2>
-
-            <button className="filter-date-btn">
-                <img src="/pics/filter.png" alt="filter" className="filter-icon" />
-                กรองตามวันที่
-            </button>
-            </div>
-
-            <table className="portfolio-table">
-            <thead>
-                <tr>
-                <th>วันที่ทำรายการ</th>
-                <th>ประเภทรายการ</th>
-                <th>ชื่อหุ้น</th>
-                <th>จำนวนหุ้น</th>
-                <th>ราคาต่อหุ้น</th>
-                <th>มูลค่ารวม</th>
-                <th>หมายเหตุ</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                {historyList.map((row, i) => (
-                <tr key={i}>
-                    <td>{row.date}</td>
-                    <td>
-                    <span className="tag-buy">{row.type}</span>
-                    </td>
-                    <td>{row.stock}</td>
-                    <td>{row.shares}</td>
-                    <td>{row.price}</td>
-                    <td>{row.total}</td>
-                    <td>{row.note}</td>
-                </tr>
-                ))}
-            </tbody>
-            </table>
-
-        </section>
-        )}
-
-    </section>
-    </>
-  );
+            </section>
+        </>
+    );
 }

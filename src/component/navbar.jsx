@@ -22,14 +22,11 @@ export default function Navbar() {
 
   /* ------------------ LOAD USER ------------------ */
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (token) {
-      setIsLoggedIn(true);  // ถ้ามี token ให้ถือว่า logged in
-    } else {
-      setIsLoggedIn(false);  // ถ้าไม่มี token ก็คือไม่ได้ล็อกอิน
-    }
+    const token = localStorage.getItem("token");
 
-    if (isLoggedIn) {
+    if (token) {
+      setIsLoggedIn(true);
+
       async function loadUser() {
         try {
           const data = await getUserById(user_id);
@@ -38,9 +35,12 @@ export default function Navbar() {
           console.error("โหลดข้อมูลผู้ใช้ล้มเหลว", err);
         }
       }
+
       loadUser();
+    } else {
+      setIsLoggedIn(false);
     }
-  }, [user_id, isLoggedIn]);
+  }, [user_id]);
 
   /* ------------------ LOAD STOCKS ------------------ */
   useEffect(() => {

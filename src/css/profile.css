@@ -45,7 +45,6 @@
   margin-bottom: 24px;
 }
 
-/* Top area */
 .profile-top {
   display: flex;
   gap: 24px;
@@ -53,10 +52,10 @@
 }
 
 .profile-avatar {
-  width: 171px;       /* หรือขนาดที่ต้องการ */
+  width: 171px;
   height: 171px;
-  border-radius: 50%; /* ทำให้กรอบกลม */
-  overflow: hidden;   /* ตัดส่วนเกิน */
+  border-radius: 50%;
+  overflow: hidden;
   background: #374151;
   display: flex;
   align-items: center;
@@ -66,7 +65,7 @@
 .profile-picture {
   width: 100%;
   height: 100%;
-  object-fit: cover;  /* ครอบให้สวย ไม่บี้ */
+  object-fit: cover;
 }
 
 .profile-info {
@@ -127,7 +126,6 @@
 }
 
 /* ===== Tabs ===== */
-/* ===== Profile Tabs (เหมือน Detail Tabs) ===== */
 
 .profile-tabs-card {
   margin-top: 12px;
@@ -177,10 +175,6 @@
   border: 1px solid #374151;
 }
 
-/* Grid info */
-
-/* ===== Header ของส่วนข้อมูลส่วนตัว ===== */
-
 .profile-section-header {
   display: flex;
   justify-content: space-between;
@@ -200,9 +194,9 @@
 }
 
 .user-icon {
-    width: 30px;
-    height: 30px;
-    opacity: 0.85;
+  width: 30px;
+  height: 30px;
+  opacity: 0.85;
 }
 
 .history-icon,
@@ -219,21 +213,17 @@
   letter-spacing: 0.3px;
 }
 
-/* ปุ่มแก้ไข */
 .profile-user-edit-btn {
   display: flex;
   align-items: center;
   gap: 6px;
-
   background: #2563EB;
   color: white;
   border: none;
   border-radius: 10px;
   padding: 8px 14px;
-
   font-size: 14px;
   cursor: pointer;
-
   transition: 0.2s;
 }
 
@@ -273,7 +263,7 @@
 .tab-section {
   display: flex;
   flex-direction: column;
-  gap: 24px; 
+  gap: 24px;
 }
 
 .risk-card {
@@ -283,10 +273,9 @@
   padding: 20px 24px;
   border-radius: 16px;
   box-shadow: 0 10px 28px rgba(0,0,0,0.45);
-  margin: 8px 0;     /* แยกการ์ดออกชัวร์ ไม่โดน margin collapse */
+  margin: 8px 0;
 }
 
-/* header การประเมิน */
 .risk-card-header {
   display: flex;
   justify-content: space-between;
@@ -305,29 +294,35 @@
   font-weight: 600;
 }
 
-/* badge ระดับความเสี่ยง */
+/* ✅ badge ระดับความเสี่ยง — redesign แบบ A */
 .risk-history-badge {
   display: inline-block;
-  padding: 4px 12px;
-  border-radius: 60px;
-  font-size: 13px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 12px;
   font-weight: 600;
 }
 
-.risk-history-mid {
-  background: #765f0954;
-  border: 1px solid #d1a300;
-  color: #d1a300;
+.risk-history-low {
+  background: #14532d;
+  color: #86efac;
+  border: 1px solid #22c55e;
 }
 
-.risk-history-low {
-  background: #0b76325f;
-  border: 1px solid #22c55e;
-  color: #22c55e;
+.risk-history-mid {
+  background: #78350f;
+  color: #fcd34d;
+  border: 1px solid #f59e0b;
+}
+
+.risk-history-high {
+  background: #7f1d1d;
+  color: #fca5a5;
+  border: 1px solid #ef4444;
 }
 
 .fav-price-block {
-  margin-top: 8px;   /* ให้หายชิดโลโก้เกินไป */
+  margin-top: 8px;
   margin-bottom: 16px;
 }
 
@@ -339,14 +334,14 @@
   font-size: 14px;
   cursor: pointer;
   transition: 0.2s ease;
+  border: none;
 }
 
 .risk-detail-btn:hover {
   background: #3b465a;
-  border-color: #6b7280;
+  color: #e5e7eb;
 }
 
-/* ปุ่มดูรายละเอียด */
 .fav-detail-btn {
   background: #e5e7eb;
   color: #334155;
@@ -355,10 +350,9 @@
   border-radius: 10px;
   font-size: 14px;
   cursor: pointer;
-  
-  align-self: flex-end;   /* ให้ปุ่มไปขวาเหมือนเดิม */
-  margin-top: 6px;       /* สร้างระยะจากราคา */
-  margin-bottom: 0px;     /* ให้ชิดล่างพอดี */
+  align-self: flex-end;
+  margin-top: 6px;
+  margin-bottom: 0px;
 }
 
 .risk-row {
@@ -380,7 +374,6 @@
   font-weight: 700;
 }
 
-/* หุ้นแนะนำ */
 .risk-stock-list {
   display: flex;
   gap: 8px;
@@ -395,24 +388,23 @@
   font-size: 13px;
 }
 
-/* GRID 2 คอลัมน์ */
+/* ===== Favorite Grid ===== */
+
 .favorite-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 18px;
 }
 
-/* การ์ดแต่ละอัน */
 .favorite-card {
   background: #1d2532;
   border: 1px solid #2b3445;
   border-radius: 20px;
-  padding: 20px 24px 28px; /* เพิ่ม padding ล่าง */
+  padding: 20px 24px 28px;
   display: flex;
   flex-direction: column;
 }
 
-/* Header */
 .fav-header {
   display: flex;
   justify-content: space-between;
@@ -448,44 +440,50 @@
 
 .fav-heart {
   width: 26px;
-  opacity: 0.9;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-/* ราคา + ปุ่ม อยู่แถวเดียว */
+.fav-heart:hover {
+  transform: scale(1.15);
+}
+
 .fav-price-row {
-  margin-top: 16px;
+  margin-top: 18px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 8px;
 }
 
-/* ราคาใหญ่ */
+.fav-arrow {
+  font-size: 20px;
+  font-weight: 700;
+}
+
 .fav-price {
-  font-size: 30px;
+  font-size: 38px;
   font-weight: 800;
+  letter-spacing: 0.5px;
 }
 
 .fav-change {
-  font-size: 14px;
+  font-size: 15px;
   margin-top: 6px;
+  font-weight: 600;
 }
 
-.fav-up {
-  color: #22c55e;
-}
+.neutral { color: #e5e7eb; }
+.up      { color: #22c55e; }
+.down    { color: #ef4444; }
 
-.fav-down {
-  color: #ef4444;
-}
+/* ===== Settings ===== */
 
-/* การ์ดใหญ่ */
 .settings-container {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
-/* การ์ดย่อย */
 .settings-card {
   background: #374151;
   border-radius: 14px;
@@ -509,7 +507,6 @@
   color: #9CA3AF;
 }
 
-/* === Toggle แบบ Figma === */
 .dark-toggle {
   width: 68px;
   height: 46px;
@@ -524,7 +521,7 @@
 }
 
 .dark-toggle.on {
-  background: rgba(255, 255, 255, 0.5); /* เขียวแบบ Figma */
+  background: rgba(255, 255, 255, 0.5);
   justify-content: flex-end;
 }
 
@@ -544,7 +541,6 @@
   object-fit: contain;
 }
 
-/* === Logout Card === */
 .logout-card {
   background: #374151;
 }
