@@ -1,33 +1,6 @@
 .addinv-page {
   padding: 24px 100px 60px;
-  font-family: "Prompt", sans-serif;
   color: #fff;
-}
-
-/* ----- Row 1: Back Button ----- */
-.addinv-row-back {
-  margin-bottom: 10px;
-}
-
-.addinv-back {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: none;
-  border: none;
-  color: #d1d5db;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.addinv-back:hover {
-  opacity: 0.7;
-}
-
-.back-icon {
-  width: 18px;
-  height: 18px;
 }
 
 
@@ -112,6 +85,11 @@
   color: #D1D5DB;
 }
 
+.required {
+  color: #ff4d4f; /* แดงแบบ modern */
+  margin-left: 4px;
+}
+
 .addinv-field input,
 .addinv-field select,
 .addinv-field textarea {
@@ -132,6 +110,47 @@ textarea {
   height: 110px;
 }
 
+.autocomplete {
+  position: relative;
+}
+
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: #1e293b;
+  border-radius: 10px;
+  margin-top: 6px;
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 999;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+.autocomplete-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: 0.2s;
+}
+
+.autocomplete-item:hover {
+  background: #334155;
+}
+
+.autocomplete-item .symbol {
+  font-weight: bold;
+  color: #fff;
+}
+
+.autocomplete-item .name {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 10px;
+}
+
 /* ===== เปลี่ยนสี icon ปฏิทินใน input date ===== */
 .addinv-field input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(1);   /* ทำให้ icon เป็นสีขาว */
@@ -140,14 +159,14 @@ textarea {
 }
 
 /* ===== Wrapper สำหรับ select ===== */
-.select-wrapper {
+.select-invest-wrapper {
   position: relative;
   display: flex;
   align-items: center;
 }
 
 /* เอา default arrow ของ select ออก */
-.select-wrapper select {
+.select-invest-wrapper select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;

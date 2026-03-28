@@ -125,6 +125,14 @@
 .portfolio-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.portfolio-table th,
+.portfolio-table td {
+  padding: 12px 20px;
+  text-align: left;
+  border-bottom: 1px solid #2b3545;
 }
 
 .portfolio-table th {
@@ -138,13 +146,14 @@
   color: #fff;
 }
 
-.action-icons {
+.portfolio-action-icon {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 30px;
 }
 
-.action-icon {
+.edit-icon,
+.delete-icon {
   width: 20px;
   height: 20px;
   cursor: pointer;
@@ -152,18 +161,19 @@
   transition: 0.15s ease;
 }
 
-.action-icon:hover {
+.edit-icon:hover,
+.delete-icon:hover {
   opacity: 1;
   transform: scale(1.1);
 }
 
 /* ===== STOCK NAME CELL ===== */
-.stock-name-cell {
+.portfolio-stock-cell {
   display: flex;
   flex-direction: column;
 }
 
-.stock-symbol {
+.portfolio-stock-symbol {
   font-size: 16px;
   font-weight: 700;
   color: #fff;

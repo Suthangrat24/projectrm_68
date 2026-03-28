@@ -241,6 +241,10 @@ html, body {
   background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 12%, transparent) 10%, var(--panel) 100%);
 }
 
+.stockcard--active h4 {
+    color: #00d9a3;
+}
+
 .stockcard_left h4{ margin: 0 0 4px; font-weight: 700; }
 .stockcard_left p{ margin: 0 0 8px; color: var(--muted); font-size: 12px; }
 .stockcard_left .label{ color: var(--muted); font-size: 12px; }
@@ -281,8 +285,8 @@ html, body {
   margin-bottom: 14px;
 }
 
-.panel_title{ font-weight: 500; font-size: 24px; margin-bottom: 4px; }
-.panel_sub{ font-size: 18px; margin-bottom: 8px; }
+.panel_title{ font-weight: 700; font-size: 24px; margin-bottom: 10px; }
+.panel_sub{ font-size: 16px; margin-bottom: 10px; }
 .panel_line{ font-size: 14px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .panel_line .muted{ color: var(--muted); }
 .panel_price{ font-size: 16px; font-weight: 500; }
@@ -794,13 +798,23 @@ html, body {
 }
 
 /* % เปลี่ยนแปลง */
-.fav_change{
-  font-size:13px;
-  font-weight:600;
-  margin-bottom:10px;
+.fav_change {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 10px 0;
 }
-.fav_change.up{ color: var(--accent); }
-.fav_change.down{ color:#ff6b6b; }
+
+.fav_change.up {
+  color: #00E676; /* เขียว neon */
+}
+
+.fav_change.down {
+  color: #FF5252; /* แดง */
+}
+
+.fav_change.neutral {
+  color: #aaa; /* เทา */
+}
 
 /* เส้นด้านล่าง */
 .fav_bar{

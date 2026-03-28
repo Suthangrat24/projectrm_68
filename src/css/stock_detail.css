@@ -643,149 +643,150 @@
   height: 100%;
 }
 
-.fin-wrapper {
-  padding: 20px 0;
-  color: #fff;
-  font-family: "Prompt", sans-serif;
-}
 
-/* Filter Row */
-.fin-filter-row {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  margin-bottom: 20px;
-}
 
-.fin-filter-text {
-  border: none;
-  padding: 10px 16px;
-  color: #fff;
-}
-
-.fin-year-select-wrapper {
-  position: relative;
-}
-
-.fin-year-select {
-  background: #2d3748;
-  color: #fff;
-  border-radius: 10px;
-  padding: 10px 40px 10px 16px;
-  border: none;
-  appearance: none;
-}
-
-.fin-select-arrow {
-  width: 16px;
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-/* GRID */
-.fin-grid {
-  display: grid;
-  grid-template-columns: 3fr 2fr;
-  gap: 24px;
-}
-
-/* LEFT SECTION */
-.fin-left {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* Small Cards */
-.fin-card-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-}
-
-.fin-small-card {
-  background: #1e2533;
-  padding: 18px;
-  border-radius: 16px;
-}
-
-.fin-small-card h4 {
-  font-size: 14px;
-  opacity: 0.8;
-}
-
-.fin-small-card p {
-  font-size: 28px;
-  margin-top: 8px;
-}
-
-/* Colors */
-.fin-small-card.green h4 { color: #38d9a9; }
-.fin-small-card.blue h4 { color: #4dabf7; }
-.fin-small-card.yellow h4 { color: #fcc419; }
-.fin-small-card.purple h4 { color: #cc5de8; }
-
-/* Chart Cards */
-.fin-chart-card {
-  background: #1e2533;
-  padding: 20px;
-  border-radius: 16px;
-}
-
-.fin-chart-placeholder {
-  height: 220px;
-  background: #2a3142;
-  border-radius: 12px;
-  margin-top: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 0.5;
-}
-
-/* RIGHT TABLE */
-.fin-right {
-  background: #1e2533;
-  border-radius: 16px;
-  padding: 20px;
-}
-.fin-summary-card {
-    background: #1e2533;
+.finance-card {
     padding: 20px;
-    border-radius: 16px;
 }
 
-.fin-summary-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.fin-summary-section {
-    margin-top: 12px;
-    margin-bottom: 4px;
-    font-weight: 600;
-    color: #8aa0c2;
-    font-size: 14px;
-    border-bottom: 1px solid #2b3242;
-    padding-bottom: 4px;
-}
-
-.fin-sum-row {
+.finance-header {
     display: flex;
     justify-content: space-between;
-    padding: 6px 0;
-    font-size: 14px;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-.fin-sum-row span:last-child {
+.finance-title {
+    font-size: 18px;
     font-weight: 600;
 }
 
+.finance-unit {
+    font-size: 13px;
+    color: #9CA3AF;
+}
 
+.finance-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
 
+.kpi_row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.kpi_card {
+    background: #1F2937;
+    border: 1px solid #334155;
+    padding: 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.kpi_card:hover {
+    transform: translateY(-2px);
+}
+
+.kpi_card.active {
+    border: 1px solid #00E676;
+    box-shadow: 0 0 10px rgba(0, 230, 118, 0.2);
+}
+
+.kpi_title {
+    font-size: 13px;
+    color: #9CA3AF;
+}
+
+.kpi_value {
+    font-size: 22px;
+    font-weight: 600;
+    margin-top: 6px;
+}
+
+/* GRAPH */
+.finance_chart {
+  background: #1c2433;
+  border: 1px dashed #334155;
+  border-radius: 20px;
+  padding: 20px;
+  margin-top: 25px;
+}
+
+.chart_title {
+  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* ===== TABLE WRAPPER ===== */
+.finance_table {
+    background: #1F2937;
+    border-radius: 16px;
+    padding: 16px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ===== TABLE ===== */
+.finance-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+/* ===== HEADER ===== */
+.finance-table thead {
+    background: #334155;
+}
+
+.finance-table th {
+    padding: 14px;
+    text-align: left;
+    font-weight: 600;
+    color: #D1D5DB;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+/* highlight column */
+.finance-table th:not(:first-child) {
+    text-align: right;
+}
+
+/* ===== BODY ===== */
+.finance-table td {
+    padding: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+/* align number */
+.finance-table td:not(:first-child) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ===== ROW HOVER ===== */
+.finance-table tbody tr {
+    transition: 0.2s;
+}
+
+.finance-table tbody tr:hover {
+    background: rgba(255,255,255,0.04);
+}
+
+/* ===== FIRST COLUMN (ชื่อรายการ) ===== */
+.finance-table td:first-child {
+    font-weight: 500;
+    color: #E5E7EB;
+}
+
+/* ===== ACTIVE ROW ===== */
+.finance-table .active-row {
+    background: rgba(0,230,118,0.08);
+    border-left: 3px solid #00E676;
+}
 
 
 /* ========== HOLDERS TAB (ข้อมูลผู้ถือหุ้น) ========== */

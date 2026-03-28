@@ -143,43 +143,204 @@
   font-size: 12px;
   color: #d1d5db;
 }
-/* ครอบ select + ลูกศร */
+/* ครอบ select + ลูกศร
 .filter-select-wrapper {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-/* select จริง แต่ให้หน้าตาเป็น textbox */
+/* select จริง แต่ให้หน้าตาเป็น textbox 
 .filter-select-native {
   width: 100%;
+  height: 50px;
   border: none;
   background: transparent;
   color: #f9fafb;
   font-size: 16px;
   font-weight: 600;
-  padding: 2px 32px 0 0; /* เผื่อช่องด้านขวาให้ icon */
+  padding: 2px 32px 0 0; /* เผื่อช่องด้านขวาให้ icon 
   outline: none;
 
-  /* เอาลูกศร default ออก */
+  /* เอาลูกศร default ออก 
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+} */
+
+
+.custom-select-stock {
+  position: relative;
+  width: 100%;
 }
 
-/* จุดไว้ใส่ icon drop-down จริง */
-.filter-select-arrow {
+/* กล่อง input */
+.custom-select-box {
+  height: 50px;
+  background: #374151;
+  border: 1px solid #4B5563;
+  border-radius: 12px;
+  padding: 0 16px;
+  color: #fff;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* icon dropdown */
+.dropdown-icon {
+  font-size: 12px;
+  transition: 0.2s;
+}
+
+.dropdown-icon.open {
+  transform: rotate(180deg);
+}
+/* ===== DROPDOWN ===== */
+.custom-dropdown {
   position: absolute;
-  right: 0;
-  transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
+  top: 55px;
+  width: 100%;
+  max-height: 420px;
+  overflow-y: auto;
 
-  /* เวลาได้รูปจริงให้เปลี่ยนเป็น:
-     background: url("/pics/drop-down.png") center/contain no-repeat;
-     border: none;
-  */
+  background: #374151;
+  border: 1px solid #1f2937;
+  border-radius: 14px;
+  z-index: 999;
+
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  padding: 8px 0;
 }
+
+/* ===== MARKET (SET / mai) ===== */
+.dropdown-market {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+/* 🔥 HEADER SET / mai */
+.dropdown-market-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+
+  font-weight: 700;
+  color: #f9fafb;
+}
+
+/* ===== subtitle ===== */
+.dropdown-subtitle {
+  font-size: 12px;
+  color: #22c55e;
+  padding: 2px 16px 6px;
+}
+
+/* ===== INDUSTRY ROW ===== */
+.dropdown-parent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 8px 16px;
+  cursor: pointer;
+  color: #e5e7eb;
+  transition: 0.2s;
+}
+
+.dropdown-parent:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+/* LEFT GROUP */
+.dropdown-parent .left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ===== SECTOR CHILD ===== */
+.dropdown-sub-item {
+  padding: 6px 16px 6px 42px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.dropdown-sub-item:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+/* ===== CHECKBOX ===== */
+.dropdown-item input,
+.dropdown-market-header input,
+.dropdown-sub-item input {
+  accent-color: #22c55e;
+  width: 15px;
+  height: 15px;
+}
+
+/* ===== ARROW ===== */
+.dropdown-arrow {
+  font-size: 12px;
+  color: #6b7280;
+  transition: 0.2s;
+}
+
+.dropdown-arrow.open {
+  transform: rotate(90deg);
+  color: #22c55e;
+}
+
+/* ===== SCROLLBAR ===== */
+.custom-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-dropdown::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 10px;
+}
+
+/* ===== BOX SELECT ===== */
+.custom-select-box {
+  height: 50px;
+  background: #374151;
+  border: 1px solid #4B5563;
+  border-radius: 12px;
+  padding: 0 16px;
+  color: #E5E7EB;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* hover */
+.custom-select-box:hover {
+  border-color: #22C55E;
+}
+
+/* ===== ICON ===== */
+.dropdown-icon {
+  color: #9CA3AF;
+  transition: 0.2s;
+}
+
+.dropdown-icon.open {
+  transform: rotate(180deg);
+  color: #22C55E;
+}
+
+
+
 
 .filter-item.buttons {
   display: flex;
@@ -548,6 +709,10 @@
   color: #22c55e !important;
 }
 
+.ant-pagination-item-link-icon {
+  color: #22c55e !important;
+}
+
 .ant-pagination-options {
   color: #cbd5e1 !important;
 }
@@ -567,6 +732,54 @@
 /* hover */
 .ant-pagination-options .ant-select-selector:hover {
   border-color: #22c55e !important;
+}
+
+/* ===== DROPDOWN ทั้งก้อน ===== */
+.ant-select-dropdown {
+  background-color: #1f2937 !important;
+  border: 1px solid #374151 !important;
+}
+
+/* ===== ตัวเลือกแต่ละอัน ===== */
+.ant-select-item {
+  color: #ffffff !important;
+}
+
+/* ===== ตัวที่ hover ===== */
+.ant-select-item-option-active {
+  background-color: #374151 !important;
+}
+
+/* ===== ตัวที่เลือกอยู่ ===== */
+.ant-select-item-option-selected {
+  background-color: rgba(255, 255, 255, 0.423)mportant;
+  color: #fff !important;
+}
+
+/* ===== ข้อความ 20 / หน้า ด้านบน ===== */
+.ant-select-selection-item {
+  color: #ffffff !important;
+}
+
+/* ===== placeholder ===== */
+.ant-select-selection-placeholder {
+  color: #9ca3af !important;
+}
+
+.ant-select-content {
+  color: #9ca3af !important;
+}
+
+/* ===== ตัว select box ===== */
+.ant-select-selector {
+  background-color: #1f2937 !important;
+  border: 1px solid #374151 !important;
+  color: #ffffff !important;
+}
+
+/* ===== icon dropdown ===== */
+.ant-select-arrow {
+  color: #ffffff !important;
 }
 
 /* ===== Footer Layout ===== */

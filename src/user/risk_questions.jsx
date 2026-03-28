@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useState, useEffect } from "react";
-import { getQuestions } from "../fetchapi/call_api_user";
+import { getQuestions, submitAssessment, getRecommendation } from "../fetchapi/call_api_user";
 
 import "../css/risk_questions.css";
 
@@ -10,20 +10,22 @@ export default function RiskQuestions() {
   const navigate = useNavigate();
 
   const [questions, setQuestions] = useState([]);
+  const [rawQuestions, setRawQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchQuestions() {
       try {
         const data = await getQuestions();
-        
+        setRawQuestions(data);
+
         const formatted = data.map(q => ({
           id: q.question_id,
           question: q.question,
           type: q.question_type_name === "เลือกคำตอบเดียว" ? "single"
-              : q.question_type_name === "เลือกหลายคำตอบ" ? "multiple"
+            : q.question_type_name === "เลือกหลายคำตอบ" ? "multiple"
               : "text",
-          choices: q.choice_list || []
+          choices: q.choices?.map(c => c.choice_text) || []
         }));
 
         console.log("formatted questions:", formatted);
@@ -50,14 +52,13 @@ export default function RiskQuestions() {
     return null;
   };
 
-  const handleNext = () => {
-    // อนุญาตให้ข้ามข้อได้ → ไม่ขึ้น alert
+  const handleNext = async () => {
     if (current < total) {
       setCurrent(current + 1);
       return;
     }
 
-    // ถ้ากดดูผล → ต้องเช็คว่าทำครบไหม
+    // เช็คครบไหม
     const missing = checkIncomplete();
     if (missing) {
       Swal.fire({
@@ -69,7 +70,67 @@ export default function RiskQuestions() {
       return;
     }
 
-    navigate("/risk-result");
+    try {
+      Swal.fire({
+        title: "กำลังประมวลผล...",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      const token = localStorage.getItem("token");
+
+      // แปลง answers → payload
+      const answersPayload = questions.map((q) => {
+        if (q.type === "text") {
+          // ข้อกรอก → ส่ง answer เป็น string (ลบ comma ออก)
+          const raw = answers[q.id] || "";
+          return {
+            question_id: q.id,
+            answer: raw.replace(/,/g, ""),
+          };
+        } else {
+          // ข้อเลือก → หา choice_id จาก choice_text
+          const selectedText = Array.isArray(answers[q.id])
+            ? answers[q.id][0]   // multiple → เอาตัวแรก
+            : answers[q.id];
+
+          const originalQ = questions.find((x) => x.id === q.id);
+          // หา choice_id จาก raw data
+          const rawQ = rawQuestions.find((x) => x.question_id === q.id);
+          const choice = rawQ?.choices.find((c) => c.choice_text === selectedText);
+
+          return {
+            question_id: q.id,
+            choice_id: choice?.choice_id || null,
+          };
+        }
+      });
+
+      // budget/invest_years/expected_return จากข้อ 18-20
+      const budget = parseFloat((answers[18] || "0").replace(/,/g, ""));
+      const invest_years = parseInt((answers[19] || "0").replace(/,/g, ""));
+      const expected_return = parseFloat((answers[20] || "0").replace(/,/g, ""));
+
+      const payload = {
+        answers: answersPayload,
+        budget,
+        invest_years,
+        expected_return,
+      };
+
+      const assessmentRes = await submitAssessment(token, payload);
+      const attempt_id = assessmentRes.attempt_id;
+
+      const recommendRes = await getRecommendation(token, attempt_id);
+
+      Swal.close();
+
+      navigate("/risk-result", { state: { assessment: assessmentRes, recommend: recommendRes } });
+
+    } catch (err) {
+      Swal.fire("เกิดข้อผิดพลาด", "ไม่สามารถประมวลผลได้", "error");
+      console.error(err);
+    }
   };
 
   const handleBack = () => {
@@ -168,7 +229,7 @@ export default function RiskQuestions() {
 
     return q.choices.map((c, i) => (
       <label key={i} className="risk-option">
-        
+
         <span className={`radio ${answers[current] === c ? "active" : ""}`}></span>
 
 
@@ -194,88 +255,88 @@ export default function RiskQuestions() {
 
   return (
     <>
-    <button 
-      className="exit-btn"
-      onClick={() => {
-        Swal.fire({
-          title: "ต้องการออกจากแบบประเมิน?",
-          text: "ข้อมูลที่ตอบไว้จะไม่ถูกบันทึก",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonText: "ออก",
-          cancelButtonText: "ยกเลิก",
-          confirmButtonColor: "#ef4444",
-          cancelButtonColor: "#6b7280"
-        }).then(result => {
-          if (result.isConfirmed) navigate("/");
-        });
-      }}
-    >
-      ✕
-    </button>
-    <section className="risk-page">
+      <button
+        className="exit-btn"
+        onClick={() => {
+          Swal.fire({
+            title: "ต้องการออกจากแบบประเมิน?",
+            text: "ข้อมูลที่ตอบไว้จะไม่ถูกบันทึก",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "ออก",
+            cancelButtonText: "ยกเลิก",
+            confirmButtonColor: "#ef4444",
+            cancelButtonColor: "#6b7280"
+          }).then(result => {
+            if (result.isConfirmed) navigate("/risk");
+          });
+        }}
+      >
+        ✕
+      </button>
+      <section className="risk-page">
 
-      <h1 className="risk-header-title">แบบประเมินความเสี่ยงการลงทุนเพื่อใช้ในการแนะนำหุ้น</h1>
-      <p className="risk-header-desc">กรุณาตอบคำถามทั้งหมด 20 ข้อเพื่อให้ระบบแนะนำหุ้นที่เหมาะสมกับคุณ</p>
+        <h1 className="risk-header-title">แบบประเมินความเสี่ยงการลงทุนเพื่อใช้ในการแนะนำหุ้น</h1>
+        <p className="risk-header-desc">กรุณาตอบคำถามทั้งหมด 20 ข้อเพื่อให้ระบบแนะนำหุ้นที่เหมาะสมกับคุณ</p>
 
-      {/* Progress Circles */}
-      <div className="progress-circles">
-        {[...Array(total)].map((_, i) => {
-          const qNum = i + 1;
-          const answered = answers[qNum];
+        {/* Progress Circles */}
+        <div className="progress-circles">
+          {[...Array(total)].map((_, i) => {
+            const qNum = i + 1;
+            const answered = answers[qNum];
 
-          return (
-            <div
-              key={i}
-              className={`circle 
+            return (
+              <div
+                key={i}
+                className={`circle 
                 ${current === qNum ? "current" : ""} 
                 ${answered ? "done" : ""}
               `}
-              onClick={() => setCurrent(qNum)}
-            >
-              {qNum}
-            </div>
-          );
-        })}
-      </div>
+                onClick={() => setCurrent(qNum)}
+              >
+                {qNum}
+              </div>
+            );
+          })}
+        </div>
 
-      {/* Card */}
-      <div className="risk-card">
-        <div className="card-header">
-          <h2 className="risk-question">
-            {questions[current - 1].id}. {questions[current - 1].question}
-          </h2>
+        {/* Card */}
+        <div className="risk-question-card">
+          <div className="card-header">
+            <h2 className="risk-question">
+              {questions[current - 1].id}. {questions[current - 1].question}
+            </h2>
 
-          {/* ปุ่มเคลียร์คำตอบ */}
-          <button className="clear-btn" onClick={clearCurrentAnswer}>
-            ล้างคำตอบ
+            {/* ปุ่มเคลียร์คำตอบ */}
+            <button className="clear-btn" onClick={clearCurrentAnswer}>
+              ล้างคำตอบ
+            </button>
+          </div>
+
+          <div className="risk-choices">
+            {renderChoices()}
+          </div>
+        </div>
+
+        <div className={`risk-card-buttons ${current === 1 ? "first-page" : ""}`}>
+          {current > 1 && (
+            <button className="btn-back" onClick={handleBack}>← ก่อนหน้า</button>
+          )}
+
+          <button
+            className={current === total ? "btn-result" : "btn-next"}
+            onClick={handleNext}
+          >
+            {current === total ? (
+              <>
+                <img src="/pics/check.png" className="check-icon" />
+                ดูผลการประเมิน
+              </>
+            ) : "ถัดไป →"}
           </button>
         </div>
 
-        <div className="risk-choices">
-          {renderChoices()}
-        </div>
-      </div>
-
-      <div className={`risk-card-buttons ${current === 1 ? "first-page" : ""}`}>
-        {current > 1 && (
-          <button className="btn-back" onClick={handleBack}>← ก่อนหน้า</button>
-        )}
-
-        <button
-          className={current === total ? "btn-result" : "btn-next"}
-          onClick={handleNext}
-        >
-          {current === total ? (
-            <>
-              <img src="/pics/check.png" className="check-icon" />
-              ดูผลการประเมิน
-            </>
-          ) : "ถัดไป →"}
-        </button>
-      </div>
-
-    </section>
+      </section>
     </>
   );
 }

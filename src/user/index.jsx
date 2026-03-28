@@ -1,187 +1,446 @@
-import React, { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
-
-import "../css/index.css"; 
+import { getFavorites, getStockLatest, getPortfolio, getStockHistory, deleteFavorite, getStocks } from "../fetchapi/call_api_user";
+import StockLineChart from "../component/stock_line_chart";
+import "../css/index.css";
 
 export default function Navbar() {
 
     const navigate = useNavigate();
+    const [portfolio, setPortfolio] = useState([]);
+    const [latestPrices, setLatestPrices] = useState({});
+    const [chartData, setChartData] = useState([]);
+    const [range, setRange] = useState("intraday");
+    const [lastUpdate, setLastUpdate] = useState("-");
+    const [selectedSymbol, setSelectedSymbol] = useState("");
+    const [allStocksLatest, setAllStocksLatest] = useState([]);
+    const [topTab, setTopTab] = useState("value");
+    const [selectedTop, setSelectedTop] = useState(0);
+    const [topChartData, setTopChartData] = useState([]);
+    const [topChartLoading, setTopChartLoading] = useState(false);
+    const [topChartHighLow, setTopChartHighLow] = useState({ high: null, low: null });
+    const token = localStorage.getItem("token");
 
-    // ------ Top Five (ไม่ fetch) ------
-    const top_five = [
-        { rank: 1, symbol: "PTT",   name: "ปตท.",                     price: 33.25, change: +0.25, pct: +0.76, value: 151136551, amount: 4996684.08 },
-        { rank: 2, symbol: "DELTA", name: "เดลต้า อีเลคโทรนิคส์",     price: 91.50, change: -0.30, pct: -0.21, value: 98765432,  amount: 3210000.50 },
-        { rank: 3, symbol: "BDMS",  name: "กรุงเทพดุสิตเวชการ",       price: 28.75, change: +0.10, pct: +0.35, value: 75643123,  amount: 2755000.20 },
-        { rank: 4, symbol: "ADVANC",name: "แอดวานซ์ อินโฟร์ เซอร์วิส", price: 189.0, change: +0.50, pct: +0.26, value: 65431234,  amount: 1669000.10 },
-        { rank: 5, symbol: "CRC",   name: "เซ็นทรัล รีเทล คอร์ปอเรชั่น", price: 39.75, change: +0.20, pct: +0.50, value: 54321234,  amount: 1511104.00 },
-    ];
+    // ดึงข้อมูล portfolio
+    useEffect(() => {
+        const fetchPortfolio = async () => {
+            try {
+                const data = await getPortfolio(token);
+                setPortfolio(data);
 
-    const [selected, setSelected] = useState(0);
-    const [tab, setTab] = useState("value");
-    const s = top_five[selected];
+                const symbols = data.map(item => item.symbol + '.BK');
+                const latestData = await Promise.all(
+                    symbols.map(async (symbol) => {
+                        try {
+                            const stockData = await getStockLatest(symbol);
+                            if (stockData && stockData.price) { // ตรวจสอบให้มั่นใจว่า stockData มีข้อมูล
+                                return {
+                                    symbol,
+                                    ...stockData
+                                };
+                            } else {
+                                console.error(`No stock data for ${symbol}`);
+                                return null;
+                            }
+                        } catch (err) {
+                            console.error(`Error fetching stock data for ${symbol}: `, err);
+                            return null;
+                        }
+                    })
+                );
 
-    const favorites = [
-        { symbol: "PTT",   name: "ปตท.",        price: 33.25, pct: +2.31, bar: 70 },
-        { symbol: "KBANK", name: "กสิกรไทย",    price: 166.00, pct: -1.50, bar: 60 },
-        { symbol: "CPALL", name: "ซีพี ออลล์",  price: 58.75, pct: +1.25, bar: 55 },
-        { symbol: "WAVE",  name: "เวฟ เอ็นเตอร์เทนเมนท์", price: 0.04, pct: +0.01, bar: 40 },
-    ];
+                const priceMap = {};
+                latestData.forEach(item => {
+                    if (item) {
+                        priceMap[item.symbol] = item;
+                    }
+                });
+                setLatestPrices(priceMap);
+                console.log("setLatestPrices: ", priceMap);
+
+                if (data.length > 0) {
+                    const firstSymbol = data[0].symbol;
+                    setSelectedSymbol(firstSymbol);
+                    await fetchChart(firstSymbol); // โหลดกราฟของหุ้นตัวแรกเลย
+                }
+            } catch (error) {
+                console.error("Error fetching portfolio:", error);
+            }
+        };
+        fetchPortfolio();
+    }, [token]);
+
+    useEffect(() => {
+        const fetchAllStocks = async () => {
+            try {
+                const res = await getStocks();
+                const stockList = res.data;
+
+                const results = await Promise.all(
+                    stockList.map(async (s) => {
+                        try {
+                            const latest = await getStockLatest(`${s.symbol}.BK`);
+                            return {
+                                symbol: s.symbol,
+                                name: s.stock_name,
+                                price: latest.price ?? 0,
+                                change: latest.change ?? 0,
+                                change_pct: latest.change_pct ?? 0,
+                                volume: latest.volume ?? 0,
+                                value: latest.value ?? 0,
+                                updated_at: latest.updated_at ?? "",
+                            };
+                        } catch {
+                            return null;
+                        }
+                    })
+                );
+
+                const filtered = results.filter(Boolean);
+                setAllStocksLatest(filtered);
+
+                // sort value แล้ว fetch chart อันดับ 1 เลย
+                const sorted = [...filtered].sort((a, b) => b.value - a.value);
+                if (sorted.length > 0) {
+                    await fetchTopChart(sorted[0].symbol);
+                }
+
+            } catch (err) {
+                console.error("โหลด allStocksLatest ไม่ได้", err);
+            }
+        };
+
+        fetchAllStocks();
+    }, []);
+
+    const fetchChart = async (symbol) => {
+        try {
+            const history = await getStockHistory({
+                symbol: `${symbol}.BK`,
+                period: "1d",
+                interval: "5m",
+            });
+
+            if (history.length === 0) {
+                console.warn("ไม่มีข้อมูลใหม่ ใช้กราฟเดิมแทน");
+                setChartData((prev) => prev);
+                return;
+            }
+
+            const cleanedHistory = history.filter(
+                (d) => d.close != null && !isNaN(d.close)
+            );
+
+            if (cleanedHistory.length < 2) {
+                console.warn("ข้อมูลไม่พอวาดกราฟ → คงข้อมูลเดิมไว้");
+                setChartData((prev) => prev);
+                return;
+            }
+
+            const formatted = cleanedHistory.map((d) => {
+                const date = new Date(d.time);
+                return {
+                    time: date.toLocaleTimeString("th-TH", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    }),
+                    ts: date.getTime(),
+                    close: d.close,
+                };
+            });
+
+            setChartData(formatted);
+
+            if (formatted.length > 0) {
+                const last = formatted[formatted.length - 1];
+                setLastUpdate(new Date(cleanedHistory[cleanedHistory.length - 1].time).toLocaleString("th-TH"));
+            }
+        } catch (err) {
+            console.error("โหลดกราฟไม่สำเร็จ", err);
+        }
+    };
+
+    const handleSelectStock = async (symbol) => {
+        setSelectedSymbol(symbol);  // อัปเดต selectedSymbol เมื่อผู้ใช้เลือกหุ้น
+        await fetchChart(symbol);
+    };
+
+    const fetchTopChart = async (symbol) => {
+        setTopChartLoading(true);
+        setTopChartData([]);
+        setTopChartHighLow({ high: null, low: null }); // reset
+        try {
+            const history = await getStockHistory({
+                symbol: `${symbol}.BK`,
+                period: "1d",
+                interval: "5m",
+            });
+
+            const cleaned = history.filter(d => d.close != null && !isNaN(d.close));
+            if (cleaned.length < 2) { setTopChartLoading(false); return; }
+
+            const formatted = cleaned.map((d) => {
+                const date = new Date(d.time);
+                return {
+                    time: date.toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" }),
+                    ts: date.getTime(),
+                    close: d.close,
+                };
+            });
+
+            // คำนวณ high/low จาก close ทั้งวัน
+            const closes = cleaned.map(d => d.close);
+            const high = Math.max(...closes);
+            const low = Math.min(...closes);
+            setTopChartHighLow({ high, low });
+
+            setTopChartData(formatted);
+        } catch (err) {
+            console.error("โหลด top chart ไม่สำเร็จ", err);
+        }
+        setTopChartLoading(false);
+    };
+
+    // สร้าง function กลางไว้ใช้ร่วมกัน (วางหลัง fetchTopChart)
+    const handleTabChange = async (newTab) => {
+        setTopTab(newTab);
+        setSelectedTop(0);
+        setTopChartData([]);
+        setTopChartHighLow({ high: null, low: null });
+
+        // sort ตาม tab ใหม่แล้วเอาอันดับ 1
+        let sorted;
+        if (newTab === "value") {
+            sorted = [...allStocksLatest].sort((a, b) => b.value - a.value);
+        } else if (newTab === "volume") {
+            sorted = [...allStocksLatest].sort((a, b) => b.volume - a.volume);
+        } else if (newTab === "up") {
+            sorted = [...allStocksLatest].filter(s => s.change_pct > 0).sort((a, b) => b.change_pct - a.change_pct);
+        } else if (newTab === "down") {
+            sorted = [...allStocksLatest].filter(s => s.change_pct < 0).sort((a, b) => a.change_pct - b.change_pct);
+        }
+
+        if (sorted && sorted.length > 0) {
+            await fetchTopChart(sorted[0].symbol);
+        }
+    };
+
+    const top_five = useMemo(() => {
+        if (allStocksLatest.length === 0) return [];
+
+        let sorted;
+        if (topTab === "value") {
+            sorted = [...allStocksLatest].sort((a, b) => b.value - a.value);
+        } else if (topTab === "volume") {
+            sorted = [...allStocksLatest].sort((a, b) => b.volume - a.volume);
+        } else if (topTab === "up") {
+            sorted = [...allStocksLatest]
+                .filter(s => s.change_pct > 0)
+                .sort((a, b) => b.change_pct - a.change_pct);
+        } else if (topTab === "down") {
+            sorted = [...allStocksLatest]
+                .filter(s => s.change_pct < 0)
+                .sort((a, b) => a.change_pct - b.change_pct);
+        } else {
+            sorted = allStocksLatest;
+        }
+
+        return sorted.slice(0, 5).map((s, i) => ({ ...s, rank: i + 1 }));
+    }, [allStocksLatest, topTab]);
+
+    const [favorites, setFavorites] = useState([]);
+    const [latestMap, setLatestMap] = useState({});
+
+    useEffect(() => {
+        async function fetchFavorites() {
+            try {
+
+                const data = await getFavorites(token);
+                setFavorites(data);
+
+                const symbols = (data || []).map(f => f.symbol);
+
+                const results = await Promise.all(
+                    symbols.map(async (symbol) => {
+                        try {
+                            const data = await getStockLatest(`${symbol}.BK`);
+
+                            return {
+                                symbol,
+                                ...data
+                            };
+                        } catch (err) {
+                            return null;
+                        }
+                    })
+                );
+
+                const map = {};
+                results.forEach(item => {
+                    if (item) {
+                        map[item.symbol] = item;
+                    }
+                });
+
+                setLatestMap(map);
+
+                console.log("favorites: ", data);
+                console.log("latestMap: ", map);
+
+            } catch (err) {
+                console.error("โหลด favorites ไม่ได้", err);
+            }
+        }
+
+        fetchFavorites();
+    }, []);
+
+    const favUI = (favorites || []).map(f => {
+        const latest = latestMap[f.symbol] || {};
+
+        return {
+            favorite_id: f.favorite_id,
+            symbol: f.symbol,
+            name: f.stock_name,
+            price: latest.price ?? 0,
+            pct: latest.change_pct ?? 0,
+            change: latest.change ?? 0,
+        };
+    });
+
+    const handleRemoveFavorite = async (favorite_id) => {
+        try {
+            const token = localStorage.getItem("token");
+            await deleteFavorite(token, favorite_id);
+
+            setFavorites((prev) =>
+                prev.filter((item) => item.favorite_id !== favorite_id)
+            );
+        } catch (err) {
+            console.error("ลบ favorite ไม่สำเร็จ", err);
+        }
+    };
 
     return (
         <>
-        {/*Recommend*/}
-        <section className="rec">
-            <div className="rec_container">
-                <div className="rec_text">
-                    <h1 className="rec_title">แนะนำหุ้นที่เหมาะสมกับคุณ</h1>
-                    <h1 className="rec_title t2">ในการลงทุนระยะยาว</h1>
-                    <p className="rec_des">
-                        จากข้อมูลที่คุณกรอกในแบบประเมิน ระบบจะวิเคราะห์โปรไฟล์การลงทุนและพฤติกรรมการลงทุนของคุณ<br/>
-                        โดยการนำข้อมูลเหล่านี้มาประมวลผลเพื่อแนะนำหุ้นที่ตรงกับความต้องการและเป้าหมายการลงทุนของคุณ<br/>
-                        เพื่อให้คุณสามารถเลือกหุ้นที่เหมาะสมกับผลการประเมิน ช่วยเพิ่มความมั่นใจในการตัดสินใจลงทุนชองคุณ
-                    </p>
-                    <p className="rec_note">
-                        หมายเหตุ:
-                        ระบบนี้เป็นเพียงเครื่องมือช่วยแนะนำ ไม่ใช่คำแนะนำการลงทุนโดยตรง<br />
-                        การลงทุนมีความเสี่ยง กรุณาศึกษาข้อมูลให้รอบคอบ และตัดสินใจลงทุนตามความเหมาะสมของตนเอง
-                    </p>
+            {/*Recommend*/}
+            <section className="rec">
+                <div className="rec_container">
+                    <div className="rec_text">
+                        <h1 className="rec_title">แนะนำหุ้นที่เหมาะสมกับคุณ</h1>
+                        <h1 className="rec_title t2">ในการลงทุนระยะยาว</h1>
+                        <p className="rec_des">
+                            จากข้อมูลที่คุณกรอกในแบบประเมิน ระบบจะวิเคราะห์โปรไฟล์การลงทุนและพฤติกรรมการลงทุนของคุณ<br />
+                            โดยการนำข้อมูลเหล่านี้มาประมวลผลเพื่อแนะนำหุ้นที่ตรงกับความต้องการและเป้าหมายการลงทุนของคุณ<br />
+                            เพื่อให้คุณสามารถเลือกหุ้นที่เหมาะสมกับผลการประเมิน ช่วยเพิ่มความมั่นใจในการตัดสินใจลงทุนชองคุณ
+                        </p>
+                        <p className="rec_note">
+                            หมายเหตุ:
+                            ระบบนี้เป็นเพียงเครื่องมือช่วยแนะนำ ไม่ใช่คำแนะนำการลงทุนโดยตรง<br />
+                            การลงทุนมีความเสี่ยง กรุณาศึกษาข้อมูลให้รอบคอบ และตัดสินใจลงทุนตามความเหมาะสมของตนเอง
+                        </p>
+                    </div>
+                    <div className="rec_button">
+                        <button className="rec_cta" onClick={() => navigate("/risk")}>
+                            เริ่มต้นใช้งาน
+                            <img src="/pics/next.png" alt="next" className="next-icon" />
+                        </button>
+                    </div>
                 </div>
-                <div className="rec_button">
-                    <button className="rec_cta" onClick={() => navigate("/risk")}>
-                        เริ่มต้นใช้งาน
-                        <img src="/pics/next.png" alt="next" className="next-icon" />
-                    </button>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        {/*ติดตามพอร์ต*/}
-        <section className="invest">
-            {/*หัวข้อ*/}
-            <div className="invest_top">
-                <div className="invest_title">
-                <div>
-                    <h3>ติดตามสถานะหุ้นที่ลงทุน</h3>
-                    <p>เปรียบเทียบราคาปัจจุบัน ณ เวลาที่ล็อกอิน และการคาดการณ์</p>
-                </div>
-                </div>
-                <a className="invest_manage" href="/portfolio">
-                จัดการพอร์ต →
-                </a>
-            </div>
-
-            <div className="invest_grid">
-                {/* ซ้าย: รายการหุ้นในพอร์ต */}
-                <aside className="invest_list">
-                <div className="stockcard stockcard--active">
-                    <div className="stockcard_left">
-                    <h4>PTT</h4>
-                    <p>ปตท.</p>
-                    <span className="label">ราคาตลาด</span>
-                    <div className="bar">
-                        <div className="bar_fill" style={{ width: '72%' }} />
-                    </div>
-                    </div>
-                    <div className="stockcard_right">
-                    <div className="price">฿ 33.25</div>
-                    <div className="chg">+฿750.00</div>
-                    <div className="pct pct--up">+2.31%</div>
-                    </div>
-                </div>
-
-                <div className="stockcard">
-                    <div className="stockcard_left">
-                    <h4>BDMS</h4>
-                    <p>กรุงเทพดุสิตเวชการ</p>
-                    <span className="label">ราคาตลาด</span>
-                    <div className="bar">
-                        <div className="bar_fill" style={{ width: '43%' }} />
-                    </div>
-                    </div>
-                    <div className="stockcard_right">
-                    <div className="price">฿ 23.40</div>
-                    <div className="chg">+฿1,200.00</div>
-                    <div className="pct pct--up">+2.63%</div>
-                    </div>
-                </div>
-
-                <div className="stockcard">
-                    <div className="stockcard_left">
-                    <h4>ADVANC</h4>
-                    <p>แอดวานซ์ อินโฟร์ เซอร์วิส</p>
-                    <span className="label">ราคาตลาด</span>
-                    <div className="bar">
-                        <div className="bar_fill" style={{ width: '58%' }} />
-                    </div>
-                    </div>
-                    <div className="stockcard_right">
-                    <div className="price">฿ 189.00</div>
-                    <div className="chg">+฿2,000.00</div>
-                    <div className="pct pct--up">+2.16%</div>
-                    </div>
-                </div>
-
-                <div className="stockcard">
-                    <div className="stockcard_left">
-                    <h4>KBANK</h4>
-                    <p>กสิกรไทย</p>
-                    <span className="label">ราคาตลาด</span>
-                    <div className="bar">
-                        <div className="bar_fill" style={{ width: '36%' }} />
-                    </div>
-                    </div>
-                    <div className="stockcard_right">
-                    <div className="price">฿ 142.50</div>
-                    <div className="chg">+฿1,350.00</div>
-                    <div className="pct pct--up">+3.26%</div>
-                    </div>
-                </div>
-                <Link to="/add-investment">
-                    <button className="invest_add">+ เพิ่มหุ้นใหม่</button>
-                </Link>
-                </aside>
-
-                <div className="invest_panel">
-                    <div className="panel_head">
+            {/*ติดตามพอร์ต*/}
+            <section className="invest">
+                {/*หัวข้อ*/}
+                <div className="invest_top">
+                    <div className="invest_title">
                         <div>
-                        <div className="panel_title">PTT</div>
-                        <div className="panel_sub">บริษัท ปตท. จำกัด (มหาชน)</div>
-                        <div className="panel_line">
-                            <span className="muted">ราคาปัจจุบัน: </span>
-                            <span className="panel_price">฿ 33.25</span>
-                            <span className="panel_pct">+฿0.75 (+2.31%)</span>
+                            <h3>ติดตามสถานะหุ้นที่ลงทุน</h3>
+                            <p>เปรียบเทียบราคาปัจจุบัน ณ เวลาที่ล็อกอิน และการคาดการณ์</p>
                         </div>
-                        </div>
-                        <Link to="/detail">
-                            <button className="btn--pill">ดูรายละเอียด</button>
+                    </div>
+                    <a className="invest_manage" href="/portfolio">
+                        จัดการพอร์ต →
+                    </a>
+                </div>
+
+                <div className="invest_grid">
+                    {/* ซ้าย: รายการหุ้นในพอร์ต */}
+                    <aside className="invest_list">
+                        {portfolio.map((item) => {
+                            const stockSymbol = item.symbol + ".BK";
+                            const stock_latest = latestPrices[stockSymbol] || {};
+                            console.log("Latest Prices: ", latestPrices);
+                            console.log("stock_latest: ", stock_latest);
+
+                            return (
+                                <div
+                                    key={item.symbol}
+                                    className={`stockcard ${selectedSymbol === item.symbol ? "stockcard--active" : ""}`}
+                                    onClick={() => handleSelectStock(item.symbol)}
+                                >
+                                    <div className="stockcard_left">
+                                        <h4>{item.symbol}</h4>
+                                        <span className="label">ราคาตลาด</span>
+
+                                    </div>
+                                    <div className="stockcard_right">
+                                        <div className="price">฿ {stock_latest.price || "0.00"}</div>
+                                        <div className="chg">
+                                            {stock_latest.change >= 0 ? "+" : ""}
+                                            {stock_latest.change || 0}{" "}
+                                            ({stock_latest.change_pct >= 0 ? "+" : ""}
+                                            {stock_latest.change_pct || 0}%)
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                        <Link to="/add-investment">
+                            <button className="invest_add">+ เพิ่มหุ้นใหม่</button>
                         </Link>
-                    </div>
+                    </aside>
 
-                    <div className="panel_chart">
-                        [ พื้นที่สำหรับกราฟจริง ]
-                    </div>
+                    <div className="invest_panel">
+                        <div className="panel_head">
+                            <div>
+                                <div className="panel_title">{selectedSymbol}</div>
+                                <div className="panel_sub">{portfolio.find(item => item.symbol === selectedSymbol)?.stock_name}</div>
+                                <div className="panel_line">
+                                    <span className="muted">ราคาปัจจุบัน: </span>
+                                    <span className="panel_price">฿ {latestPrices[selectedSymbol + ".BK"]?.price || "0.00"}</span>
+                                    <span className="panel_pct">
+                                        {latestPrices[selectedSymbol + ".BK"]?.change > 0 ? "+" : ""}
+                                        {latestPrices[selectedSymbol + ".BK"]?.change || 0}
+                                        ({latestPrices[selectedSymbol + ".BK"]?.change_pct || 0}%)
+                                    </span>
+                                </div>
+                            </div>
+                            <Link to={`/${selectedSymbol}/detail`}>
+                                <button className="btn--pill">ดูรายละเอียด</button>
+                            </Link>
+                        </div>
 
-                    {/* <div className="panel_legend">
-                        <span className="dot dot--actual" /> Actual (Real-time)
-                        <span className="dot dot--base" /> Baseline @ Login
-                        <span className="dot dot--model" /> Predicted (model)
-                        <span className="ghost">predictedHigh</span>
-                        <span className="ghost">predictedLow</span>
-                    </div> */}
+                        <div className="panel_chart">
+                            {chartData.length > 0 ? (
+                                <StockLineChart data={chartData} range="intraday" />
+                            ) : (
+                                <div>กราฟไม่สามารถโหลดได้</div>
+                            )}
+                        </div>
 
-                    <div className="panel_foot">
-                        แสดงราคาจริง ณ เวลาเดียวกับข้อมูล | Baseline = ราคาตอนผู้ใช้ล็อกอินครั้งล่าสุด
-                        <span className="right">อัปเดตล่าสุด: 17/10/2568 18:47:32 (UTC+7)</span>
+                        <div className="panel_foot">
+                            อัปเดตล่าสุด: {lastUpdate}
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <div className="section-divider"></div>
+            <div className="section-divider"></div>
 
-        {/* ===== Top Five ===== */}
-        <section className="top_five">
-            <div className="top_container">
+            {/* ===== Top Five ===== */}
+            <section className="top_five">
+                <div className="top_container">
 
                 {/* หัวข้อ + แท็บ */}
                 <div className="top_header">
@@ -189,163 +448,205 @@ export default function Navbar() {
                     <div className="top_tabs">
                         <button className={`tab_btn ${tab === "value" ? "is-active" : ""}`} onClick={() => setTab("value")}>
                             {/* icon มูลค่า (ตัวอย่าง path) */}
-                            <img className="btn_icon" src={ tab === "value" ? "/pics/value_active.png" : "/pics/value_norm.png"} alt="" />
+                            <img className="btn_icon" src={ tab === "value" ? "../public/pics/value_active.png" : "../public/pics/value_norm.png"} alt="" />
                             มูลค่าการซื้อขาย
                         </button>
                         <button className={`tab_btn ${tab === "volume" ? "is-active" : ""}`} onClick={() => setTab("volume")}>
                             {/* icon ปริมาณ (ตัวอย่าง path) */}
-                            <img className="btn_icon" src={ tab === "volume" ? "/pics/volume_active.png" : "/pics/volume_norm.png"} alt="" />
+                            <img className="btn_icon" src={ tab === "volume" ? "../public/pics/volume_active.png" : "../public/pics/volume_norm.png"} alt="" />
                             ปริมาณการซื้อขาย
                         </button>
                         <button className={`tab_btn ${tab === "up" ? "is-active" : ""}`} onClick={() => setTab("up")}>
                             {/* icon ราคาเพิ่มขึ้น */}
-                            <img className="btn_icon" src={ tab === "up" ? "/pics/up_active.png" : "/pics/up_norm.png"} alt="" />
+                            <img className="btn_icon" src={ tab === "up" ? "../public/pics/up_active.png" : "../public/pics/up_norm.png"} alt="" />
                             ราคาเพิ่มขึ้น
                         </button>
                         <button className={`tab_btn ${tab === "down" ? "is-active" : ""}`} onClick={() => setTab("down")}>
                             {/* icon ราคาลดลง */}
-                            <img className="btn_icon" src={ tab === "down" ? "/pics/down_active.png" : "/pics/down_norm.png"} alt="" />
+                            <img className="btn_icon" src={ tab === "down" ? "../public/pics/down_active.png" : "../public/pics/down_norm.png"} alt="" />
                             ราคาลดลง
                         </button>
                     </div>
                 </div>
 
-                <div className="top_content">
-                    {/* ซ้าย: รายการ 5 อันดับ */}
-                    <aside className="top_list">
-                        {top_five.map((it, idx) => (
-                        <button
-                            key={it.symbol}
-                            className={`top_item ${idx === selected ? "active" : ""}`}
-                            onClick={() => setSelected(idx)}
-                        >
-                            <div className="left">
-                            <span className="top_rank">{it.rank}</span>
+                    {top_five.length === 0 ? (
+                        <div className="top_loading">กำลังโหลดข้อมูล...</div>
+                    ) : (
+                        <div className="top_content">
+                            {/* ซ้าย: รายการ 5 อันดับ */}
+                            <aside className="top_list">
+                                {top_five.map((it, idx) => (
+                                    <button
+                                        key={it.symbol}
+                                        className={`top_item ${idx === selectedTop ? "active" : ""}`}
+                                        onClick={() => {
+                                            setSelectedTop(idx);
+                                            fetchTopChart(it.symbol);
+                                        }}
+                                    >
+                                        <div className="left">
+                                            <span className="top_rank">{it.rank}</span>
+                                            <div
+                                                className="top_logo"
+                                                style={{ backgroundImage: `url(/logos/${it.symbol}.png)` }}
+                                                aria-hidden
+                                            />
+                                            <div className="top_symbolwrap">
+                                                <div className="top_symbol">{it.symbol}</div>
+                                                <div className="top_name">{it.name}</div>
+                                            </div>
+                                        </div>
+                                        <div className="right">
+                                            <div className="top_amount">
+                                                {topTab === "volume"
+                                                    ? it.volume.toLocaleString("th-TH")
+                                                    : topTab === "up" || topTab === "down"
+                                                        ? `${it.change_pct >= 0 ? "+" : ""}${it.change_pct.toFixed(2)}%`
+                                                        : `฿ ${it.value.toLocaleString("th-TH", { minimumFractionDigits: 2 })}`
+                                                }
+                                            </div>
+                                        </div>
+                                    </button>
+                                ))}
+                            </aside>
 
-                            {/* โลโก้ – ใส่รูปจริงภายหลังได้ (ตั้งชื่อไฟล์ /logos/SYMBOL.png) */}
-                            <div
-                                className="top_logo"
-                                style={{ backgroundImage: `url(/logos/${it.symbol}.png)` }}
-                                aria-hidden
-                            />
+                            {/* ขวา: panel รายละเอียด */}
+                            {(() => {
+                                const s = top_five[selectedTop];
+                                if (!s) return null;
+                                return (
+                                    <div className="top_panel" style={{ "--sel": selectedTop }}>
+                                        <div className="top_panel_in">
+                                            <div className="top_panel_head">
+                                                <div className="price_block">
+                                                    <div className="price_now_row">
+                                                        <span className={`arrow_icon ${s.change >= 0 ? "up" : "down"}`}>
+                                                            {s.change >= 0 ? "▲" : "▼"}
+                                                        </span>
+                                                        <span className="price_now">฿ {s.price.toFixed(2)}</span>
+                                                    </div>
+                                                    <div className={`price_chg ${s.change >= 0 ? "up" : "down"}`}>
+                                                        {(s.change >= 0 ? "+" : "") + s.change.toFixed(2)}{" "}
+                                                        ({(s.change_pct >= 0 ? "+" : "") + s.change_pct.toFixed(2)}%)
+                                                    </div>
+                                                </div>
 
-                            <div className="top_symbolwrap">
-                                <div className="top_symbol">{it.symbol}</div>
-                                <div className="top_name">{it.name}</div>
-                            </div>
-                            </div>
+                                                <div className="meta_wrap">
+                                                    <div className="latest_text">
+                                                        ข้อมูลล่าสุด : {s.updated_at
+                                                            ? new Date(s.updated_at).toLocaleString("th-TH")
+                                                            : "-"}
+                                                    </div>
+                                                    <div className="meta_block right">
+                                                        <div className="meta_col">
+                                                            <div className="meta_val">{s.volume.toLocaleString("th-TH")}</div>
+                                                            <div className="meta_lbl">ปริมาณ (หุ้น)</div>
+                                                        </div>
+                                                        <div className="meta_col">
+                                                            <div className="meta_val">฿ {s.value.toLocaleString("th-TH")}</div>
+                                                            <div className="meta_lbl">มูลค่า ('000 บาท)</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                            <div className="right">
-                            <div className="top_amount">
-                                ฿ {it.amount.toLocaleString("th-TH", { minimumFractionDigits: 2 })}
-                            </div>
-                            </div>
-                        </button>
-                        ))}
-                    </aside>
+                                            {/* Chart จริง */}
+                                            <div className="top_chartbox">
+                                                {topChartLoading ? (
+                                                    <div>กำลังโหลดกราฟ...</div>
+                                                ) : topChartData.length > 0 ? (
+                                                    <StockLineChart data={topChartData} range="intraday" />
+                                                ) : (
+                                                    <div className="top_chart_hint">คลิกหุ้นเพื่อดูกราฟ</div>
+                                                )}
+                                            </div>
 
-                    {/* ขวา: กล่องรายละเอียด (bubble) */}
-                    <div className="top_panel" style={{ "--sel": selected }}>
-                        <div className="top_panel_in">
-                            <div className="top_panel_head">
-                                <div className="price_block">
-                                    <div className="price_now_row">
-                                        <span className={`arrow_icon ${s.change >= 0 ? "up" : "down"}`}>{s.change >= 0 ? "▲" : "▼"}</span>
-                                        <span className="price_now">฿ {s.price.toFixed(2)}</span>
+                                            <div className="top_panel_foot">
+                                                <div className="foot_left">
+                                                    <span className="foot_label">ราคาสูงสุด</span>
+                                                    <span className="foot_val">
+                                                        {topChartHighLow.high != null ? topChartHighLow.high.toFixed(2) : "-"}
+                                                    </span>
+                                                    <span className="foot_divider" />
+                                                    <span className="foot_label">ราคาต่ำสุด</span>
+                                                    <span className="foot_val">
+                                                        {topChartHighLow.low != null ? topChartHighLow.low.toFixed(2) : "-"}
+                                                    </span>
+                                                </div>
+                                                <Link to={`/${s.symbol}/detail`}>
+                                                    <button className="btn-soft">ดูรายละเอียด →</button>
+                                                </Link>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className={`price_chg ${s.change >= 0 ? "up" : "down"}`}>
-                                        {(s.change >= 0 ? "+" : "") + s.change.toFixed(2)}{" "}
-                                        ({(s.pct >= 0 ? "+" : "") + s.pct.toFixed(2)}%)
-                                    </div>
-                                </div>
+                                );
+                            })()}
+                        </div>
+                    )}
+                </div>
+            </section>
 
-                                {/* ขวา: ข้อมูลล่าสุด + ปริมาณ/มูลค่า (ใช้ของเดิมที่ทำไว้แล้วได้เลย) */}
-                                <div className="meta_wrap">
-                                    <div className="latest_text">ข้อมูลล่าสุด : 11 ก.ย. 2568 02:30:10</div>
+            <div className="section-divider"></div>
 
-                                    <div className="meta_block right">
-                                    <div className="meta_col">
-                                        <div className="meta_val">฿ {s.value.toLocaleString("th-TH")}</div>
-                                        <div className="meta_lbl">ปริมาณ (หุ้น)</div>
-                                    </div>
-                                    <div className="meta_col">
-                                        <div className="meta_val">฿ {s.amount.toLocaleString("th-TH")}</div>
-                                        <div className="meta_lbl">มูลค่า (‘000 บาท)</div>
-                                    </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="top_chartbox">[ พื้นที่สำหรับกราฟจริง ]</div>
-
-                            <div className="top_panel_foot">
-                                <div className="foot_left">
-                                    <span className="foot_label">ราคาสูงสุด</span>
-                                    <span className="foot_val">33.50</span>
-
-                                    <span className="foot_divider" />
-
-                                    <span className="foot_label">ราคาต่ำสุด</span>
-                                    <span className="foot_val">32.75</span>
-                                </div>
-
-                                <Link to="/detail">
-                                    <button className="btn-soft">ดูรายละเอียด →</button>
-                                </Link>
+            <section className="favorite">
+                <div className="fav_container">
+                    <div className="fav_head">
+                        <div className="fav_titlewrap">
+                            <div>
+                                <h3>หุ้นที่ติดตาม</h3>
+                                <p>หุ้นที่คุณสนใจและติดตาม</p>
                             </div>
                         </div>
+                        <Link to="/profile?tab=favorite">
+                            <button className="fav_all">ดูทั้งหมด →</button>
+                        </Link>
                     </div>
-                </div>
-            </div>
-        </section>
 
-        <div className="section-divider"></div>
+                    {/* การ์ดแบบเลื่อนแนวนอน */}
+                    <div className="fav_scroller">
+                        {favUI.map((f) => {
+                            const isUp = f.pct > 0;
+                            const isDown = f.pct < 0;
+                            const isZero = f.pct === 0;
 
-        <section className="favorite">
-            <div className="fav_container">
-                <div className="fav_head">
-                    <div className="fav_titlewrap">
-                        <div>
-                            <h3>หุ้นที่ติดตาม</h3>
-                            <p>หุ้นที่คุณสนใจและติดตาม</p>
-                        </div>
-                    </div>
-                    <Link to="/profile?tab=favorite">
-                        <button className="fav_all">ดูทั้งหมด →</button>
-                    </Link>
-                </div>
+                            const colorClass = isZero ? "neutral" : isUp ? "up" : "down";
+                            return (
+                                <article
+                                    key={f.symbol}
+                                    className="fav_card"
+                                    onClick={() => navigate(`/${f.symbol}/detail`)}
+                                >
+                                    <header className="fav_card_head">
+                                        <div className="fav_symbol_block">
+                                            <div className="fav_symbol">{f.symbol}</div>
+                                            <div className="fav_name">{f.name}</div>
+                                        </div>
 
-                {/* การ์ดแบบเลื่อนแนวนอน */}
-                <div className="fav_scroller">
-                    {favorites.map((f) => {
-                        const isUp = f.pct >= 0;
-                        return (
-                            <article key={f.symbol} className="fav_card">
-                                <header className="fav_card_head">
-                                    <div className="fav_symbol_block">
-                                        <div className="fav_symbol">{f.symbol}</div>
-                                        <div className="fav_name">{f.name}</div>
+                                        <img
+                                            src="/pics/heart.png"
+                                            className="fav_heart"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleRemoveFavorite(f.favorite_id);
+                                            }}
+                                        />
+                                    </header>
+
+                                    <div className="fav_price">
+                                        ฿ {Number(f.price || 0).toFixed(2)}
                                     </div>
 
-                                    {/* ไอคอนหัวใจขวาบน – เปลี่ยนเป็น <img> ใช้รูปจริงภายหลังได้ */}
-                                    {/* ตัวอย่าง: <img className="fav_heart" src="/icons/heart_fill.png" alt="" /> */}
-                                    {/* <span className="fav_heart">♡</span> */}
-                                    <img src="/pics/heart.png" className="fav_heart" />
-                                </header>
-
-                                <div className="fav_price">฿ {f.price.toFixed(2)}</div>
-
-                                <div className={`fav_change ${isUp ? "up" : "down"}`}> {isUp ? "+" : ""} {f.pct.toFixed(2)}%</div>
-
-                                <div className="fav_bar">
-                                    <div className={`fav_bar_fill ${isUp ? "up" : "down"}`} style={{ width: `${f.bar}%` }} />
-                                </div>
-                            </article>
-                        );
-                    })}
+                                    <div className={`fav_change ${colorClass}`}>
+                                        {isZero
+                                            ? "0.00 (0.00%)"
+                                            : `${isUp ? "+" : ""}${f.change.toFixed(2)} (${isUp ? "+" : ""}${f.pct.toFixed(2)}%)`}
+                                    </div>
+                                </article>
+                            );
+                        })}
+                    </div>
                 </div>
-            </div>
-        </section>
-        </> 
+            </section>
+        </>
     );
 }
