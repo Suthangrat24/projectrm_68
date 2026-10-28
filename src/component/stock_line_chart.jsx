@@ -1,23 +1,26 @@
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, CartesianGrid } from "recharts";
 
-// ------------------ Intraday ticks (10:00 → last data hour) ------------------
-function generateHourlyTicks(baseDate, lastTs) {
-    if (!lastTs) return [];
+// ------------------ ช่วงเวลาซื้อขายทั้งวัน (10:00 → 17:00) ------------------
+const SESSION_START_HOUR = 10;
+const SESSION_END_HOUR = 17;
 
+function getSessionRange(baseDate) {
+    const start = new Date(baseDate);
+    start.setHours(SESSION_START_HOUR, 0, 0, 0);
+    const end = new Date(baseDate);
+    end.setHours(SESSION_END_HOUR, 0, 0, 0);
+    return [start.getTime(), end.getTime()];
+}
+
+// ------------------ Intraday ticks: ทุกชั่วโมง 10:00 → 17:00 เสมอ ------------------
+// (เดิมตัด tick ที่เกินข้อมูลจริงทิ้ง ทำให้ช่วงเช้าเห็นแค่ 10:00)
+function generateHourlyTicks(baseDate) {
     const ticks = [];
-    const base = new Date(baseDate);
-    base.setHours(10, 0, 0, 0);
-
-    for (let h = 10; h <= 17; h++) {
-        const d = new Date(base);
+    for (let h = SESSION_START_HOUR; h <= SESSION_END_HOUR; h++) {
+        const d = new Date(baseDate);
         d.setHours(h, 0, 0, 0);
-
-        // ❗ ตัด tick ที่เกินข้อมูลจริง
-        if (d.getTime() <= lastTs) {
-            ticks.push(d.getTime());
-        }
+        ticks.push(d.getTime());
     }
-
     return ticks;
 }
 
@@ -184,39 +187,59 @@ function generateDateTicks(data, range) {
 }
 
 // ------------------ Component ------------------
-export default function StockLineChart({ data = [], range }) {
+// refPrice (ไม่บังคับ): ราคาปิดวันก่อน ถ้าส่งมาจะขึ้นเส้นประแนวนอนในกราฟ Intraday
+export default function StockLineChart({ data = [], range, refPrice }) {
+    const isIntraday = range === "intraday";
     const baseDate = data?.[0]?.ts ? new Date(data[0].ts) : new Date();
-    const lastTs = data?.[data.length - 1]?.ts;
 
-    const ticks =
-        range === "intraday"
-            ? generateHourlyTicks(baseDate, lastTs)
-            : generateDateTicks(data, range);
+    const ticks = isIntraday
+        ? generateHourlyTicks(baseDate)
+        : generateDateTicks(data, range);
+
+    // Intraday: แกนเวลายาวทั้งวัน 10:00–17:00 เส้นราคาจะหยุดตรงเวลาล่าสุดที่มีข้อมูล
+    const xDomain = isIntraday ? getSessionRange(baseDate) : ["dataMin", "dataMax"];
+
+    // เผื่อขอบบนล่างให้เส้นไม่ชิดขอบกราฟ (และให้เส้นราคาอ้างอิงอยู่ในกรอบ)
+    const yDomain = [
+        (min) => Math.floor(Math.min(min, refPrice ?? min) - 1),
+        (max) => Math.ceil(Math.max(max, refPrice ?? max) + 1),
+    ];
 
     return (
         <ResponsiveContainer width="100%" height={260}>
             <LineChart data={data}>
+                {isIntraday && (
+                    <CartesianGrid vertical={false} stroke="#374151" strokeOpacity={0.5} />
+                )}
+
                 <XAxis
                     dataKey="ts"
                     type="number"
                     scale="time"
-                    domain={["dataMin", "dataMax"]}
+                    domain={xDomain}
                     ticks={ticks}
                     tickFormatter={(ts) => formatXAxis(ts, range)}
                     tick={{ fill: "#9ca3af", fontSize: 12 }}
                     dy={10}
+                    allowDataOverflow
                 />
 
                 <YAxis
-                    domain={["auto", "auto"]}
+                    domain={isIntraday ? yDomain : ["auto", "auto"]}
                     tick={{ fill: "#9ca3af", fontSize: 12 }}
+                    tickFormatter={(v) => Number(v).toFixed(2)}
+                    width={60}
                 />
+
+                {isIntraday && refPrice != null && (
+                    <ReferenceLine y={refPrice} stroke="#9ca3af" strokeDasharray="4 4" />
+                )}
 
                 <Tooltip
                     formatter={(value) => Number(value).toFixed(2)}
                     labelFormatter={(ts) => {
                         const d = new Date(ts);
-                        return range === "intraday"
+                        return isIntraday
                             ? d.toLocaleTimeString("th-TH", {
                                   hour: "2-digit",
                                   minute: "2-digit"
@@ -233,10 +256,10 @@ export default function StockLineChart({ data = [], range }) {
                     type="linear"
                     dataKey="close"
                     stroke="#00d9a3"
-                    
                     strokeWidth={2}
                     dot={false}
                     connectNulls
+                    isAnimationActive={false}
                 />
             </LineChart>
         </ResponsiveContainer>

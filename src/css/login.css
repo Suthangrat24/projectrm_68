@@ -174,3 +174,32 @@
     display: block;
     border-radius: 50%;
 }
+
+.login-google-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border: 1px solid #374151;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #1f2937;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, box-shadow 0.15s;
+}
+
+.login-google-btn:hover {
+    background: #f3f4f6;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.login-google-icon {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}

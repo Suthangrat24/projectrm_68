@@ -2,6 +2,7 @@ import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { useState, useMemo, useEffect } from "react";
 import { getStock, getStockLatest, getStockHistory, getStockSummary, getStockHistoryPerDay, addFavorite, deleteFavorite, checkFavorite, getStockFinancial } from "../fetchapi/call_api_user";
 import StockLineChart from "../component/stock_line_chart";
+import StockLogo from "./stock_logo";
 import {
     LineChart,
     Line,
@@ -9,7 +10,10 @@ import {
     YAxis,
     Tooltip,
     ResponsiveContainer,
-    Legend
+    Legend,
+    PieChart,
+    Pie,
+    Cell
 } from "recharts";
 import "../css/stock_detail.css";
 import Swal from "sweetalert2";
@@ -527,6 +531,15 @@ export default function StockDetail() {
         { id: 5, name: "ผู้ถือหุ้นรายย่อย", sharesText: "0.74B หุ้น", percent: 20.44, color: "red" },
     ];
 
+    // สีของแต่ละกลุ่ม ใช้ทั้งกราฟโดนัท legend และการ์ด 5 อันดับแรก ให้ตรงกัน
+    const HOLDER_COLORS = {
+        teal: "#22c55e",
+        blue: "#3b82f6",
+        orange: "#f59e0b",
+        purple: "#a855f7",
+        red: "#f87171",
+    };
+
     // เพิ่มอันนี้ลงมา
     const holdersSummary = {
         totalHolders: 52345,
@@ -542,13 +555,12 @@ export default function StockDetail() {
                     {/* ซ้าย: โลโก้ + ชื่อหุ้น */}
                     <div className="detail-main-left">
                         <div className="detail-logo">
-                            {stock?.logo_path ? (
-                                <img src={stock.logo_path} alt={stock.symbol} className="detail-logo-img" />
-                            ) : (
-                                <div className="detail-logo-mark">
-                                    {stock?.symbol?.charAt(0)}
-                                </div>
-                            )}
+                            <StockLogo
+                                symbol={symbol}
+                                src={stock.logo_path}
+                                size={72}
+                                radius={16}
+                            />
                         </div>
 
                         <div className="detail-name-block">
@@ -803,7 +815,7 @@ export default function StockDetail() {
                                 </span>
                                 <button
                                     className="btn-future"
-                                    onClick={() => navigate(`/detail/future`)}
+                                    onClick={() => navigate(`/${symbol}/detail/future`)}
                                 >
                                     <img src="/pics/future.png" alt="future" className="btn-future-icon" />
                                     <span>ดูแนวโน้มในอนาคต</span>
@@ -1327,10 +1339,64 @@ export default function StockDetail() {
                                     <h3 className="holders-plain-title">โครงสร้างผู้ถือหุ้น</h3>
                                 </header>
 
-                                <div className="holders-plain-body">
-                                    <div className="holders-plain-placeholder">
-                                        [ พื้นที่สำหรับกราฟโครงสร้างผู้ถือหุ้น ]
+                                <div className="holders-structure">
+                                    {/* กราฟโดนัทสัดส่วนผู้ถือหุ้น */}
+                                    <div className="holders-donut-wrap">
+                                        <ResponsiveContainer width="100%" height={260}>
+                                            <PieChart>
+                                                <Pie
+                                                    data={majorHolders}
+                                                    dataKey="percent"
+                                                    nameKey="name"
+                                                    cx="50%"
+                                                    cy="50%"
+                                                    innerRadius={72}
+                                                    outerRadius={110}
+                                                    paddingAngle={2}
+                                                    stroke="none"
+                                                    isAnimationActive={false}
+                                                >
+                                                    {majorHolders.map((h) => (
+                                                        <Cell key={h.id} fill={HOLDER_COLORS[h.color]} />
+                                                    ))}
+                                                </Pie>
+                                                <Tooltip
+                                                    formatter={(v, name) => [`${Number(v).toFixed(2)}%`, name]}
+                                                    contentStyle={{
+                                                        background: "#111827",
+                                                        border: "1px solid #374151",
+                                                        borderRadius: 10,
+                                                        color: "#f9fafb",
+                                                    }}
+                                                    itemStyle={{ color: "#f9fafb" }}
+                                                />
+                                            </PieChart>
+                                        </ResponsiveContainer>
+
+                                        {/* ข้อความกลางโดนัท */}
+                                        <div className="holders-donut-label">
+                                            <div className="holders-donut-label-value">
+                                                {holdersSummary.freeFloat.toFixed(2)}%
+                                            </div>
+                                            <div className="holders-donut-label-sub">Free Float</div>
+                                        </div>
                                     </div>
+
+                                    {/* คำอธิบายสี */}
+                                    <ul className="holders-structure-legend">
+                                        {majorHolders.map((h) => (
+                                            <li key={h.id} className="holders-structure-row">
+                                                <span
+                                                    className="holders-structure-dot"
+                                                    style={{ background: HOLDER_COLORS[h.color] }}
+                                                />
+                                                <span className="holders-structure-name">{h.name}</span>
+                                                <span className="holders-structure-percent">
+                                                    {h.percent.toFixed(2)}%
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
                                 </div>
                             </article>
 

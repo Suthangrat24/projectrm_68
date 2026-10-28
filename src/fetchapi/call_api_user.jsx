@@ -1,6 +1,33 @@
 // let api = "http://127.0.0.1:8000";
 let api = "http://localhost:8000";
 import axios from "axios";
+import Swal from "sweetalert2";
+
+let isHandlingSessionExpiry = false; // กันไม่ให้ popup ขึ้นซ้อนกันหลายอัน ตอนหลาย request 401 พร้อมกัน
+ 
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401 && !isHandlingSessionExpiry) {
+      isHandlingSessionExpiry = true;
+ 
+      localStorage.removeItem("token");
+      localStorage.removeItem("user_id");
+ 
+      Swal.fire({
+        icon: "warning",
+        title: "เซสชันหมดอายุ",
+        text: "กรุณาเข้าสู่ระบบใหม่อีกครั้ง",
+        confirmButtonText: "ตกลง",
+        allowOutsideClick: false,
+      }).then(() => {
+        window.location.href = "/login"; // ปรับ path ให้ตรงกับ route login จริงของโปรเจค
+      });
+    }
+ 
+    return Promise.reject(error);
+  }
+);
 
 export async function GetLogin(email, password) {
   try {
@@ -20,6 +47,64 @@ export async function GetLogin(email, password) {
   } catch (error) {
     console.error("Error fetching user data:", error); // แสดงข้อผิดพลาดถ้ามี
     throw error; // ส่งข้อผิดพลาดออกไปให้ฟังก์ชันที่เรียกใช้จัดการ
+  }
+}
+
+export async function logoutUser(token) {
+  try {
+    const response = await axios.post(
+      `${api}/logout`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Logout error:", err);
+    throw err;
+  }
+}
+
+export async function registerUser(payload) {
+  try {
+    const response = await axios.post(`${api}/register`, payload, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Register error:", error);
+    throw error;
+  }
+}
+
+// ยืนยัน OTP
+export async function verifyRegisterOtp(payload) {
+  try {
+    const response = await axios.post(`${api}/register/verify-otp`, payload, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Verify OTP error:", error);
+    throw error;
+  }
+}
+
+// ตั้งรหัสผ่าน
+export async function setRegisterPassword(payload) {
+  try {
+    const response = await axios.post(`${api}/register/set-password`, payload, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Set password error:", error);
+    throw error;
   }
 }
 
@@ -496,6 +581,67 @@ export async function getAssessmentHistory(token) {
     return response.data;
   } catch (error) {
     console.error("Get assessment history error:", error);
+    throw error;
+  }
+}
+
+export async function getStockForecast(symbol) {
+  try {
+    const response = await axios.get(
+      `${api}/stock/forecast`,
+      {
+        params: { symbol },
+      }
+    );
+    console.log("forecast:", response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Get stock forecast error:", err);
+    throw err;
+  }
+}
+ 
+// หน้ารายการหุ้นทั้งหมด — payload เบา ไม่มี chart (ใช้ทำการ์ด/ตารางแนะนำหุ้นได้)
+export async function getAllStockForecasts() {
+  try {
+    const response = await axios.get(`${api}/stock/forecast/all`);
+    console.log("all forecasts:", response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Get all stock forecasts error:", err);
+    throw err;
+  }
+}
+
+export async function getRecommendationPerformance(token) {
+  try {
+    const response = await axios.get(
+      `${api}/portfolio/recommendation-performance`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log("recommendation performance:", response.data);
+    return response.data;
+
+  } catch (error) {
+    console.error("Get recommendation performance error:", error);
+    throw error;
+  }
+}
+
+export async function getAssessmentAnswers(token, attempt_id) {
+  try {
+    const response = await axios.get(
+      `${api}/assessment/${attempt_id}/answers`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Get assessment answers error:", error);
     throw error;
   }
 }

@@ -28,7 +28,8 @@ export default function Navbar() {
                 const data = await getPortfolio(token);
                 setPortfolio(data);
 
-                const symbols = data.map(item => item.symbol + '.BK');
+                // ดึงราคาแค่ครั้งเดียวต่อหุ้น 1 ตัว (พอร์ตอาจมีหลายรายการของหุ้นตัวเดียวกัน)
+                const symbols = [...new Set(data.map(item => item.symbol))].map(s => s + '.BK');
                 const latestData = await Promise.all(
                     symbols.map(async (symbol) => {
                         try {
@@ -58,8 +59,9 @@ export default function Navbar() {
                 setLatestPrices(priceMap);
                 console.log("setLatestPrices: ", priceMap);
 
-                if (data.length > 0) {
-                    const firstSymbol = data[0].symbol;
+                const firstHeld = uniqueHoldings(data)[0];
+                if (firstHeld) {
+                    const firstSymbol = firstHeld.symbol;
                     setSelectedSymbol(firstSymbol);
                     await fetchChart(firstSymbol); // โหลดกราฟของหุ้นตัวแรกเลย
                 }
@@ -70,48 +72,64 @@ export default function Navbar() {
         fetchPortfolio();
     }, [token]);
 
-    useEffect(() => {
-        const fetchAllStocks = async () => {
-            try {
-                const res = await getStocks();
-                const stockList = res.data;
+    // useEffect(() => {
+    //     const fetchAllStocks = async () => {
+    //         try {
+    //             const res = await getStocks();
+    //             const stockList = res.data;
 
-                const results = await Promise.all(
-                    stockList.map(async (s) => {
-                        try {
-                            const latest = await getStockLatest(`${s.symbol}.BK`);
-                            return {
-                                symbol: s.symbol,
-                                name: s.stock_name,
-                                price: latest.price ?? 0,
-                                change: latest.change ?? 0,
-                                change_pct: latest.change_pct ?? 0,
-                                volume: latest.volume ?? 0,
-                                value: latest.value ?? 0,
-                                updated_at: latest.updated_at ?? "",
-                            };
-                        } catch {
-                            return null;
-                        }
-                    })
-                );
+    //             const results = await Promise.all(
+    //                 stockList.map(async (s) => {
+    //                     try {
+    //                         const latest = await getStockLatest(`${s.symbol}.BK`);
+    //                         return {
+    //                             symbol: s.symbol,
+    //                             name: s.stock_name,
+    //                             price: latest.price ?? 0,
+    //                             change: latest.change ?? 0,
+    //                             change_pct: latest.change_pct ?? 0,
+    //                             volume: latest.volume ?? 0,
+    //                             value: latest.value ?? 0,
+    //                             updated_at: latest.updated_at ?? "",
+    //                         };
+    //                     } catch {
+    //                         return null;
+    //                     }
+    //                 })
+    //             );
 
-                const filtered = results.filter(Boolean);
-                setAllStocksLatest(filtered);
+    //             const filtered = results.filter(Boolean);
+    //             setAllStocksLatest(filtered);
 
-                // sort value แล้ว fetch chart อันดับ 1 เลย
-                const sorted = [...filtered].sort((a, b) => b.value - a.value);
-                if (sorted.length > 0) {
-                    await fetchTopChart(sorted[0].symbol);
-                }
+    //             // sort value แล้ว fetch chart อันดับ 1 เลย
+    //             const sorted = [...filtered].sort((a, b) => b.value - a.value);
+    //             if (sorted.length > 0) {
+    //                 await fetchTopChart(sorted[0].symbol);
+    //             }
 
-            } catch (err) {
-                console.error("โหลด allStocksLatest ไม่ได้", err);
-            }
-        };
+    //         } catch (err) {
+    //             console.error("โหลด allStocksLatest ไม่ได้", err);
+    //         }
+    //     };
 
-        fetchAllStocks();
-    }, []);
+    //     fetchAllStocks();
+    // }, []);
+
+    // ── รวมรายการในพอร์ตให้เหลือหุ้นละ 1 แถว ──
+    // ซื้อหุ้นตัวเดียวกันหลายครั้ง → แสดงครั้งเดียว และไม่แสดงหุ้นที่ขายหมดแล้ว
+    // (invest_type_id: 1 = ซื้อ, อื่นๆ = ขาย)
+    function uniqueHoldings(rows) {
+        const map = new Map();
+        (rows || []).forEach((r) => {
+            const sign = r.invest_type_id === 1 ? 1 : -1;
+            const cur = map.get(r.symbol) || { symbol: r.symbol, stock_name: r.stock_name, shares: 0 };
+            cur.shares += sign * (Number(r.number_of_share) || 0);
+            map.set(r.symbol, cur);
+        });
+        return [...map.values()].filter((h) => h.shares > 0);
+    }
+
+    const holdings = useMemo(() => uniqueHoldings(portfolio), [portfolio]);
 
     const fetchChart = async (symbol) => {
         try {
@@ -165,41 +183,41 @@ export default function Navbar() {
         await fetchChart(symbol);
     };
 
-    const fetchTopChart = async (symbol) => {
-        setTopChartLoading(true);
-        setTopChartData([]);
-        setTopChartHighLow({ high: null, low: null }); // reset
-        try {
-            const history = await getStockHistory({
-                symbol: `${symbol}.BK`,
-                period: "1d",
-                interval: "5m",
-            });
+    // const fetchTopChart = async (symbol) => {
+    //     setTopChartLoading(true);
+    //     setTopChartData([]);
+    //     setTopChartHighLow({ high: null, low: null }); // reset
+    //     try {
+    //         const history = await getStockHistory({
+    //             symbol: `${symbol}.BK`,
+    //             period: "1d",
+    //             interval: "5m",
+    //         });
 
-            const cleaned = history.filter(d => d.close != null && !isNaN(d.close));
-            if (cleaned.length < 2) { setTopChartLoading(false); return; }
+    //         const cleaned = history.filter(d => d.close != null && !isNaN(d.close));
+    //         if (cleaned.length < 2) { setTopChartLoading(false); return; }
 
-            const formatted = cleaned.map((d) => {
-                const date = new Date(d.time);
-                return {
-                    time: date.toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" }),
-                    ts: date.getTime(),
-                    close: d.close,
-                };
-            });
+    //         const formatted = cleaned.map((d) => {
+    //             const date = new Date(d.time);
+    //             return {
+    //                 time: date.toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" }),
+    //                 ts: date.getTime(),
+    //                 close: d.close,
+    //             };
+    //         });
 
-            // คำนวณ high/low จาก close ทั้งวัน
-            const closes = cleaned.map(d => d.close);
-            const high = Math.max(...closes);
-            const low = Math.min(...closes);
-            setTopChartHighLow({ high, low });
+    //         // คำนวณ high/low จาก close ทั้งวัน
+    //         const closes = cleaned.map(d => d.close);
+    //         const high = Math.max(...closes);
+    //         const low = Math.min(...closes);
+    //         setTopChartHighLow({ high, low });
 
-            setTopChartData(formatted);
-        } catch (err) {
-            console.error("โหลด top chart ไม่สำเร็จ", err);
-        }
-        setTopChartLoading(false);
-    };
+    //         setTopChartData(formatted);
+    //     } catch (err) {
+    //         console.error("โหลด top chart ไม่สำเร็จ", err);
+    //     }
+    //     setTopChartLoading(false);
+    // };
 
     // สร้าง function กลางไว้ใช้ร่วมกัน (วางหลัง fetchTopChart)
     const handleTabChange = async (newTab) => {
@@ -367,7 +385,7 @@ export default function Navbar() {
                 <div className="invest_grid">
                     {/* ซ้าย: รายการหุ้นในพอร์ต */}
                     <aside className="invest_list">
-                        {portfolio.map((item) => {
+                        {holdings.map((item) => {
                             const stockSymbol = item.symbol + ".BK";
                             const stock_latest = latestPrices[stockSymbol] || {};
                             console.log("Latest Prices: ", latestPrices);
@@ -405,7 +423,7 @@ export default function Navbar() {
                         <div className="panel_head">
                             <div>
                                 <div className="panel_title">{selectedSymbol}</div>
-                                <div className="panel_sub">{portfolio.find(item => item.symbol === selectedSymbol)?.stock_name}</div>
+                                <div className="panel_sub">{holdings.find(item => item.symbol === selectedSymbol)?.stock_name}</div>
                                 <div className="panel_line">
                                     <span className="muted">ราคาปัจจุบัน: </span>
                                     <span className="panel_price">฿ {latestPrices[selectedSymbol + ".BK"]?.price || "0.00"}</span>
@@ -465,11 +483,11 @@ export default function Navbar() {
                         </div>
                     </div>
 
-                    {top_five.length === 0 ? (
+                    {/* {top_five.length === 0 ? (
                         <div className="top_loading">กำลังโหลดข้อมูล...</div>
                     ) : (
                         <div className="top_content">
-                            {/* ซ้าย: รายการ 5 อันดับ */}
+                            {/* ซ้าย: รายการ 5 อันดับ 
                             <aside className="top_list">
                                 {top_five.map((it, idx) => (
                                     <button
@@ -506,7 +524,7 @@ export default function Navbar() {
                                 ))}
                             </aside>
 
-                            {/* ขวา: panel รายละเอียด */}
+                            {/* ขวา: panel รายละเอียด 
                             {(() => {
                                 const s = top_five[selectedTop];
                                 if (!s) return null;
@@ -546,7 +564,7 @@ export default function Navbar() {
                                                 </div>
                                             </div>
 
-                                            {/* Chart จริง */}
+                                            {/* Chart จริง 
                                             <div className="top_chartbox">
                                                 {topChartLoading ? (
                                                     <div>กำลังโหลดกราฟ...</div>
@@ -578,7 +596,7 @@ export default function Navbar() {
                                 );
                             })()}
                         </div>
-                    )}
+                    )} */}
                 </div>
             </section>
 

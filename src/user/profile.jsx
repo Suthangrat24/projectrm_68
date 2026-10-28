@@ -44,7 +44,7 @@ export default function Profile() {
     const [riskHistory, setRiskHistory] = useState([]);
     const [historyLoading, setHistoryLoading] = useState(false);
 
-        async function fetchHistory() {
+    async function fetchHistory() {
         try {
             setHistoryLoading(true);
             const token = localStorage.getItem("token");
@@ -56,17 +56,15 @@ export default function Profile() {
             setHistoryLoading(false);
         }
     }
- 
+
     useEffect(() => {
         fetchHistory();
     }, []);
 
-    const levelMap = {
-        1: { label: "มือใหม่", cls: "low" },
-        2: { label: "ระมัดระวัง", cls: "low" },
-        3: { label: "สมดุล", cls: "mid" },
-        4: { label: "เติบโต", cls: "high" },
-        5: { label: "เชี่ยวชาญ", cls: "high" },
+    const userTypeBadge = {
+        Conservative: { label: "ความเสี่ยงต่ำ",     cls: "low"  },
+        Moderate:     { label: "ความเสี่ยงปานกลาง", cls: "mid"  },
+        Aggressive:   { label: "ความเสี่ยงสูง",     cls: "high" },
     };
 
     const handleViewDetail = (item) => {
@@ -96,7 +94,7 @@ export default function Profile() {
             try {
                 const token = localStorage.getItem("token");
                 const data = await getFavorites(token);
- 
+
                 const withPrice = await Promise.all(
                     data.map(async (stock) => {
                         try {
@@ -112,7 +110,7 @@ export default function Profile() {
                 console.error("โหลด favorite ไม่สำเร็จ", err);
             }
         }
- 
+
         fetchFavorites();
     }, []);
 
@@ -157,7 +155,7 @@ export default function Profile() {
                             <p className="profile-username">{user.email}</p>
 
                             <div className="profile-badges">
-                                <span className={`badge badge-${getRiskClass(user.level_name)}`}>ระดับ{user.level_name}</span>
+                                <span className={`badge badge-${getRiskClass(user.level_id)}`}>ระดับ{user.level_name}</span>
                                 <span className="badge badge-small">
                                     <img src="/pics/history.png" alt="history" className="history-icon" />
                                     {riskHistory.length} ครั้งที่ประเมิน
@@ -276,11 +274,11 @@ export default function Profile() {
                                 </p>
                             ) : (
                                 riskHistory.map((item, index) => {
-                                    const levelInfo = levelMap[item.level_id] || { label: item.user_type || "-", cls: "mid" };
-                                    const riskPercent = item.risk_index ? Math.round(item.risk_index * 100) : "-";
+                                    const levelInfo = userTypeBadge[item.user_type] || { label: "-", cls: "mid" };
+                                    const riskPercent = item.risk_index != null ? Math.round(item.risk_index * 100) : "-";
 
                                     return (
-                                        <div key={item.attempt_id} className="risk-card">
+                                        <div key={item.attempt_id} className="risk-history-card">
 
                                             <div className="risk-card-header">
                                                 <div className="risk-title-row">
@@ -291,12 +289,25 @@ export default function Profile() {
                                                         {levelInfo.label}
                                                     </span>
                                                 </div>
-                                                <button
-                                                    className="risk-detail-btn"
-                                                    onClick={() => handleViewDetail(item)}
-                                                >
-                                                    ดูรายละเอียด
-                                                </button>
+                                                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                                                    <button
+                                                        className="risk-detail-btn risk-retake-btn"
+                                                        onClick={() => navigate("/risk-evaluation", {
+                                                            state: {
+                                                                prefillAttemptId: item.attempt_id,
+                                                                prefillNo: riskHistory.length - index,
+                                                            },
+                                                        })}
+                                                    >
+                                                        ประเมินใหม่จากคำตอบนี้
+                                                    </button>
+                                                    <button
+                                                        className="risk-detail-btn"
+                                                        onClick={() => handleViewDetail(item)}
+                                                    >
+                                                        ดูรายละเอียด
+                                                    </button>
+                                                </div>
                                             </div>
 
                                             <div className="risk-row">
@@ -452,7 +463,19 @@ export default function Profile() {
                                         <p className="settings-desc">ออกจากระบบในอุปกรณ์นี้</p>
                                     </div>
 
-                                    <button className="logout-user-btn">
+                                    <button
+                                        className="logout-user-btn"
+                                        onClick={async () => {
+                                            const token = localStorage.getItem("token");
+                                            try {
+                                                await logoutUser(token);
+                                            } finally {
+                                                localStorage.removeItem("token");
+                                                localStorage.removeItem("user_id");
+                                                navigate("/login");
+                                            }
+                                        }}
+                                    >
                                         <img src="/pics/logout.png" className="logout-icon" />
                                         ออกจากระบบ
                                     </button>

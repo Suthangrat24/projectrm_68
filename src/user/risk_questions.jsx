@@ -1,13 +1,65 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useState, useEffect } from "react";
-import { getQuestions, submitAssessment, getRecommendation } from "../fetchapi/call_api_user";
+import { getQuestions, submitAssessment, getRecommendation, getAssessmentAnswers } from "../fetchapi/call_api_user";
 
 import "../css/risk_questions.css";
+
+// หน่วยของข้อที่ตอบเป็นตัวเลข (ข้อ 18 งบประมาณ, 19 ระยะเวลา, 20 ผลตอบแทนต่อปี)
+// แสดง 2 จุด: ต่อท้ายคำถามเป็นวงเล็บ และต่อท้ายช่องกรอก
+const UNIT_BY_QUESTION = { 18: "บาท", 19: "ปี", 20: "%" };
+
+// ข้อความคำถาม + หน่วยในวงเล็บ เช่น "ระยะเวลาที่ตั้งใจจะลงทุน (ปี)"
+// ถ้าข้อความคำถามในฐานข้อมูลมีหน่วยในวงเล็บอยู่แล้ว จะไม่ต่อซ้ำ
+const questionTitle = (q) => {
+  const unit = UNIT_BY_QUESTION[q.id];
+  if (!unit || q.question.includes(`(${unit})`)) return q.question;
+  return `${q.question} (${unit})`;
+};
+
+const formatWithComma = (num) => {
+  const parts = num.toString().split(".");
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return parts.join(".");
+};
+
+// แปลงคำตอบที่บันทึกไว้ใน DB → รูปแบบ answers ของหน้านี้
+const buildPrefill = (formatted, raw, saved) => {
+  const byQ = {};
+  saved.forEach((a) => { byQ[a.question_id] = a; });
+
+  const result = {};
+  formatted.forEach((q) => {
+    const a = byQ[q.id];
+    if (!a) return;
+
+    // ข้อกรอกตัวเลข (18–20)
+    if (q.type === "text") {
+      const v = (a.answer || "").replace(/,/g, "");
+      if (v === "") return;
+      result[q.id] = q.id === 20 ? v : formatWithComma(v);
+      return;
+    }
+
+    // ข้อเลือก → หาข้อความตัวเลือกจาก choice_id
+    const rawQ = raw.find((x) => x.question_id === q.id);
+    const choice = rawQ?.choices.find((c) => c.choice_id === a.choice_id);
+    if (!choice) return; // ตัวเลือกถูกลบไปแล้ว หรือเป็นข้อที่ถูกข้าม → ให้ผู้ใช้ตอบใหม่
+    result[q.id] = q.type === "multiple" ? [choice.choice_text] : choice.choice_text;
+  });
+
+  // ข้อ 13 ตอบว่าไม่เคยลงทุน → ข้อ 14 ต้องถูกข้ามเหมือนตอนทำครั้งแรก
+  if (result[13] === "ไม่เคยลงทุนมาก่อน") result[14] = ["__skip__"];
+
+  return result;
+};
 
 export default function RiskQuestions() {
   const total = 20;
   const navigate = useNavigate();
+  const location = useLocation();
+  const prefillAttemptId = location.state?.prefillAttemptId;
+  const prefillNo = location.state?.prefillNo;
 
   const [questions, setQuestions] = useState([]);
   const [rawQuestions, setRawQuestions] = useState([]);
@@ -28,9 +80,20 @@ export default function RiskQuestions() {
           choices: q.choices?.map(c => c.choice_text) || []
         }));
 
-        console.log("formatted questions:", formatted);
-
         setQuestions(formatted);
+
+        // มาจากปุ่ม "ประเมินใหม่จากคำตอบนี้" → เติมคำตอบเดิมให้
+        if (prefillAttemptId) {
+          try {
+            const token = localStorage.getItem("token");
+            const saved = await getAssessmentAnswers(token, prefillAttemptId);
+            setAnswers(buildPrefill(formatted, data, saved));
+          } catch (err) {
+            console.error("ดึงคำตอบเดิมไม่สำเร็จ", err);
+            Swal.fire("ดึงคำตอบเดิมไม่สำเร็จ", "สามารถทำแบบประเมินใหม่ได้ตามปกติ", "warning");
+          }
+        }
+
         setLoading(false);
       } catch (err) {
         console.error("โหลดคำถามไม่สำเร็จ", err);
@@ -39,7 +102,7 @@ export default function RiskQuestions() {
     }
 
     fetchQuestions();
-  }, []);
+  }, [prefillAttemptId]);
 
   const [current, setCurrent] = useState(1);
   const [answers, setAnswers] = useState({});
@@ -54,6 +117,11 @@ export default function RiskQuestions() {
 
   const handleNext = async () => {
     if (current < total) {
+      // ข้อ 13 ตอบว่า "ไม่เคยลงทุนมาก่อน" → ข้ามข้อ 14 ไปข้อ 15 เลย
+      if (current === 13 && answers[14]?.[0] === "__skip__") {
+        setCurrent(15);
+        return;
+      }
       setCurrent(current + 1);
       return;
     }
@@ -134,6 +202,11 @@ export default function RiskQuestions() {
   };
 
   const handleBack = () => {
+    // ถ้าข้อ 14 ถูกข้ามไว้ (ตอบข้อ 13 ว่าไม่เคยลงทุนมาก่อน) กด "ก่อนหน้า" จากข้อ 15 ให้ย้อนกลับไปข้อ 13 เลย
+    if (current === 15 && answers[14]?.[0] === "__skip__") {
+      setCurrent(13);
+      return;
+    }
     if (current > 1) setCurrent(current - 1);
   };
 
@@ -197,14 +270,40 @@ export default function RiskQuestions() {
 
               // ========== เงื่อนไขพิเศษแต่ละข้อ ==========
 
-              // ❗ ข้อ 19 → ต้องเป็นจำนวนเต็ม
+              // ❗ ข้อ 19 → ต้องเป็นจำนวนเต็ม และไม่เกิน 50 ปี
               if (q.id === 19) {
                 v = v.replace(/\./g, ""); // ไม่อนุญาตจุด
                 if (v === "") {
                   setAnswers({ ...answers, [current]: "" });
                   return;
                 }
+
+                const yearsNumeric = parseInt(v, 10);
+                if (!isNaN(yearsNumeric) && yearsNumeric > 50) return; // เกิน 50 ปี ไม่ยอมรับค่าที่พิมพ์เข้ามา
+
                 v = formatNumber(v);
+                setAnswers({ ...answers, [current]: v });
+                return;
+              }
+
+              // ❗ ข้อ 20 → เป็น % รับทศนิยมได้ แต่ห้ามเกิน 100
+              if (q.id === 20) {
+                const parts20 = v.split(".");
+                if (parts20.length > 2) return; // มีจุดเกิน 1 จุดไม่ได้
+
+                if (parts20[1]) parts20[1] = parts20[1].slice(0, 2); // ทศนิยมไม่เกิน 2 หลัก
+
+                v = parts20.join(".");
+
+                if (v === "" || v === ".") {
+                  setAnswers({ ...answers, [current]: v });
+                  return;
+                }
+
+                const numeric = parseFloat(v);
+                if (!isNaN(numeric) && numeric > 100) return; // เกิน 100 ไม่ยอมรับค่าที่พิมพ์เข้ามา
+
+                // ไม่ต้องใส่ comma คั่นหลักพัน เพราะค่าสูงสุดคือ 100 อยู่แล้ว
                 setAnswers({ ...answers, [current]: v });
                 return;
               }
@@ -222,7 +321,10 @@ export default function RiskQuestions() {
             }}
           />
 
-          {q.id === 20 && <span className="unit">%</span>}
+          {/* หน่วยหลังช่องกรอก: ข้อ 18 = บาท, ข้อ 19 = ปี, ข้อ 20 = % */}
+          {UNIT_BY_QUESTION[q.id] && (
+            <span className="unit">{UNIT_BY_QUESTION[q.id]}</span>
+          )}
         </div>
       );
     }
@@ -237,7 +339,21 @@ export default function RiskQuestions() {
           type="radio"
           name="choice"
           checked={answers[current] === c}
-          onChange={() => setAnswers({ ...answers, [current]: c })}
+          onChange={() => {
+            const updated = { ...answers, [current]: c };
+
+            // ข้อ 13 = "ไม่เคยลงทุนมาก่อน" → ข้ามข้อ 14 อัตโนมัติ (ไม่เคยลงทุนแล้วไม่มีประเภทสินทรัพย์ให้เลือก)
+            if (current === 13) {
+              if (c === "ไม่เคยลงทุนมาก่อน") {
+                updated[14] = ["__skip__"];
+              } else if (answers[14]?.[0] === "__skip__") {
+                // เปลี่ยนใจจากเดิมที่ตอบว่าไม่เคยลงทุน → เคลียร์ค่าที่ข้ามไว้ ให้กลับไปตอบข้อ 14 ใหม่
+                updated[14] = undefined;
+              }
+            }
+
+            setAnswers(updated);
+          }}
           style={{ display: "none" }}
         />
         <span className="opt-text">{c}</span>
@@ -278,6 +394,12 @@ export default function RiskQuestions() {
 
         <h1 className="risk-header-title">แบบประเมินความเสี่ยงการลงทุนเพื่อใช้ในการแนะนำหุ้น</h1>
         <p className="risk-header-desc">กรุณาตอบคำถามทั้งหมด 20 ข้อเพื่อให้ระบบแนะนำหุ้นที่เหมาะสมกับคุณ</p>
+        {prefillAttemptId && (
+          <p className="risk-header-desc">
+            ระบบเติมคำตอบจากการประเมิน{prefillNo ? `ครั้งที่ ${prefillNo}` : "ครั้งก่อน"}ไว้ให้แล้ว
+            แก้เฉพาะข้อที่ต้องการ แล้วกดวงกลมข้อ 20 เพื่อดูผลได้เลย (การประเมินครั้งเดิมจะไม่ถูกแก้ไข)
+          </p>
+        )}
 
         {/* Progress Circles */}
         <div className="progress-circles">
@@ -304,7 +426,7 @@ export default function RiskQuestions() {
         <div className="risk-question-card">
           <div className="card-header">
             <h2 className="risk-question">
-              {questions[current - 1].id}. {questions[current - 1].question}
+              {questions[current - 1].id}. {questionTitle(questions[current - 1])}
             </h2>
 
             {/* ปุ่มเคลียร์คำตอบ */}

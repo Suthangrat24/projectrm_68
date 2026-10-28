@@ -109,7 +109,15 @@
 .table-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 16px;
+}
+
+.table-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
 }
 
 .add-invest-btn {
@@ -133,17 +141,41 @@
   padding: 12px 20px;
   text-align: left;
   border-bottom: 1px solid #2b3545;
+  vertical-align: middle;
 }
 
 .portfolio-table th {
   text-align: left;
-  padding: 10px 0;
   color: #9ca3af;
+  padding: 10px 0px;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .portfolio-table td {
-  padding: 10px 0;
   color: #fff;
+  font-size: 14px;
+}
+
+.portfolio-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* คอลัมน์ "หมายเหตุ" — ใส่ truncation ที่ span ข้างในแทน td โดยตรง
+   เพราะ max-width บน <td> ไม่น่าเชื่อถือเมื่อใช้ร่วมกับ table-layout:fixed + colgroup
+   (เบราว์เซอร์ยึดความกว้างจาก colgroup เป็นหลัก ไม่บังคับ overflow ตาม max-width ของ td) */
+.portfolio-table .col-note {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* แถวไฮไลต์เบาๆ ตอนชี้เมาส์ — ให้เข้าธีมเดียวกับตาราง "ผลตอบแทนจากคำแนะนำของระบบ" */
+.portfolio-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .portfolio-action-icon {
@@ -329,3 +361,49 @@
   font-size: 13px;
 }
 
+.tag-sell {
+  background: #7f1d1d;
+  color: #fca5a5;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+/* ===== กำไร/ขาดทุนต่อรายการ ในตาราง "รายการหุ้นทั้งหมด" — สไตล์เดียวกับ tag-buy/tag-sell เป๊ะ ===== */
+.pl-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+.pl-pill.up {
+  background: #0f5132;
+  color: #8dffc9;
+}
+
+.pl-pill.down {
+  background: #7f1d1d;
+  color: #fca5a5;
+}
+
+.pl-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.pl-amount {
+  font-size: 12px;
+}
+
+.pl-amount.up {
+  color: #4ade80;
+}
+
+.pl-amount.down {
+  color: #f87171;
+}

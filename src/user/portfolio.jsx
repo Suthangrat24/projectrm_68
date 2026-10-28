@@ -1,37 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { getPortfolio } from "../fetchapi/call_api_user";
+import { getPortfolio, getStockLatest } from "../fetchapi/call_api_user";
+import RecommendationPerformance from "./recommendation_performance";
 import "../css/portfolio.css";
 
 export default function Portfolio() {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState("all");
-
-    const summaryStats = [
-        {
-            label: "มูลค่าพอร์ตทั้งหมด",
-            value: "217,300.00 ฿",
-            sub: "+5,300.00 ฿",
-            green: true
-        },
-        {
-            label: "เงินลงทุนรวม",
-            value: "212,000.00 ฿",
-            sub: "ลงทุนทั้งหมด: 4 ตัว"
-        },
-        {
-            label: "% กำไร/ขาดทุน",
-            value: "+2.50%",
-            sub: "+5,300.00 ฿",
-            green: true
-        },
-        {
-            label: "กำไร/ขาดทุนวันนี้",
-            value: "+1,250 ฿",
-            sub: "+0.58%",
-            green: true
-        }
-    ];
 
     const [portfolioList, setPortfolioList] = useState([]);
 
@@ -41,7 +16,6 @@ export default function Portfolio() {
         async function loadPortfolio() {
             try {
                 const data = await getPortfolio(token);
-                // เช็คว่า data เป็น array และไม่ว่าง
                 if (data && Array.isArray(data)) {
                     setPortfolioList(data);
                 } else {
@@ -55,91 +29,135 @@ export default function Portfolio() {
         loadPortfolio();
     }, []);
 
-    // const portfolioList = [
-    //     {
-    //         symbol: "PTT",
-    //         fullname: "ปตท.",
-    //         date: "15 ม.ค. 2568",
-    //         type: "ซื้อ",
-    //         shares: 1000,
-    //         price: "32.50 ฿",
-    //         value: "32,500.00 ฿",
-    //         pl: "+750.00 ฿",
-    //         percent: "+2.35%",
-    //         note: "เป็นพอร์ตลงทุนหลัก",
-    //         plGreen: true
-    //     },
-    //     {
-    //         symbol: "BDMS",
-    //         fullname: "กรุงเทพดุสิตเวชการ",
-    //         date: "10 ม.ค. 2568",
-    //         type: "ซื้อ",
-    //         shares: 2000,
-    //         price: "22.80 ฿",
-    //         value: "45,600.00 ฿",
-    //         pl: "+1,200.00 ฿",
-    //         percent: "+2.31%",
-    //         note: "ถือยาว",
-    //         plGreen: true
-    //     }
-    // ];
+    // ── ดึงราคาล่าสุดของทุก symbol ที่ถืออยู่ (unique) เพื่อเอามาคำนวณ KPI จริง ──
+    // getPortfolio() มีแค่ราคาตอนซื้อ (price_per_share) ไม่มีราคาปัจจุบัน
+    // ต้องดึงเพิ่มแบบเดียวกับที่ profile.jsx ทำกับหุ้นโปรด
+    const [latestPrices, setLatestPrices] = useState({}); // { symbol: {price, change, change_pct} }
 
-    const historyList = [
-        {
-            date: "15 ม.ค. 2568",
-            type: "ซื้อ",
-            stock: "PTT",
-            shares: 500,
-            price: "32.50 ฿",
-            total: "16,250.00 ฿",
-            note: "เพิ่มพอร์ตพลังงาน",
-        },
-        {
-            date: "10 ม.ค. 2568",
-            type: "ซื้อ",
-            stock: "BDMS",
-            shares: 1000,
-            price: "22.80 ฿",
-            total: "22,800.00 ฿",
-            note: "รับจังหวะปลายแดง",
-        },
-        {
-            date: "8 ม.ค. 2568",
-            type: "ซื้อ",
-            stock: "PTT",
-            shares: 500,
-            price: "32.50 ฿",
-            total: "16,250.00 ฿",
-            note: "เพิ่มพอร์ตพลังงาน",
-        },
-        {
-            date: "5 ม.ค. 2568",
-            type: "ซื้อ",
-            stock: "ADVANC",
-            shares: 500,
-            price: "185.00 ฿",
-            total: "92,500.00 ฿",
-            note: "หุ้นเทคโนโลยี",
-        },
-        {
-            date: "3 ม.ค. 2568",
-            type: "ซื้อ",
-            stock: "BDMS",
-            shares: 1000,
-            price: "22.80 ฿",
-            total: "22,800.00 ฿",
-            note: "รับจังหวะปลายแดง",
-        },
-        {
-            date: "2 ม.ค. 2568",
-            type: "ซื้อ",
-            stock: "KBANK",
-            shares: 300,
-            price: "138.00 ฿",
-            total: "41,400.00 ฿",
-            note: "ธนาคารใหญ่",
-        },
-    ];
+    useEffect(() => {
+        if (portfolioList.length === 0) return;
+
+        const uniqueSymbols = [...new Set(portfolioList.map((r) => r.symbol))];
+
+        async function loadLatestPrices() {
+            const results = await Promise.all(
+                uniqueSymbols.map(async (symbol) => {
+                    try {
+                        const latest = await getStockLatest(`${symbol}.BK`);
+                        return [symbol, latest];
+                    } catch (err) {
+                        console.error(`โหลดราคาล่าสุดของ ${symbol} ไม่สำเร็จ`, err);
+                        return [symbol, null];
+                    }
+                })
+            );
+            setLatestPrices(Object.fromEntries(results));
+        }
+
+        loadLatestPrices();
+    }, [portfolioList]);
+
+    // ── คำนวณพอร์ตด้วย "ต้นทุนเฉลี่ย" (average cost) ──
+    // แก้ปัญหาเดิม: เงินลงทุนรวมเคยนับทุกรายการซื้อ แม้หุ้นที่ขายไปแล้ว แต่มูลค่าพอร์ตนับแค่หุ้นที่ยังถือ
+    // → % กำไร/ขาดทุนบนการ์ดไม่ตรงกับตาราง ตอนนี้ทั้งสองฝั่งนับเฉพาะหุ้นที่ยังถืออยู่
+    const positions = useMemo(() => {
+        const sorted = [...portfolioList].sort(
+            (a, b) =>
+                new Date(a.invest_date) - new Date(b.invest_date) || a.portfolio_id - b.portfolio_id
+        );
+        const pos = {}; // { symbol: { shares, cost, realized } }
+        sorted.forEach((row) => {
+            const p = (pos[row.symbol] ||= { shares: 0, cost: 0, realized: 0 });
+            const n = Number(row.number_of_share) || 0;
+            const price = Number(row.price_per_share) || 0;
+            if (row.invest_type_id === 1) {
+                p.shares += n;
+                p.cost += n * price;
+            } else {
+                const sellN = Math.min(n, p.shares); // ขายเกินที่ถือ → นับเท่าที่มี
+                const avg = p.shares > 0 ? p.cost / p.shares : 0;
+                p.realized += sellN * (price - avg);
+                p.cost -= sellN * avg;
+                p.shares -= sellN;
+            }
+        });
+        return pos;
+    }, [portfolioList]);
+
+    const summaryStats = useMemo(() => {
+        const fmt = (n) =>
+            n.toLocaleString("th-TH", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const sign = (n) => (n >= 0 ? "+" : "");
+
+        const held = Object.entries(positions).filter(([, p]) => p.shares > 0);
+
+        if (held.length === 0) {
+            return [
+                { label: "มูลค่าพอร์ตทั้งหมด", value: "0.00 ฿", sub: "-" },
+                { label: "ต้นทุนหุ้นที่ถืออยู่", value: "0.00 ฿", sub: "ถืออยู่: 0 ตัว" },
+                { label: "% กำไร/ขาดทุน", value: "0.00%", sub: "0.00 ฿" },
+                { label: "กำไร/ขาดทุนวันนี้", value: "0.00 ฿", sub: "0.00%" },
+            ];
+        }
+
+        // ราคาล่าสุดยังโหลดไม่ครบ → ยังไม่คำนวณ ไม่งั้นมูลค่าจะขาดไปบางตัวแล้วดูเหมือนขาดทุน
+        const missing = held.filter(([s]) => latestPrices[s]?.price == null).map(([s]) => s);
+        if (missing.length > 0) {
+            const loading = { value: "กำลังโหลด...", sub: `รอราคา ${missing.join(", ")}` };
+            return [
+                { label: "มูลค่าพอร์ตทั้งหมด", ...loading },
+                { label: "ต้นทุนหุ้นที่ถืออยู่", ...loading },
+                { label: "% กำไร/ขาดทุน", ...loading },
+                { label: "กำไร/ขาดทุนวันนี้", ...loading },
+            ];
+        }
+
+        let totalCost = 0;
+        let currentValue = 0;
+        let todayChange = 0;
+        let realized = 0;
+        Object.values(positions).forEach((p) => (realized += p.realized));
+        held.forEach(([symbol, p]) => {
+            const latest = latestPrices[symbol];
+            totalCost += p.cost;
+            currentValue += p.shares * latest.price;
+            todayChange += p.shares * (latest.change ?? 0);
+        });
+
+        const unrealized = currentValue - totalCost;
+        const unrealizedPct = totalCost > 0 ? (unrealized / totalCost) * 100 : 0;
+        const yesterdayValue = currentValue - todayChange;
+        const todayChangePct = yesterdayValue > 0 ? (todayChange / yesterdayValue) * 100 : 0;
+
+        return [
+            {
+                label: "มูลค่าพอร์ตทั้งหมด",
+                value: `${fmt(currentValue)} ฿`,
+                sub: `${sign(unrealized)}${fmt(unrealized)} ฿`,
+                green: unrealized >= 0,
+            },
+            {
+                label: "ต้นทุนหุ้นที่ถืออยู่",
+                value: `${fmt(totalCost)} ฿`,
+                sub: `ถืออยู่: ${held.length} ตัว`,
+            },
+            {
+                label: "% กำไร/ขาดทุน",
+                value: `${sign(unrealizedPct)}${unrealizedPct.toFixed(2)}%`,
+                sub:
+                    realized !== 0
+                        ? `ยังไม่ขาย ${sign(unrealized)}${fmt(unrealized)} ฿ · ขายแล้ว ${sign(realized)}${fmt(realized)} ฿`
+                        : `${sign(unrealized)}${fmt(unrealized)} ฿`,
+                green: unrealizedPct >= 0,
+            },
+            {
+                label: "กำไร/ขาดทุนวันนี้",
+                value: `${sign(todayChange)}${fmt(todayChange)} ฿`,
+                sub: `${sign(todayChangePct)}${todayChangePct.toFixed(2)}%`,
+                green: todayChange >= 0,
+            },
+        ];
+    }, [positions, latestPrices]);
 
     return (
         <>
@@ -172,6 +190,9 @@ export default function Portfolio() {
                         </div>
                     ))}
                 </section>
+
+                {/* ===== ผลตอบแทนจากคำแนะนำของระบบ (feedback loop) ===== */}
+                <RecommendationPerformance />
 
                 {/* ===== TABS ===== */}
                 <section className="portfolio-tabs-card">
@@ -211,59 +232,117 @@ export default function Portfolio() {
                         </div>
 
                         <table className="portfolio-table">
+                            <colgroup>
+                                <col style={{ width: "8%" }} />   {/* ชื่อย่อ */}
+                                <col style={{ width: "8%" }} />   {/* วันที่ซื้อ */}
+                                <col style={{ width: "7%" }} />   {/* ประเภท */}
+                                <col style={{ width: "8%" }} />   {/* จำนวนหุ้น */}
+                                <col style={{ width: "8%" }} />   {/* ราคาซื้อ */}
+                                <col style={{ width: "8%" }} />   {/* มูลค่า */}
+                                <col style={{ width: "12%" }} />  {/* ราคาปัจจุบัน */}
+                                <col style={{ width: "12%" }} />  {/* กำไร/ขาดทุน */}
+                                <col style={{ width: "19%" }} />  {/* หมายเหตุ */}
+                                <col style={{ width: "10%" }} />  {/* จัดการ */}
+                            </colgroup>
                             <thead>
                                 <tr>
-                                    <th>ชื่อย่อ</th>
-                                    <th>วันที่ซื้อ</th>
+                                    <th>หุ้น</th>
+                                    <th>วันที่ลงทุน</th>
                                     <th>ประเภท</th>
                                     <th>จำนวนหุ้น</th>
-                                    <th>ราคาซื้อ</th>
+                                    <th>ราคาที่ซื้อ</th>
                                     <th>มูลค่า</th>
-                                    {/* <th>กำไร/ขาดทุน</th> */}
+                                    <th>ราคาปัจจุบัน</th>
+                                    <th>กำไร/ขาดทุน</th>
                                     <th>หมายเหตุ</th>
                                     <th>จัดการ</th>
                                 </tr>
                             </thead>
 
                             <tbody>
-                                {portfolioList.map((row) => (
-                                    <tr>
-                                        <td className="text-muted">
-                                            <div className="portfolio-stock-symbol">{row.symbol}</div>
-                                        </td>
-                                        <td className="text-muted">
-                                            {new Date(row.invest_date).toLocaleDateString("th-TH")}
-                                        </td>
-                                        <td>
-                                            <span className="tag-buy">
-                                                {row.invest_type_id === 1 ? "ซื้อ" : "ขาย"}
-                                            </span>
-                                        </td>
+                                {portfolioList.map((row) => {
+                                    const latest = latestPrices[row.symbol];
+                                    const currentPrice = latest?.price;
+                                    const isBuy = row.invest_type_id === 1;
 
-                                        <td className="text-muted">{row.number_of_share}</td>
-                                        <td className="text-muted">{row.price_per_share}</td>
-                                        <td className="text-muted">{row.total}</td>
+                                    // กำไร/ขาดทุนคำนวณเทียบกับต้นทุนของรายการนี้โดยตรง (มีความหมายเฉพาะรายการ "ซื้อ" ที่ยังถืออยู่)
+                                    const cost = row.number_of_share * row.price_per_share;
+                                    const currentValue = currentPrice != null ? row.number_of_share * currentPrice : null;
+                                    const plValue = currentValue != null ? currentValue - cost : null;
+                                    const plPct = plValue != null && cost > 0 ? (plValue / cost) * 100 : null;
+                                    const isUp = plPct != null && plPct >= 0;
 
-                                        {/* <td className="pl-wrapper">
-                                            <div className={row.plGreen ? "pl-main green-text" : "pl-main red-text"}>
-                                                {row.pl}
-                                            </div>
-                                            <div className={row.plGreen ? "pl-sub green-text" : "pl-sub red-text"}>
-                                                {row.percent ?? "(0.00%)"}
-                                            </div>
-                                        </td> */}
-                                        <td className="text-muted">{row.note || "-"}</td>
+                                    // ราคาซื้อห่างจากราคาตลาดเกิน 3 เท่า → น่าจะกรอกผิด (เช่น TFG ซื้อ 100 บาท ทั้งที่ราคาจริง ~10)
+                                    const ratio = currentPrice ? row.price_per_share / currentPrice : 1;
+                                    const suspicious = ratio > 3 || ratio < 1 / 3;
 
-                                        <td className="portfolio-action-icon">
-                                            <img
-                                                src="/pics/edit.png"
-                                                className="edit-icon"
-                                                onClick={() => navigate(`/edit-investment/${row.portfolio_id}`)}
-                                            />
-                                            <img src="/pics/delete.png" className="delete-icon" />
-                                        </td>
-                                    </tr>
-                                ))}
+                                    return (
+                                        <tr key={row.portfolio_id}>
+                                            <td className="text-muted">
+                                                <div className="portfolio-stock-symbol">{row.symbol}</div>
+                                            </td>
+                                            <td className="text-muted">
+                                                {new Date(row.invest_date).toLocaleDateString("th-TH")}
+                                            </td>
+                                            <td>
+                                                <span className={isBuy ? "tag-buy" : "tag-sell"}>
+                                                    {isBuy ? "ซื้อ" : "ขาย"}
+                                                </span>
+                                            </td>
+
+                                            <td className="text-muted">{row.number_of_share}</td>
+                                            <td className="text-muted">
+                                                {Number(row.price_per_share).toFixed(2)}
+                                                {suspicious && (
+                                                    <div
+                                                        style={{ color: "#f59e0b", fontSize: "0.75rem", marginTop: 2 }}
+                                                        title="ราคาซื้อต่างจากราคาตลาดมาก กรุณาตรวจสอบว่ากรอกถูกต้อง"
+                                                    >
+                                                        ⚠ ตรวจสอบราคา
+                                                    </div>
+                                                )}
+                                            </td>
+                                            <td className="text-muted">
+                                                {cost.toLocaleString("th-TH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            </td>
+
+                                            <td className="text-muted">
+                                                {isBuy
+                                                    ? (currentPrice != null ? `${currentPrice.toFixed(2)} บาท` : "กำลังโหลด...")
+                                                    : "-"}
+                                            </td>
+
+                                            <td>
+                                                {isBuy && plPct != null ? (
+                                                    <div className="pl-cell">
+                                                        <span className={`pl-pill ${isUp ? "up" : "down"}`}>
+                                                            {isUp ? "▲" : "▼"} {isUp ? "+" : ""}
+                                                            {plPct.toFixed(2)}%
+                                                        </span>
+                                                        <span className={`pl-amount ${isUp ? "up" : "down"}`}>
+                                                            {isUp ? "+" : ""}{plValue.toFixed(2)} บาท
+                                                        </span>
+                                                    </div>
+                                                ) : (
+                                                    <span className="text-muted">-</span>
+                                                )}
+                                            </td>
+
+                                            <td className="text-muted" title={row.note || ""}>
+                                                <span className="col-note">{row.note || "-"}</span>
+                                            </td>
+
+                                            <td className="portfolio-action-icon">
+                                                <img
+                                                    src="/pics/edit.png"
+                                                    className="edit-icon"
+                                                    onClick={() => navigate(`/edit-investment/${row.portfolio_id}`)}
+                                                />
+                                                <img src="/pics/delete.png" className="delete-icon" />
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
 
@@ -285,13 +364,6 @@ export default function Portfolio() {
                                         [ พื้นที่กราฟวงกลม – อุตสาหกรรม ]
                                     </div>
                                 </div>
-
-                                {/* <div className="analysis-legend-row">
-                          <span className="legend-dot legend-red" /> การเงิน
-                          <span className="legend-dot legend-green" /> พลังงาน
-                          <span className="legend-dot legend-cyan" /> สุขภาพ
-                          <span className="legend-dot legend-yellow" /> เทคโนโลยี
-                      </div> */}
                             </article>
 
                             {/* =========== การกระจายตามความเสี่ยง =========== */}
@@ -303,11 +375,6 @@ export default function Portfolio() {
                                         [ พื้นที่กราฟวงกลม – ความเสี่ยง ]
                                     </div>
                                 </div>
-
-                                {/* <div className="analysis-legend-row">
-                          <span className="legend-dot legend-cyan" /> ต่ำ
-                          <span className="legend-dot legend-yellow" /> ปานกลาง
-                      </div> */}
                             </article>
 
                         </div>

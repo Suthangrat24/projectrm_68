@@ -1,76 +1,114 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getStocks, addPortfolio } from "../fetchapi/call_api_user";
 import Swal from "sweetalert2";
 import "../css/add_investment.css";
 
+const MAX_DROPDOWN_ITEMS = 10;
+
 export default function AddInvestment() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // ── ค่าที่ส่งมาจากหน้าคำแนะนำ (ปุ่ม "+ เพิ่มเข้าพอร์ต") ──
+  // ถ้ามาจากที่อื่น (เช่นเมนู "เพิ่มการลงทุน" ตรงๆ) location.state จะเป็น null ตามปกติ
+  const prefill = location.state || {};
+  const attemptId = prefill.attempt_id ?? null;
 
   const [stocks, setStocks] = useState([]);
   const [filteredStocks, setFilteredStocks] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showTypeDropdown, setShowTypeDropdown] = useState(false);
+
+  const TYPE_OPTIONS = [
+    { value: "1", label: "ซื้อ" },
+    { value: "2", label: "ขาย" },
+  ];
 
   useEffect(() => {
     async function loadStocks() {
       try {
         const res = await getStocks();
         setStocks(res.data);
+
+        // ถ้ามาจากหน้าคำแนะนำ พอโหลดหุ้นเสร็จ ให้หา stock_id ของ symbol ที่ prefill มา
+        if (prefill.prefill_symbol) {
+          const matched = res.data.find(
+            (s) => s.symbol.toLowerCase() === prefill.prefill_symbol.toLowerCase()
+          );
+          if (matched) {
+            setForm((prev) => ({
+              ...prev,
+              symbol: matched.symbol,
+              stock_id: matched.stock_id,
+            }));
+          }
+        }
       } catch (err) {
         console.error(err);
       }
     }
 
     loadStocks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [form, setForm] = useState({
-    symbol: "",
+    symbol: prefill.prefill_symbol || "",
     stock_id: "",
     date: "",
-    type: "",
+    type: prefill.prefill_symbol ? "1" : "", // มาจากคำแนะนำ = ค่าเริ่มต้นเป็น "ซื้อ"
     shares: "",
-    price: "",
-    note: "",
+    price: prefill.prefill_price ?? "",
+    note: prefill.prefill_symbol ? `เพิ่มจากคำแนะนำระบบ` : "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     if (name === "symbol") {
-      if (!value) {
-        setShowDropdown(false); // ปิด dropdown
-      } else {
-        setShowDropdown(true); // เปิด dropdown
-      }
-    }
-
-    setForm({
-      ...form,
-      [name]: value,
-    });
-
-    if (name === "symbol") {
-      const keyword = value.toLowerCase();
-
-      const filtered = stocks.filter((s) =>
-        s.symbol.toLowerCase().includes(keyword) ||
-        s.stock_name.toLowerCase().includes(keyword)
-      );
-
-      setFilteredStocks(filtered.slice(0, 10)); // เอาแค่ 10 ตัว
       setShowDropdown(true);
+
+      const keyword = value.toLowerCase();
+      const filtered = keyword
+        ? stocks.filter(
+            (s) =>
+              s.symbol.toLowerCase().includes(keyword) ||
+              s.stock_name.toLowerCase().includes(keyword)
+          )
+        : stocks; // ช่องว่าง = โชว์ทั้งหมด (ตัด slice ทีหลัง)
+
+      setFilteredStocks(filtered.slice(0, MAX_DROPDOWN_ITEMS));
+
+      // พิมพ์เองใหม่ = ยกเลิกการเลือกหุ้นเดิม จนกว่าจะกดเลือกจาก dropdown อีกครั้ง
+      setForm((prev) => ({ ...prev, symbol: value, stock_id: "" }));
+      return;
     }
+
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFocusSymbol = () => {
+    // โฟกัสครั้งแรก (ยังไม่พิมพ์อะไร) ให้โชว์ตัวเลือกทั้งหมดทันที เหมือนเปิด dropdown
+    // พิมพ์ต่อแล้วค่อยกรองแคบลงใน handleChange
+    if (!form.symbol) {
+      setFilteredStocks(stocks.slice(0, MAX_DROPDOWN_ITEMS));
+    }
+    setShowDropdown(true);
   };
 
   const handleSelectStock = (stock) => {
-    setForm({
-      ...form,
+    setForm((prev) => ({
+      ...prev,
       symbol: stock.symbol,
       stock_id: stock.stock_id,
-    });
-
+    }));
     setShowDropdown(false);
+  };
+
+  const handleSelectType = (value) => {
+    setForm((prev) => ({ ...prev, type: value }));
+    setShowTypeDropdown(false);
   };
 
   const handleSave = async () => {
@@ -90,7 +128,7 @@ export default function AddInvestment() {
 
     try {
       if (!form.stock_id) {
-        alert("กรุณาเลือกหุ้น");
+        alert("กรุณาเลือกหุ้นจากรายการ");
         return;
       }
 
@@ -100,12 +138,13 @@ export default function AddInvestment() {
       }
 
       const payload = {
-        stock_id: Number(form.stock_id), 
+        stock_id: Number(form.stock_id),
         invest_date: form.date, // format: YYYY-MM-DD
         invest_type_id: Number(form.type), // 1 / 2
         number_of_share: Number(form.shares),
         price_per_share: Number(form.price),
         note: form.note || "",
+        attempt_id: attemptId, // null ถ้าไม่ได้มาจากหน้าคำแนะนำ — backend ต้องรองรับ field นี้
       };
 
       console.log("payload:", payload);
@@ -120,7 +159,6 @@ export default function AddInvestment() {
       });
 
       navigate("/portfolio");
-
     } catch (err) {
       console.error(err);
 
@@ -136,7 +174,6 @@ export default function AddInvestment() {
   return (
     <>
       <section className="addinv-page">
-
         {/* ===== ROW 2: TITLE + SAVE BUTTON ===== */}
         <div className="addinv-row-header">
           <h1 className="addinv-title">เพิ่มข้อมูลการลงทุน</h1>
@@ -145,6 +182,13 @@ export default function AddInvestment() {
             บันทึกข้อมูล
           </button>
         </div>
+
+        {attemptId && (
+          <div className="addinv-prefill-banner">
+            หุ้นตัวนี้มาจากคำแนะนำของระบบ — ราคาที่กรอกไว้คือราคาตอนแนะนำ
+            แก้ไขได้ถ้าราคาซื้อจริงต่างไป
+          </div>
+        )}
 
         {/* ===== CARD 1: เลือกหุ้น ===== */}
         <div className="addinv-card">
@@ -160,14 +204,25 @@ export default function AddInvestment() {
               ชื่อย่อ / ชื่อเต็มหุ้น<span className="required">*</span>
             </label>
 
-            <input
-              type="text"
-              name="symbol"
-              placeholder="กรอกรหัสหุ้น เช่น PTT"
-              value={form.symbol}
-              onChange={handleChange}
-              onFocus={() => setShowDropdown(true)}
-            />
+            <div className="autocomplete-input-wrapper">
+              <input
+                type="text"
+                name="symbol"
+                placeholder="พิมพ์ค้นหา หรือกดเพื่อดูรายการหุ้นทั้งหมด"
+                value={form.symbol}
+                onChange={handleChange}
+                onFocus={handleFocusSymbol}
+                onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+                autoComplete="off"
+              />
+              <img
+                src="/pics/drop-down.png"
+                className={`autocomplete-dropdown-icon${showDropdown ? " is-open" : ""}`}
+                alt="drop"
+                onMouseDown={(e) => e.preventDefault()} // กันไม่ให้แย่ง focus ไปจาก input
+                onClick={handleFocusSymbol}
+              />
+            </div>
 
             {showDropdown && filteredStocks.length > 0 && (
               <div className="autocomplete-dropdown">
@@ -175,12 +230,18 @@ export default function AddInvestment() {
                   <div
                     key={stock.stock_id}
                     className="autocomplete-item"
-                    onClick={() => handleSelectStock(stock)}
+                    onMouseDown={() => handleSelectStock(stock)}
                   >
                     <div className="symbol">{stock.symbol}</div>
                     <div className="name">{stock.stock_name}</div>
                   </div>
                 ))}
+              </div>
+            )}
+
+            {form.symbol && !form.stock_id && (
+              <div className="addinv-hint-warning">
+                ยังไม่ได้เลือกหุ้นจากรายการ — กดเลือกจากดรอปดาวน์ก่อนบันทึก
               </div>
             )}
           </div>
@@ -190,7 +251,6 @@ export default function AddInvestment() {
         <div className="addinv-card">
           <div className="addinv-card-header">
             <div className="add-detail-icon-wrap">
-              {/* 4086F4 */}
               <img src="/pics/add_detail.png" className="add-detail-icon" />
             </div>
             <div className="addinv-title">รายละเอียดการลงทุน</div>
@@ -215,15 +275,36 @@ export default function AddInvestment() {
                 ประเภท<span className="required">*</span>
               </label>
 
-              <div className="select-invest-wrapper">
-                <select name="type" value={form.type} onChange={handleChange}>
-                  <option value="">เลือกประเภท</option>
-                  <option value="1">ซื้อ</option>
-                  <option value="2">ขาย</option>
-                </select>
+              <div className="type-dropdown-wrapper autocomplete">
+                <div
+                  className="type-dropdown-trigger"
+                  tabIndex={0}
+                  onClick={() => setShowTypeDropdown((prev) => !prev)}
+                  onBlur={() => setTimeout(() => setShowTypeDropdown(false), 150)}
+                >
+                  <span className={form.type ? "" : "type-placeholder"}>
+                    {TYPE_OPTIONS.find((t) => t.value === form.type)?.label || "เลือกประเภท"}
+                  </span>
+                  <img
+                    src="/pics/drop-down.png"
+                    className={`autocomplete-dropdown-icon${showTypeDropdown ? " is-open" : ""}`}
+                    alt="drop"
+                  />
+                </div>
 
-                {/* --- icon ใหม่ --- */}
-                <img src="/pics/drop-down.png" className="select-icon" alt="drop" />
+                {showTypeDropdown && (
+                  <div className="autocomplete-dropdown">
+                    {TYPE_OPTIONS.map((t) => (
+                      <div
+                        key={t.value}
+                        className={`autocomplete-item type-item${form.type === t.value ? " is-selected" : ""}`}
+                        onMouseDown={() => handleSelectType(t.value)}
+                      >
+                        {t.label}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>

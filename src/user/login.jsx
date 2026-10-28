@@ -36,7 +36,7 @@ export default function Login() {
             console.log("LOGIN RES:", response);
 
             const token = response.token;
-const user_id = response.user_id;
+            const user_id = response.user_id;
 
             console.log("TOKEN:", token);
 
@@ -44,7 +44,9 @@ const user_id = response.user_id;
                 localStorage.setItem("token", token);
                 localStorage.setItem("user_id", user_id);
 
-                navigate("/");
+                // แอดมินไปหน้า /admin ผู้ใช้ทั่วไปไปหน้าแรก (backend ส่ง redirect_to มาให้)
+                navigate(response.redirect_to || "/");
+                window.location.reload();
             }
         } catch (err) {
             setError("เกิดข้อผิดพลาดในการเข้าสู่ระบบ"); // แสดงข้อความข้อผิดพลาดหากมี
@@ -105,15 +107,15 @@ const user_id = response.user_id;
 
                     <div className="login-or">หรือ</div>
 
-                    <div className="login-social-row">
-                        <div className="login-social-circle">
-                            <img src="/pics/facebook_icon.png" className="login-social-icon" onClick={() => navigate("/admin")} />
-                        </div>
-
-                        <div className="login-social-circle">
-                            <img src="/pics/gmail_icon.png" className="login-social-icon" />
-                        </div>
-                    </div>
+                    {/* ปุ่มเข้าสู่ระบบด้วย Google (ยังไม่เชื่อมต่อจริง) */}
+                    <button
+                        type="button"
+                        className="login-google-btn"
+                        onClick={() => setError("ยังไม่รองรับการเข้าสู่ระบบด้วย Google")}
+                    >
+                        <img src="/pics/gmail_icon.png" alt="" className="login-google-icon" />
+                        <span>Login with Gmail</span>
+                    </button>
                 </div>
             </div>
         </section>

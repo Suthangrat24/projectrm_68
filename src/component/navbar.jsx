@@ -10,7 +10,7 @@ export default function Navbar() {
   const location = useLocation();
 
   /* ===== USER ===== */
-  const user_id = "01b9d117-f56d-4884-a617-26b2e3177cf4";
+  const user_id = localStorage.getItem("user_id");
   const [user, setUser] = useState(null);
   const [open, setOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);  // เช็คสถานะการล็อกอิน
@@ -24,7 +24,7 @@ export default function Navbar() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    if (token) {
+    if (token && user_id) {
       setIsLoggedIn(true);
 
       async function loadUser() {
@@ -39,8 +39,9 @@ export default function Navbar() {
       loadUser();
     } else {
       setIsLoggedIn(false);
+    setUser(null);
     }
-  }, [user_id]);
+  }, [location.pathname]);
 
   /* ------------------ LOAD STOCKS ------------------ */
   useEffect(() => {

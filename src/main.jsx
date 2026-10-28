@@ -104,7 +104,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="history" element={<HistoryTab />} />
           <Route path="finance" element={<FinanceTab />} />
           <Route path="holders" element={<HoldersTab />} />*/}
-      <Route path="/detail/future" element={<UserLayout><StockFuture /></UserLayout>} />
+      <Route path="/:symbol/detail/future" element={<UserLayout><StockFuture /></UserLayout>} />
 
       <Route path="/profile/:user_id" element={<UserLayout><Profile /></UserLayout>} />
       <Route path="/profile/edit/:user_id" element={<UserLayout><EditProfile /></UserLayout>} />

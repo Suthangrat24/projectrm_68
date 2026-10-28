@@ -263,16 +263,15 @@
 .tab-section {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 10px;
 }
 
-.risk-card {
+.risk-history-card {
   width: 100%;
-  background: #1F2937;
+  background: #1d2532;
   border: 1px solid #374151;
   padding: 20px 24px;
   border-radius: 16px;
-  box-shadow: 0 10px 28px rgba(0,0,0,0.45);
   margin: 8px 0;
 }
 
@@ -560,4 +559,15 @@
 .logout-icon {
   width: 16px;
   height: 16px;
+}
+
+/* ปุ่มรอง: ประเมินใหม่จากคำตอบเดิม — ขอบเขียว พื้นโปร่ง */
+.risk-detail-btn.risk-retake-btn {
+    background: transparent;
+    color: #22c55e;
+    border: 1px solid #22c55e;
+}
+
+.risk-detail-btn.risk-retake-btn:hover {
+    background: rgba(34, 197, 94, 0.12);
 }
